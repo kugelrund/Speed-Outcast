@@ -23,7 +23,7 @@ qboolean FFChannelSet::ParseChannels( const char *channels )
 	;
 	){
 		int device;
-		char *endpos;
+		const char *endpos;
 		endpos = strchr( pos, ';' );
 
 		if ( channel >= 0 && channel < FF_CHANNEL_MAX )
