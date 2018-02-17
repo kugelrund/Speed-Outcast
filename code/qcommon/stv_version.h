@@ -1,6 +1,6 @@
 // Current version of the single player game
 
-#define	Q3_VERSION		"JK2: v1.03"
+#define	Q3_VERSION		"Speed Outcast: v0.1"
 
 // end
 
