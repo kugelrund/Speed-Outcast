@@ -12,8 +12,9 @@ qboolean MultiEffect::GetStartDelay( DWORD &StartDelay )
 	StartDelay = MAXDWORD;
 	qboolean result = qtrue;
 
+	const int max = GetNumberOfContainedEffects();
 	for
-	(	int i = 0, max = GetNumberOfContainedEffects()
+	(	int i = 0
 	;	i < max
 	;	i++
 	){
@@ -47,8 +48,9 @@ qboolean MultiEffect::GetDelayEnd( DWORD &DelayEnd )
 	DelayEnd = MAXDWORD;
 	qboolean result = qtrue;
 
+	const int max = GetNumberOfContainedEffects();
 	for
-	(	int i = 0, max = GetNumberOfContainedEffects()
+	(	int i = 0
 	;	i < max
 	;	i++
 	){
@@ -87,8 +89,9 @@ qboolean MultiEffect::ChangeDuration( DWORD Duration )
 	{
 		DWORD RelativeDuration = Duration - CurrentDuration;
 
+		const int max = GetNumberOfContainedEffects();
 		for
-		(	int i = 0, max = GetNumberOfContainedEffects()
+		(	int i = 0
 		;	i < max
 		;	i++
 		){
@@ -129,8 +132,9 @@ qboolean MultiEffect::ChangeGain( DWORD Gain )
 	{
 		DWORD RelativeGain = Gain - CurrentGain;
 
+		const int max = GetNumberOfContainedEffects();
 		for
-		(	int i = 0, max = GetNumberOfContainedEffects()
+		(	int i = 0
 		;	i < max
 		;	i++
 		){
@@ -160,8 +164,9 @@ qboolean MultiEffect::GetStatus( DWORD &Status )
 	Status = 0;
 	qboolean result = qtrue;
 
+	const int max = GetNumberOfContainedEffects();
 	for
-	(	int i = 0, max = GetNumberOfContainedEffects()
+	(	int i = 0
 	;	i < max
 	;	i++
 	){
@@ -193,8 +198,9 @@ qboolean MultiEffect::ChangeStartDelay( DWORD StartDelay )
 	{
 		DWORD RelativeStartDelay = StartDelay - CurrentStartDelay;
 		
+		const int max = GetNumberOfContainedEffects();
 		for
-		(	int i = 0, max = GetNumberOfContainedEffects()
+		(	int i = 0
 		;	i < max
 		;	i++
 		){
@@ -217,8 +223,9 @@ qboolean MultiEffect::GetDuration( DWORD &Duration )
 	Duration = 0;
 	qboolean result = qtrue;
 
+	const int max = GetNumberOfContainedEffects();
 	for
-	(	int i = 0, max = GetNumberOfContainedEffects()
+	(	int i = 0
 	;	i < max
 	;	i++
 	){
@@ -246,8 +253,9 @@ qboolean MultiEffect::GetGain( DWORD &Gain )
 	Gain = 0;
 	qboolean result = qtrue;
 
+	const int max = GetNumberOfContainedEffects();
 	for
-	(	int i = 0, max = GetNumberOfContainedEffects()
+	(	int i = 0
 	;	i < max
 	;	i++
 	){

@@ -56,8 +56,9 @@ void FFSet::InitIncludes( const char *setname )
 	;	i < include.size()
 	;	i++
 	){
+		size_t j;
 		for	// each include entered into current list
-		(	int j = 0
+		(	j = 0
 		;	j < mIncludePath.size()
 		;	j++
 		){

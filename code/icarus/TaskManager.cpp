@@ -1904,7 +1904,7 @@ void CTaskManager::Load( void )
 	int *taskIDs = new int[ numTaskGroups ];
 
 	//Get the task group IDs
-	for ( i = 0; i < numTaskGroups; i++ )
+	for ( int i = 0; i < numTaskGroups; i++ )
 	{
 		//Creat a new task group
 		taskGroup = new CTaskGroup;
@@ -1920,7 +1920,7 @@ void CTaskManager::Load( void )
 	}
 
 	//Recreate and load the task groups
-	for ( i = 0; i < numTaskGroups; i++ )
+	for ( int i = 0; i < numTaskGroups; i++ )
 	{
 		taskGroup = GetTaskGroup( taskIDs[i] );
 		assert( taskGroup );
@@ -1957,7 +1957,7 @@ void CTaskManager::Load( void )
 	(m_owner->GetInterface())->I_ReadSaveData( 'TGCG', &curGroupID, sizeof( curGroupID ), NULL );
 
 	//Reload the map entries
-	for ( i = 0; i < numTaskGroups; i++ )
+	for ( int i = 0; i < numTaskGroups; i++ )
 	{
 		char	name[1024];
 		int		length;

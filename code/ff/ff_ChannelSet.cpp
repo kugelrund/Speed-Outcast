@@ -35,8 +35,9 @@ qboolean FFChannelSet::ParseChannels( const char *channels )
 			){
 				if ( device >= 0 && device < mSet.size() )
 				{
+					ChannelIterator itChannel( mChannel, channel );
 					for
-					(	ChannelIterator itChannel( mChannel, channel )
+					(
 					;	itChannel != mChannel.end()
 					&&	(**itChannel).second != device	// found duplicate
 					;	++itChannel
