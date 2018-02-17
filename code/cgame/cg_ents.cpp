@@ -517,7 +517,7 @@ const weaponData_t  *wData = NULL;
 				if ( cc->currentState.eFlags & EF_FIRING || cc->currentState.eFlags & EF_ALT_FIRING )
 				{
 					gi.G2API_SetBoneAnimIndex( &cent->gent->ghoul2[cent->gent->playerModel], cent->gent->rootBone, 
-						0, 3, BONE_ANIM_OVERRIDE_FREEZE, 0.6f, cg.time );
+						0, 3, BONE_ANIM_OVERRIDE_FREEZE, 0.6f, cg.time, -1, -1 );
 		
 					if ( effect )
 					{

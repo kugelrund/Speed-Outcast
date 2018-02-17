@@ -484,7 +484,7 @@ static void GM_CheckFireState( void )
 					vec3_t	forward, end;
 					AngleVectors( NPC->client->ps.viewangles, forward, NULL, NULL );
 					VectorMA( muzzle, 8192, forward, end );
-					gi.trace( &tr, muzzle, vec3_origin, vec3_origin, end, NPC->s.number, MASK_SHOT );
+					gi.trace( &tr, muzzle, vec3_origin, vec3_origin, end, NPC->s.number, MASK_SHOT, (EG2_Collision)0, 0 );
 					VectorCopy( tr.endpos, impactPos );
 				}
 
@@ -750,7 +750,7 @@ void NPC_BSGM_Attack( void )
 				trace_t	trace;
 				vec3_t	end, mins={-3,-3,-3}, maxs={3,3,3};
 				VectorMA( NPC->client->renderInfo.muzzlePoint, 1024, NPC->client->renderInfo.muzzleDir, end );
-				gi.trace( &trace, NPC->client->renderInfo.muzzlePoint, mins, maxs, end, NPC->s.number, MASK_SHOT );
+				gi.trace( &trace, NPC->client->renderInfo.muzzlePoint, mins, maxs, end, NPC->s.number, MASK_SHOT, (EG2_Collision)0, 0 );
 				if ( trace.allsolid || trace.startsolid )
 				{//oops, in a wall
 					if ( NPCInfo->coverTarg )
@@ -1216,7 +1216,7 @@ void NPC_BSGM_Default( void )
 		{//armor regenerated, turn shield back on
 			//do a trace and make sure we can turn this back on?
 			trace_t	tr;
-			gi.trace( &tr, NPC->currentOrigin, shieldMins, shieldMaxs, NPC->currentOrigin, NPC->s.number, NPC->clipmask );
+			gi.trace( &tr, NPC->currentOrigin, shieldMins, shieldMaxs, NPC->currentOrigin, NPC->s.number, NPC->clipmask, (EG2_Collision)0, 0 );
 			if ( !tr.startsolid )
 			{
 				VectorCopy( shieldMins, NPC->mins );

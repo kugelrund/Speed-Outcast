@@ -91,7 +91,7 @@ qboolean	PM_SlideMove( float gravMod ) {
 		VectorMA( pm->ps->origin, time_left, pm->ps->velocity, end );
 
 		// see if we can make it there
-		pm->trace ( &trace, pm->ps->origin, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
+		pm->trace ( &trace, pm->ps->origin, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask, (EG2_Collision)0, 0);
 
 		if ( trace.allsolid ) 
 		{// entity is completely trapped in another solid
@@ -286,7 +286,7 @@ void PM_StepSlideMove( float gravMod )
 	//Q3Final addition...
 	VectorCopy(start_o, down);
 	down[2] -= stepSize;
-	pm->trace (&trace, start_o, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
+	pm->trace (&trace, start_o, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask, (EG2_Collision)0, 0);
 	VectorSet(up, 0, 0, 1);
 	// never step up when you still have up velocity
 	if ( pm->ps->velocity[2] > 0 && (trace.fraction == 1.0 ||
@@ -307,7 +307,7 @@ void PM_StepSlideMove( float gravMod )
 
 	// test the player position if they were a stepheight higher
 
-	pm->trace (&trace, start_o, pm->mins, pm->maxs, up, pm->ps->clientNum, pm->tracemask);
+	pm->trace (&trace, start_o, pm->mins, pm->maxs, up, pm->ps->clientNum, pm->tracemask, (EG2_Collision)0, 0);
 	if ( trace.allsolid || trace.startsolid || trace.fraction == 0) {
 		if ( pm->debugLevel ) {
 			Com_Printf("%i:bend can't step\n", c_pmove);
@@ -336,7 +336,7 @@ void PM_StepSlideMove( float gravMod )
 		// push down the final amount
 		VectorCopy (pm->ps->origin, down);
 		down[2] -= stepSize;
-		pm->trace (&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
+		pm->trace (&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask, (EG2_Collision)0, 0);
 		if ( !trace.allsolid ) 
 		{
 			if ( pm->ps->clientNum 

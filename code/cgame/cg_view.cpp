@@ -79,7 +79,7 @@ void CG_TestG2Model_f (void) {
 	Q_strncpyz (cg.testModelName, CG_Argv( 1 ), MAX_QPATH );
 	cg.testModelEntity.hModel = cgi_R_RegisterModel( cg.testModelName );
 
-	cg.testModel = gi.G2API_InitGhoul2Model(*((CGhoul2Info_v *)cg.testModelEntity.ghoul2), cg.testModelName, cg.testModelEntity.hModel, NULL, NULL,0);
+	cg.testModel = gi.G2API_InitGhoul2Model(*((CGhoul2Info_v *)cg.testModelEntity.ghoul2), cg.testModelName, cg.testModelEntity.hModel, NULL, NULL, 0, 0);
 	cg.testModelEntity.radius = 100.0f;
 
 	if ( cgi_Argc() == 3 ) {
@@ -147,7 +147,7 @@ void CG_TestModelSetAnglespre_f(void)
 	angles[0] = atof(CG_Argv(2)); 
 	angles[1] = atof(CG_Argv(3)); 
 	angles[2] = atof(CG_Argv(4));
-	gi.G2API_SetBoneAngles(&ghoul2[cg.testModel], CG_Argv(1), angles, BONE_ANGLES_PREMULT, POSITIVE_X, POSITIVE_Z, POSITIVE_Y, NULL);
+	gi.G2API_SetBoneAngles(&ghoul2[cg.testModel], CG_Argv(1), angles, BONE_ANGLES_PREMULT, POSITIVE_X, POSITIVE_Z, POSITIVE_Y, NULL, 0, 0);
 }
 
 void CG_TestModelSetAnglespost_f(void)
@@ -163,7 +163,7 @@ void CG_TestModelSetAnglespost_f(void)
 	angles[0] = atof(CG_Argv(2)); 
 	angles[1] = atof(CG_Argv(3)); 
 	angles[2] = atof(CG_Argv(4));
-	gi.G2API_SetBoneAngles(&ghoul2[cg.testModel], CG_Argv(1), angles, BONE_ANGLES_POSTMULT, POSITIVE_X, POSITIVE_Z, POSITIVE_Y, NULL);
+	gi.G2API_SetBoneAngles(&ghoul2[cg.testModel], CG_Argv(1), angles, BONE_ANGLES_POSTMULT, POSITIVE_X, POSITIVE_Z, POSITIVE_Y, NULL, 0, 0);
 }
 
 void CG_TestModelAnimate_f(void)
@@ -172,7 +172,7 @@ void CG_TestModelAnimate_f(void)
 	CGhoul2Info_v	&ghoul2 = *((CGhoul2Info_v *)cg.testModelEntity.ghoul2);
 
 	strcpy(boneName, CG_Argv(1));
-	gi.G2API_SetBoneAnim(&ghoul2[cg.testModel], boneName, atoi(CG_Argv(2)), atoi(CG_Argv(3)), BONE_ANIM_OVERRIDE_LOOP, atof(CG_Argv(4)), cg.time);
+	gi.G2API_SetBoneAnim(&ghoul2[cg.testModel], boneName, atoi(CG_Argv(2)), atoi(CG_Argv(3)), BONE_ANIM_OVERRIDE_LOOP, atof(CG_Argv(4)), cg.time, -1, -1);
 
 }
 

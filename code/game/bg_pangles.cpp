@@ -24,7 +24,7 @@ void BG_G2SetBoneAngles( centity_t *cent, gentity_t *gent, int boneIndex, const 
 {
 	if (boneIndex!=-1)
 	{
-		gi.G2API_SetBoneAnglesIndex( &cent->gent->ghoul2[0], boneIndex, angles, flags, up, left, forward, modelList ); 
+		gi.G2API_SetBoneAnglesIndex( &cent->gent->ghoul2[0], boneIndex, angles, flags, up, left, forward, modelList, 0, 0 ); 
 	}
 }
 
@@ -106,7 +106,7 @@ qboolean PM_AdjustAngleForWallRun( gentity_t *ent, usercmd_t *ucmd, qboolean doM
 			yawAdjust = 90;
 		}
 		VectorMA( ent->currentOrigin, dist, rt, traceTo );
-		gi.trace( &trace, ent->currentOrigin, mins, maxs, traceTo, ent->s.number, ent->clipmask );
+		gi.trace( &trace, ent->currentOrigin, mins, maxs, traceTo, ent->s.number, ent->clipmask, (EG2_Collision)0, 0 );
 		if ( trace.fraction < 1.0f && trace.plane.normal[2] == 0.0f )
 		{//still a vertical wall there
 			//FIXME: don't pull around 90 turns
@@ -533,7 +533,7 @@ void PM_UpdateViewAngles( playerState_t *ps, usercmd_t *cmd, gentity_t *gent )
 			VectorSet( tmaxs, 8, 8, 4 );
 			//if we don't trace EVERY frame, can TURN while leaning and
 			//end up leaning into solid architecture (sigh)
-			gi.trace( &trace, start, tmins, tmaxs, end, gent->s.number, MASK_PLAYERSOLID );
+			gi.trace( &trace, start, tmins, tmaxs, end, gent->s.number, MASK_PLAYERSOLID, (EG2_Collision)0, 0 );
 
 			ps->leanofs = floor((float)leanofs * trace.fraction);
 

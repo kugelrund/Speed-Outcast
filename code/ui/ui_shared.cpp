@@ -2127,7 +2127,7 @@ qboolean Script_FFPlay(itemDef_t *item, const char **args)
 	const char *val;
 	if (String_Parse(args, &val)) 
 	{
-		DC->startForce(DC->registerForce(val));
+		DC->startForce(DC->registerForce(val, FF_CHANNEL_MENU));
 	}
 	return qtrue;
 }
@@ -2329,7 +2329,7 @@ qboolean ItemParse_focusForce( itemDef_t *item)
 //#endif
 		return qfalse;
 	}
-	item->focusForce = DC->registerForce(temp);
+	item->focusForce = DC->registerForce(temp, FF_CHANNEL_MENU);
 	return qtrue;
 }
 #endif // _IMMERSION
