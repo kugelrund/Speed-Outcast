@@ -332,11 +332,6 @@ void SV_InitGameProgs (void) {
 		SV_ShutdownGameProgs ();
 	}
 
-	if ( !Cvar_VariableIntegerValue("fs_restrict") && !Sys_CheckCD() ) 
-	{
-		Com_Error( ERR_NEED_CD, SP_GetStringTextString("CON_TEXT_NEED_CD") ); //"Game CD not in drive" );		
-	}
-
 	// load a new game dll
 	import.Printf = Com_Printf;
 	import.WriteCam = Com_WriteCam;
