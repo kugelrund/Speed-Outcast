@@ -37,7 +37,7 @@ qboolean NPC_CheckPlayerTeamStealth( void );
 static qboolean enemyLOS;
 static qboolean enemyCS;
 static qboolean faceEnemy;
-static qboolean move;
+static qboolean doMove;
 static qboolean shoot;
 static float	enemyDist;
 
@@ -317,7 +317,7 @@ static void Sniper_CheckMoveState( void )
 	{
 		if ( NPCInfo->goalEntity == NPC->enemy )
 		{
-			move = qfalse;
+			doMove = qfalse;
 			return;
 		}
 	}
@@ -337,7 +337,7 @@ static void Sniper_CheckMoveState( void )
 	{
 		if ( !NPCInfo->goalEntity )
 		{
-			move = qfalse;
+			doMove = qfalse;
 			return;
 		}
 	}
@@ -667,7 +667,7 @@ void NPC_BSSniper_Attack( void )
 	}
 
 	enemyLOS = enemyCS = qfalse;
-	move = qtrue;
+	doMove = qtrue;
 	faceEnemy = qfalse;
 	shoot = qfalse;
 	enemyDist = DistanceSquared( NPC->currentOrigin, NPC->enemy->currentOrigin );
@@ -758,19 +758,19 @@ void NPC_BSSniper_Attack( void )
 	//See if we should override shooting decision with any special considerations
 	Sniper_CheckFireState();
 
-	if ( move )
+	if ( doMove )
 	{//move toward goal
 		if ( NPCInfo->goalEntity )//&& ( NPCInfo->goalEntity != NPC->enemy || enemyDist > 10000 ) )//100 squared
 		{
-			move = Sniper_Move();
+			doMove = Sniper_Move();
 		}
 		else
 		{
-			move = qfalse;
+			doMove = qfalse;
 		}
 	}
 
-	if ( !move )
+	if ( !doMove )
 	{
 		if ( !TIMER_Done( NPC, "duck" ) )
 		{
@@ -803,7 +803,7 @@ void NPC_BSSniper_Attack( void )
 
 	if ( !faceEnemy )
 	{//we want to face in the dir we're running
-		if ( move )
+		if ( doMove )
 		{//don't run away and shoot
 			NPCInfo->desiredYaw = NPCInfo->lastPathAngles[YAW];
 			NPCInfo->desiredPitch = 0;
