@@ -1,0 +1,6 @@
+**/.vs
+**/Debug
+**/FinalBuild
+**/Release
+**/SHDebug
+*vcxproj.user
