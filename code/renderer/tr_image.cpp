@@ -1634,7 +1634,7 @@ static void R_CreateDlightImage( void )
 			xs = (DLIGHT_SIZE * 0.5f - x);
 			ys = (DLIGHT_SIZE * 0.5f - y);
 
-            b = 255 - sqrt( xs * xs + ys * ys ) * 9.0f; // try and generate numbers in the range of 255-0
+            b = 255 - sqrt(static_cast<float>(xs * xs + ys * ys)) * 9.0f; // try and generate numbers in the range of 255-0
 
 			// should be close, but clamp anyway
 			if ( b > 255 ) 

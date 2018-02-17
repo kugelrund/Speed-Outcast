@@ -4789,7 +4789,7 @@ void Item_TextColor(itemDef_t *item, vec4_t *newColor)
 		lowLight[1] = 0.8 * parent->focusColor[1]; 
 		lowLight[2] = 0.8 * parent->focusColor[2]; 
 		lowLight[3] = 0.8 * parent->focusColor[3]; 
-		LerpColor(parent->focusColor,lowLight,*newColor,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
+		LerpColor(parent->focusColor,lowLight,*newColor,0.5+0.5*sin(static_cast<float>(DC->realTime / PULSE_DIVISOR)));
 	} 
 /*	else if (item->textStyle == ITEM_TEXTSTYLE_BLINK && !((DC->realTime/BLINK_DIVISOR) & 1)) 
 	{
@@ -5042,7 +5042,7 @@ void Item_TextField_Paint(itemDef_t *item)
 		lowLight[1] = 0.8 * parent->focusColor[1]; 
 		lowLight[2] = 0.8 * parent->focusColor[2]; 
 		lowLight[3] = 0.8 * parent->focusColor[3]; 
-		LerpColor(parent->focusColor,lowLight,newColor,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
+		LerpColor(parent->focusColor,lowLight,newColor,0.5+0.5*sin(static_cast<float>(DC->realTime / PULSE_DIVISOR)));
 	} 
 	else 
 	{
@@ -5340,7 +5340,7 @@ void Item_Bind_Paint(itemDef_t *item)
 			lowLight[2] = 0.8f * parent->focusColor[2]; 
 			lowLight[3] = 0.8f * parent->focusColor[3]; 
 		}
-		LerpColor(parent->focusColor,lowLight,newColor,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
+		LerpColor(parent->focusColor,lowLight,newColor,0.5+0.5*sin(static_cast<float>(DC->realTime / PULSE_DIVISOR)));
 	} 
 	else 
 	{
@@ -5525,7 +5525,7 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 			lowLight[1] = 0.8 * parent->focusColor[1]; 
 			lowLight[2] = 0.8 * parent->focusColor[2]; 
 			lowLight[3] = 0.8 * parent->focusColor[3]; 
-			LerpColor(parent->focusColor,lowLight,color,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
+			LerpColor(parent->focusColor,lowLight,color,0.5+0.5*sin(static_cast<float>(DC->realTime / PULSE_DIVISOR)));
 		} 
 		else if (item->textStyle == ITEM_TEXTSTYLE_BLINK && !((DC->realTime/BLINK_DIVISOR) & 1)) 
 		{
@@ -5533,7 +5533,7 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 			lowLight[1] = 0.8 * item->window.foreColor[1]; 
 			lowLight[2] = 0.8 * item->window.foreColor[2]; 
 			lowLight[3] = 0.8 * item->window.foreColor[3]; 
-			LerpColor(item->window.foreColor,lowLight,color,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
+			LerpColor(item->window.foreColor,lowLight,color,0.5+0.5*sin(static_cast<float>(DC->realTime / PULSE_DIVISOR)));
 		}
 
 		if (item->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE) && !Item_EnableShowViaCvar(item, CVAR_ENABLE)) 
@@ -5569,7 +5569,7 @@ void Item_YesNo_Paint(itemDef_t *item)
 		lowLight[1] = 0.8 * parent->focusColor[1]; 
 		lowLight[2] = 0.8 * parent->focusColor[2]; 
 		lowLight[3] = 0.8 * parent->focusColor[3]; 
-		LerpColor(parent->focusColor,lowLight,newColor,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
+		LerpColor(parent->focusColor,lowLight,newColor,0.5+0.5*sin(static_cast<float>(DC->realTime / PULSE_DIVISOR)));
 	} 
 	else 
 	{
@@ -5607,7 +5607,7 @@ void Item_Multi_Paint(itemDef_t *item)
 		lowLight[1] = 0.8 * parent->focusColor[1]; 
 		lowLight[2] = 0.8 * parent->focusColor[2]; 
 		lowLight[3] = 0.8 * parent->focusColor[3]; 
-		LerpColor(parent->focusColor,lowLight,newColor,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
+		LerpColor(parent->focusColor,lowLight,newColor,0.5+0.5*sin(static_cast<float>(DC->realTime / PULSE_DIVISOR)));
 	} 
 	else 
 	{
@@ -5742,7 +5742,7 @@ void Item_Slider_Paint(itemDef_t *item)
 		lowLight[1] = 0.8 * parent->focusColor[1]; 
 		lowLight[2] = 0.8 * parent->focusColor[2]; 
 		lowLight[3] = 0.8 * parent->focusColor[3]; 
-		LerpColor(parent->focusColor,lowLight,newColor,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
+		LerpColor(parent->focusColor,lowLight,newColor,0.5+0.5*sin(static_cast<float>(DC->realTime / PULSE_DIVISOR)));
 	} 
 	else 
 	{

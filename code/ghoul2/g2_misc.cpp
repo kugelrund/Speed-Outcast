@@ -713,8 +713,8 @@ static bool G2_RadiusTracePolys(
 	VectorNormalize(basis1);
 	VectorNormalize(basis2);
 
-	const float c=cos(0);//theta
-	const float s=sin(0);//theta
+	const float c=cos(0.0f);//theta
+	const float s=sin(0.0f);//theta
 
 	VectorScale(basis1, 0.5f * c / TS.m_fRadius,taxis);
 	VectorMA(taxis,     0.5f * s / TS.m_fRadius,basis2,taxis);
