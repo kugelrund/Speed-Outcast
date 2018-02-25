@@ -727,6 +727,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='SHDebug|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\speedrun\overbounce_prediction\OverbouncePrediction.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='SHDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FinalBuild|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\speedrun\PlayerOverbouncePrediction.cpp" />
     <ClCompile Include="..\ui\gameinfo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
@@ -1451,6 +1458,9 @@
     <ClInclude Include="..\qcommon\tags.h" />
     <ClInclude Include="..\renderer\mdx_format.h" />
     <ClInclude Include="..\renderer\tr_types.h" />
+    <ClInclude Include="..\speedrun\overbounce_prediction\OverbouncePrediction.hpp" />
+    <ClInclude Include="..\speedrun\overbounce_prediction\RingBuffer.hpp" />
+    <ClInclude Include="..\speedrun\PlayerOverbouncePrediction.hpp" />
     <ClInclude Include="..\ui\gameinfo.h" />
     <ClInclude Include="AI.h" />
     <ClInclude Include="anims.h" />

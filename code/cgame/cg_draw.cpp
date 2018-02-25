@@ -7,6 +7,7 @@
 //#include "cg_local.h"
 #include "cg_media.h"
 #include "..\game\objectives.h"
+#include "..\speedrun\PlayerOverbouncePrediction.hpp"
 
 void CG_DrawIconBackground(void);
 void CG_DrawMissionInformation( void );
@@ -2229,6 +2230,61 @@ static qboolean CG_RenderingFromMiscCamera()
 }
 
 /*
+======================
+CG_DrawOverbounceInfo
+======================
+*/
+static void CG_DrawOverbounceInfo( void ) {
+	gentity_t const *const player_gent = cg_entities[cg.snap->ps.clientNum].gent;
+	playerState_t const &player_state = player_gent->client->ps;
+	if ( player_state.groundEntityNum == ENTITYNUM_NONE ) {
+		return;
+	}
+
+	vec3_t start;
+	vec3_t end;
+	trace_t trace;
+	constexpr float TRACE_LENGTH = 4096.0f;
+	VectorCopy( cg.refdef.vieworg, start );
+	VectorMA( start, TRACE_LENGTH, cg.refdef.viewaxis[0], end );
+	CG_Trace( &trace, start, vec3_origin, vec3_origin, end, cg.snap->ps.clientNum, MASK_PLAYERSOLID );
+	if ( trace.plane.normal[2] < MIN_WALK_NORMAL ) {
+		return;
+	}
+
+	double const height_difference = player_gent->currentOrigin[2] +
+	                                 player_gent->mins[2] - trace.endpos[2];
+	if ( height_difference <= 0.0 ) {
+		return;
+	}
+
+	float jump_velocity = JUMP_VELOCITY;
+	if ( player_state.forcePowerLevel[FP_LEVITATION] > 0 ) {
+		extern float forceJumpStrength[];
+		jump_velocity += forceJumpStrength[player_state.forcePowerLevel[FP_LEVITATION]] / 10.0f;
+	}
+
+	if ( !playerOverbouncePredictor ) {
+		playerOverbouncePredictor = std::make_unique<OverbouncePrediction>();
+		playerOverbouncePredictor->start();
+	}
+	playerOverbouncePredictor->setParameters( height_difference, player_state.gravity, jump_velocity );
+
+	double const go_overbounce_probability = playerOverbouncePredictor->getProbabilityForGo();
+	double const go_overbounce_percentage = std::round( go_overbounce_probability * 100.0 );
+	if ( go_overbounce_probability > 0.0 ) {
+		cgi_R_Font_DrawString( 10, 235, va( "G: %.0f%%", go_overbounce_percentage ),
+			colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
+	}
+	double const jump_overbounce_probability = playerOverbouncePredictor->getProbabilityForJump();
+	double const jump_overbounce_percentage = std::round( jump_overbounce_probability * 100.0 );
+	if ( jump_overbounce_probability > 0.0 ) {
+		cgi_R_Font_DrawString( 10, 255, va( "J: %.0f%%", jump_overbounce_percentage ),
+			colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
+	}
+}
+
+/*
 =================
 CG_Draw2D
 =================
@@ -2340,6 +2396,11 @@ static void CG_Draw2D( void )
 	} 
 	if (cg_drawTimer.integer) {
 		y=CG_DrawTimer(y);
+	}
+
+	if ( cg_drawOverbounceInfo.integer )
+	{
+		CG_DrawOverbounceInfo();
 	}
 
 	// don't draw center string if scoreboard is up

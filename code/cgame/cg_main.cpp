@@ -14,6 +14,7 @@
 #include "../ff/ff.h"
 #endif // _IMMERSION
 #include "../qcommon/sstring.h"
+#include "../speedrun/PlayerOverbouncePrediction.hpp"
 //NOTENOTE: Be sure to change the mirrored code in g_shared.h
 typedef	map< sstring_t, unsigned char, less<sstring_t>, allocator< unsigned char >  >	namePrecache_m;
 extern namePrecache_m	as_preCacheMap;
@@ -311,6 +312,9 @@ vmCvar_t	cg_smoothPlayerPos;
 vmCvar_t	cg_smoothPlayerPlat;
 vmCvar_t	cg_smoothPlayerPlatAccel;
 
+// Additions for Speed Outcast
+vmCvar_t	cg_drawOverbounceInfo;
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -416,6 +420,9 @@ Ghoul2 Insert End
 	{ &cg_smoothPlayerPos, "cg_smoothPlayerPos", "0.5", 0},
 	{ &cg_smoothPlayerPlat, "cg_smoothPlayerPlat", "0.75", 0},
 	{ &cg_smoothPlayerPlatAccel, "cg_smoothPlayerPlatAccel", "3.25", 0},
+
+	// Additions for Speed Outcast
+	{ &cg_drawOverbounceInfo, "cg_drawOverbounceInfo", "0", CVAR_ARCHIVE },
 };
 
 int		cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -1900,6 +1907,7 @@ void CG_Shutdown( void )
 {
 	in_camera = false;
 	FX_Free();
+	playerOverbouncePredictor.reset();
 }
 
 //// DEBUG STUFF
