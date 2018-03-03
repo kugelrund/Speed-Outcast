@@ -17,6 +17,7 @@
 #include "../cgame/cg_local.h"	// yeah I know this is naughty, but we're shipping soon...
 #include "wp_saber.h"
 #include "../speedrun/overbounce_prediction/OverbouncePrediction.hpp"
+#include "../speedrun/strafe_helper/StrafeHelper.hpp"
 #include <float.h>
 
 extern qboolean G_DoDismemberment( gentity_t *self, vec3_t point, int mod, int damage, int hitLoc, qboolean force = qfalse );
@@ -332,6 +333,11 @@ static void PM_Accelerate( vec3_t wishdir, float wishspeed, float accel )
 {
 	int			i;
 	float		addspeed, accelspeed, currentspeed;
+
+	if (pm->ps->clientNum == 0) {
+		StrafeHelper::setAccelerationValues(pml.forward, pm->ps->velocity, wishdir,
+		                                    wishspeed, accel, pml.frametime);
+	}
 
 	currentspeed = DotProduct (pm->ps->velocity, wishdir);
 

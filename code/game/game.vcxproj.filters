@@ -35,6 +35,9 @@
     <Filter Include="speedrun\overbounce_detection">
       <UniqueIdentifier>{da7ee66c-868a-41fd-9f21-d98ad49e8087}</UniqueIdentifier>
     </Filter>
+    <Filter Include="speedrun\strafe_helper">
+      <UniqueIdentifier>{871356d3-bf66-4555-8a69-6260299c92e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Icarus\BlockStream.cpp">
@@ -427,6 +430,9 @@
     <ClCompile Include="..\speedrun\PlayerOverbouncePrediction.cpp">
       <Filter>speedrun</Filter>
     </ClCompile>
+    <ClCompile Include="..\speedrun\strafe_helper\StrafeHelper.cpp">
+      <Filter>speedrun\strafe_helper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Icarus\BlockStream.h">
@@ -650,6 +656,9 @@
     </ClInclude>
     <ClInclude Include="..\speedrun\PlayerOverbouncePrediction.hpp">
       <Filter>speedrun</Filter>
+    </ClInclude>
+    <ClInclude Include="..\speedrun\strafe_helper\StrafeHelper.hpp">
+      <Filter>speedrun\strafe_helper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
