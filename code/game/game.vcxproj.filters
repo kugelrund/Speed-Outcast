@@ -430,8 +430,11 @@
     <ClCompile Include="..\speedrun\PlayerOverbouncePrediction.cpp">
       <Filter>speedrun</Filter>
     </ClCompile>
-    <ClCompile Include="..\speedrun\strafe_helper\StrafeHelper.cpp">
-      <Filter>speedrun\strafe_helper</Filter>
+    <ClCompile Include="..\speedrun\strafe_helper\strafe_helper.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\speedrun\strafe_helper_includes.cpp">
+      <Filter>speedrun</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -657,8 +660,11 @@
     <ClInclude Include="..\speedrun\PlayerOverbouncePrediction.hpp">
       <Filter>speedrun</Filter>
     </ClInclude>
-    <ClInclude Include="..\speedrun\strafe_helper\StrafeHelper.hpp">
+    <ClInclude Include="..\speedrun\strafe_helper\strafe_helper.h">
       <Filter>speedrun\strafe_helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\speedrun\strafe_helper_includes.h">
+      <Filter>speedrun</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
