@@ -536,6 +536,7 @@ extern	vmCvar_t		cg_shadows;
 extern	vmCvar_t		cg_paused;
 extern	vmCvar_t		cg_drawTimer;
 extern	vmCvar_t		cg_drawFPS;
+extern	vmCvar_t		cg_drawServerFPS;
 extern	vmCvar_t		cg_drawSnapshot;
 extern	vmCvar_t		cg_drawAmmoWarning;
 extern	vmCvar_t		cg_drawCrosshair;

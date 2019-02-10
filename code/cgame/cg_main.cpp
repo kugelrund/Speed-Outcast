@@ -229,6 +229,7 @@ vmCvar_t	cg_shadows;
 vmCvar_t	cg_paused;
 vmCvar_t	cg_drawTimer;
 vmCvar_t	cg_drawFPS;
+vmCvar_t	cg_drawServerFPS;
 vmCvar_t	cg_drawSnapshot;
 vmCvar_t	cg_drawAmmoWarning;
 vmCvar_t	cg_drawCrosshair;
@@ -340,6 +341,7 @@ cvarTable_t		cvarTable[] = {
 	{ &cg_drawHUD, "cg_drawHUD", "1", 0  },
 	{ &cg_drawTimer, "cg_drawTimer", "0", CVAR_ARCHIVE  },
 	{ &cg_drawFPS, "cg_drawFPS", "0", CVAR_ARCHIVE  },
+	{ &cg_drawServerFPS, "cg_drawServerFPS", "0", CVAR_ARCHIVE  },
 	{ &cg_drawSnapshot, "cg_drawSnapshot", "0", CVAR_ARCHIVE  },
 	{ &cg_drawAmmoWarning, "cg_drawAmmoWarning", "1", CVAR_ARCHIVE  },
 	{ &cg_drawCrosshair, "cg_drawCrosshair", "1", CVAR_ARCHIVE },

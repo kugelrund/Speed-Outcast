@@ -2130,6 +2130,26 @@ static float CG_DrawFPS( float y ) {
 	return y + BIGCHAR_HEIGHT + 10;
 }
 
+
+/*
+=================
+CG_DrawServerFPS
+=================
+*/
+static float CG_DrawServerFPS( float y ) {
+	int fps = 0;
+	if ( cg.nextSnap != nullptr ) {
+		fps = 1000 / (cg.nextSnap->serverTime - cg.snap->serverTime);
+	}
+	const char *fps_string = va( "%ifps", fps );
+	const int width = cgi_R_Font_StrLenPixels(fps_string,
+	                                          cgs.media.qhFontMedium, 1.0f);	
+	cgi_R_Font_DrawString(635 - width, y+2, fps_string, colorTable[CT_LTGOLD1],
+	                      cgs.media.qhFontMedium, -1, 1.0f);
+	return y + BIGCHAR_HEIGHT + 10;
+}
+
+
 /*
 =================
 CG_DrawTimer
@@ -2415,6 +2435,9 @@ static void CG_Draw2D( void )
 	if (cg_drawFPS.integer) {
 		y=CG_DrawFPS(y);
 	} 
+	if (cg_drawServerFPS.integer) {
+		y=CG_DrawServerFPS(y);
+	}
 	if (cg_drawTimer.integer) {
 		y=CG_DrawTimer(y);
 	}
