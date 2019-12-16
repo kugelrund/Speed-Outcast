@@ -169,7 +169,7 @@ public:
 // Fancy comparator
 struct SndForceLess : public less<SndForce>
 {
-	bool operator() ( const SndForce &x, const SndForce &y )
+	bool operator() ( const SndForce &x, const SndForce &y ) const
 	{
 		return bool
 		(/* x.mEntNum < y.mEntNum
