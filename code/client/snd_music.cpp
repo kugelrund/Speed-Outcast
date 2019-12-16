@@ -12,6 +12,8 @@
 #include "cl_mp3.h"
 //
 #include "snd_music.h"
+//
+#include <string>
 
 extern qboolean S_FileExists( const char *psFilename );
 					

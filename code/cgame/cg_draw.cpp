@@ -9,6 +9,7 @@
 #include "..\game\objectives.h"
 #include "..\speedrun\PlayerOverbouncePrediction.hpp"
 #include "..\speedrun\strafe_helper\strafe_helper.h"
+#include <cmath>
 
 void CG_DrawIconBackground(void);
 void CG_DrawMissionInformation( void );
