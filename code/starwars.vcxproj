@@ -110,7 +110,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalIncludeDirectories>ff/ifc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;FINAL_BUILD;_JK2EXE;WIN32;_WINDOWS;_IMMERSION;_FF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;FINAL_BUILD;_JK2EXE;WIN32;_WINDOWS;_IMMERSION;_FF;_USE_32BIT_TIME_T;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\FinalBuild\exe\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\FinalBuild\exe\starwars.pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>.\FinalBuild\exe\</ObjectFileName>
@@ -150,7 +150,7 @@
       <MinimalRebuild>true</MinimalRebuild>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <AdditionalIncludeDirectories>ff/ifc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;MEM_DEBUG;_JK2EXE;WIN32;_WINDOWS;_IMMERSION;_FF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;MEM_DEBUG;_JK2EXE;WIN32;_WINDOWS;_IMMERSION;_FF;_USE_32BIT_TIME_T;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\SHDebug\exe\</AssemblerListingLocation>
       <BrowseInformation>true</BrowseInformation>
       <PrecompiledHeaderOutputFile>.\SHDebug\exe\starwars.pch</PrecompiledHeaderOutputFile>
@@ -192,7 +192,7 @@
       <MinimalRebuild>true</MinimalRebuild>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <AdditionalIncludeDirectories>ff/ifc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;_JK2EXE;WIN32;_WINDOWS;_IMMERSION;_FF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_JK2EXE;WIN32;_WINDOWS;_IMMERSION;_FF;_USE_32BIT_TIME_T;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Debug\exe\</AssemblerListingLocation>
       <BrowseInformation>true</BrowseInformation>
       <PrecompiledHeaderOutputFile>.\Debug\exe\starwars.pch</PrecompiledHeaderOutputFile>
@@ -233,7 +233,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalIncludeDirectories>ff/ifc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;_JK2EXE;WIN32;_WINDOWS;_IMMERSION;_FF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_JK2EXE;WIN32;_WINDOWS;_IMMERSION;_FF;_USE_32BIT_TIME_T;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Release\exe\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Release\exe\starwars.pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>.\Release\exe\</ObjectFileName>
