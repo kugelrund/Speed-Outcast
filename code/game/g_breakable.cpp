@@ -988,7 +988,15 @@ void funcGlassDie( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, i
 	}
 
 	// Really naughty cheating.  Put in an EVENT at some point...
-	cgi_R_GetBModelVerts( cgs.inlineDrawModel[self->s.modelindex], verts, normal );
+	// This "really naughty cheating" seems to be what causes loading quicksaves
+	// of certain areas to crash the game. SV_Frame is run and eventually calls
+	// this function, before CG_RegisterGraphics is called to setup up the
+	// inline draw models. Lets therefore check for them to be setup to fix the
+	// crashes.
+	if ( cgs.numInlineModels > 0 )
+	{
+		cgi_R_GetBModelVerts( cgs.inlineDrawModel[self->s.modelindex], verts, normal );
+	}
 	CG_DoGlass( verts, normal, self->pos1, self->pos2, self->splashRadius );
 
 	self->takedamage = qfalse;//stop chain reaction runaway loops
