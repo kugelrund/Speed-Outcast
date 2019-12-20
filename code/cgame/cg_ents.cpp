@@ -131,8 +131,21 @@ static void CG_EntityEffects( centity_t *cent ) {
 	// add loop sound
 	if ( cent->currentState.loopSound ) 
 	{
-		
-		sfxHandle_t	sfx = ( cent->currentState.eType == ET_MOVER ) ? cent->currentState.loopSound : cgs.sound_precache[ cent->currentState.loopSound ];
+		// There are two functions used for assignment to loopSound, G_SoundIndex and CAS_GetBModelSound.
+		// - G_SoundIndex returns an index into the cgs.sound_precache array.
+		// - CAS_GetBModelSound returns the sfxHandle_t itself directly from a cent->gent->soundSet.
+		// We therefore have to distinguish and then handle these two cases differently. Raven used
+		// the condition (cent->currentState.eType == ET_MOVER) to distinguish them. Unfortunately
+		// this does not seem to work for example for the turrets on ns_hideout, which are movers
+		// but have their loopSound assigned via G_SoundIndex as can be seen in g_turret.cpp. As
+		// CAS_GetBModelSound requires cent->gent->soundSet, let us try to use that being the nullptr
+		// as an additional condition. This additional check is also done in a similar situation in
+		// the function ReadGEntities.
+		const bool isBModelSound = ( cent->currentState.eType == ET_MOVER &&
+		                             cent->gent->soundSet != nullptr &&
+		                             cent->gent->soundSet[0] != '\0' );
+		sfxHandle_t sfx = isBModelSound ? cent->currentState.loopSound
+		                                : cgs.sound_precache[ cent->currentState.loopSound ];
 
 		cgi_S_AddLoopingSound( cent->currentState.number, v3Origin/*cent->lerpOrigin*/, vec3_origin, sfx );
 	}
