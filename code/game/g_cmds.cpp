@@ -803,8 +803,15 @@ qboolean PickSeekerSpawnPoint( vec3_t org, vec3_t fwd, vec3_t right, int skip, v
 	vec3_t	mins, maxs, forward, end;
 	trace_t tr;
 
+	// I guess this first one should be "mins" but Raven dun goofed
 	VectorSet( maxs, -8, -8, -24); // ?? size
 	VectorSet( maxs, 8, 8, 8 );
+	// "mins" is now uninitialized, so it could be anything. If mins[0] is by
+	// chance >= 16, doom_shields skip will work, otherwise it won't. To make
+	// things consistent we simply use very large mins. This seems reasonable,
+	// as it is probably possible to get this kind of benefit somehow with some
+	// uninitialized values.
+	VectorSet( mins, 8192, 8192, 8192 );
 
 	VectorCopy( fwd, forward );
 
