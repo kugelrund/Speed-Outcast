@@ -269,7 +269,23 @@ static void turret_aim( gentity_t *self )
 
 	if ( diffYaw || diffPitch )
 	{
-		self->s.loopSound = G_SoundIndex( "sound/chars/turret/move.wav" );
+		// There are two functions used for assignment to loopSound, G_SoundIndex and CAS_GetBModelSound.
+		// - G_SoundIndex returns an index into the cgs.sound_precache array.
+		// - CAS_GetBModelSound returns the sfxHandle_t itself directly from a cent->gent->soundSet.
+		// Therefore, in CG_EntityEffects we have to distinguish and then handle these two cases
+		// differently. The condition (cent->currentState.eType == ET_MOVER) is used in that function
+		// to distinguish them.
+		//
+		// Unfortunately, there are turrets that are moved around on ns_hideout with the Q3_Lerp*
+		// functions. Those functions explicitly change the eType to ET_MOVER, so those turrets become
+		// movers. We therefore cannot use G_SoundIndex here, because that would cause errors in the
+		// CG_EntityEffects function. Luckily the change to ET_MOVER always seems to take place before
+		// this code here is called, so it should be enough to check for ET_MOVER here and simply not
+		// put any sound in that case.
+		if ( self->s.eType != ET_MOVER )
+		{
+			self->s.loopSound = G_SoundIndex("sound/chars/turret/move.wav");
+		}
 	}
 	else
 	{
