@@ -617,6 +617,8 @@ extern	vmCvar_t		cg_smoothPlayerPlat;
 extern	vmCvar_t		cg_smoothPlayerPlatAccel;
 
 // Additions for Speed Outcast
+extern	vmCvar_t		cg_drawSpeedrunTotalTimer;
+extern	vmCvar_t		cg_drawSpeedrunLevelTimer;
 extern	vmCvar_t		cg_drawOverbounceInfo;
 extern	vmCvar_t		cg_drawStrafeHelper;
 extern	vmCvar_t		cg_strafeHelperCenter;
@@ -1184,5 +1186,11 @@ void	cgi_UI_String_Init(void);
 
 void	SetWeaponSelectTime(void);
 
+void cgi_SpeedrunPauseTimer(void);
+void cgi_SpeedrunUnpauseTimer(void);
+void cgi_SpeedrunLevelFinished(void);
+void cgi_SpeedrunRunFinished(void);
+int cgi_SpeedrunGetTotalTimeMilliseconds(void);
+int cgi_SpeedrunGetLevelTimeMilliseconds(void);
 
 #endif	//__CG_LOCAL_H__

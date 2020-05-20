@@ -21,6 +21,8 @@
 #include "client_ui.h"	// CHC
 #include "snd_local.h"
 
+#include "../speedrun/speedrun_timer_q3/timer.h"
+
 #define MAXSIZE				8
 #define MINSIZE				4
 
@@ -1270,6 +1272,10 @@ e_status CIN_StopCinematic(int handle) {
 		}
 	}
 	cinTable[currentHandle].status = FMV_EOF;
+	if (strcmp(cinTable[currentHandle].fileName, "video/jk0101.roq") == 0) {
+		// cinematic cutscene on first map (kejim_post) is over, so unpause the timer
+		SpeedrunUnpauseTimer();
+	}
 	RoQShutdown();
 
 	return FMV_EOF;
@@ -1368,6 +1374,13 @@ int CIN_PlayCinematic( const char *arg, int x, int y, int w, int h, int systemBi
 	unsigned short RoQID;
 	char	name[MAX_OSPATH];
 	int		i;
+
+	if (strcmp(arg, "video/jk0101.roq") == 0) {
+		// cinematic cutscene on first map (kejim_post) now starting, so start
+		// a new run by resetting and pausing the timer
+		SpeedrunResetTimer();
+		SpeedrunPauseTimer();
+	}
 
 	if (strstr(arg, "/") == NULL && strstr(arg, "\\") == NULL) {
 		Com_sprintf (name, sizeof(name), "video/%s", arg);
@@ -1657,6 +1670,11 @@ static void PlayCinematic(const char *arg, const char *s, qboolean qbInGame)
 {
 	qboolean bFailed = qfalse;
 
+	extern cvar_t *cl_skippingcin;
+	if ( cl_skippingcin->integer )
+	{
+		SpeedrunUnpauseTimer();
+	}
 	Cvar_Set( "timescale", "1" );			// jic we were skipping a scripted cinematic, return to normal after playing video
 	Cvar_Set( "skippingCinematic", "0" );	// "" 
 

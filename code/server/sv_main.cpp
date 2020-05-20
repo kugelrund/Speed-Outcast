@@ -32,6 +32,9 @@ cvar_t	*sv_serverid;
 cvar_t	*sv_testsave;			// Run the savegame enumeration every game frame
 cvar_t	*sv_compress_saved_games;	// compress the saved games on the way out (only affect saver, loader can read both)
 
+// Additions for Speed Outcast
+cvar_t	*sv_speedrunModeIL;
+
 /*
 =============================================================================
 

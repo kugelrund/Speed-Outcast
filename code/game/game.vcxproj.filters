@@ -38,6 +38,9 @@
     <Filter Include="speedrun\strafe_helper">
       <UniqueIdentifier>{871356d3-bf66-4555-8a69-6260299c92e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="speedrun\speedrun_timer_q3">
+      <UniqueIdentifier>{52e1452b-6841-4ef6-8053-b87ef213c431}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Icarus\BlockStream.cpp">
@@ -436,6 +439,9 @@
     <ClCompile Include="..\speedrun\strafe_helper_includes.cpp">
       <Filter>speedrun</Filter>
     </ClCompile>
+    <ClCompile Include="..\speedrun\speedrun_timer_q3\timer_helper.cpp">
+      <Filter>speedrun\speedrun_timer_q3</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Icarus\BlockStream.h">
@@ -665,6 +671,9 @@
     </ClInclude>
     <ClInclude Include="..\speedrun\strafe_helper_includes.h">
       <Filter>speedrun</Filter>
+    </ClInclude>
+    <ClInclude Include="..\speedrun\speedrun_timer_q3\timer_helper.h">
+      <Filter>speedrun\speedrun_timer_q3</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -21,6 +21,8 @@ extern byte *Compress_JPG(int *pOutputSize, int quality, int image_width, int im
 #include "..\game\weapons.h"
 #include "..\game\g_items.h"
 
+#include "..\speedrun\speedrun_timer_q3\timer.h"
+
 #pragma warning(disable : 4786)  // identifier was truncated (STL crap)
 #pragma warning(disable : 4710)  // function was not inlined (STL crap)
 #pragma warning(disable : 4512)  // yet more STL drivel...
@@ -341,6 +343,15 @@ void SV_LoadGame_f(void)
 	{
 		Com_Printf (S_COLOR_RED "Can't load from \"current\"\n");
 		return;
+	}
+
+	if ((sv_speedrunModeIL->integer && strncmp("auto_", psFilename, strlen("auto_")) == 0) ||
+	    strcmp("auto_kejim_post", psFilename) == 0)
+	{
+		// autosaves are used for starting individual level runs, so reset the timer for those.
+		// For full runs, the kejim_post autosave can also be used to start a run, so reset
+		// the timer for that in any case.
+		SpeedrunResetTimer();
 	}
 
 	// special case, if doing a respawn then check that the available auto-save (if any) is from the same map
@@ -997,6 +1008,9 @@ qboolean SG_ReadSavegame(const char *psPathlessBaseName)
 		sv_testsave->value = fPrevTestSave;
 		return qfalse;
 	}
+
+	// Disk I/O is slow, so lets explicitly pause the timer here already
+	SpeedrunPauseTimer();
 
 	// this check isn't really necessary, but it reminds me that these two strings may actually be the same physical one.
 	//

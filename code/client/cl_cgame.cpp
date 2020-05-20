@@ -28,6 +28,8 @@ Ghoul2 Insert Start
 Ghoul2 Insert End
 */
 
+#include "../speedrun/speedrun_timer_q3/timer.h"
+
 //FIXME: Temp
 extern void S_UpdateAmbientSet ( const char *name, vec3_t origin );
 extern int S_AddLocalSet( const char *name, vec3_t listener_origin, vec3_t origin, int entID, int time );
@@ -821,6 +823,24 @@ Ghoul2 Insert End
 		}
 		return strlen(text);
 		//break;
+	case CG_SPEEDRUN_PAUSE_TIMER:
+		SpeedrunPauseTimer();
+		break;
+	case CG_SPEEDRUN_UNPAUSE_TIMER:
+		SpeedrunUnpauseTimer();
+		break;
+	case CG_SPEEDRUN_LEVEL_FINISHED:
+		SpeedrunLevelFinished();
+		break;
+	case CG_SPEEDRUN_RUN_FINISHED:
+		SpeedrunRunFinished();
+		break;
+	case CG_SPEEDRUN_GET_TOTAL_TIME_MILLISECONDS:
+		return SpeedrunGetTotalTimeMilliseconds();
+		break;
+	case CG_SPEEDRUN_GET_LEVEL_TIME_MILLISECONDS:
+		return SpeedrunGetLevelTimeMilliseconds();
+		break;
 	default:
 		Com_Error( ERR_DROP, "Bad cgame system trap: %i", args[0] );
 	}

@@ -739,6 +739,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FinalBuild|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\speedrun\speedrun_timer_q3\timer_helper.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='FinalBuild|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='SHDebug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\speedrun\strafe_helper\strafe_helper.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='SHDebug|Win32'">NotUsing</PrecompiledHeader>
@@ -1478,6 +1484,7 @@
     <ClInclude Include="..\speedrun\overbounce_prediction\OverbouncePrediction.hpp" />
     <ClInclude Include="..\speedrun\overbounce_prediction\RingBuffer.hpp" />
     <ClInclude Include="..\speedrun\PlayerOverbouncePrediction.hpp" />
+    <ClInclude Include="..\speedrun\speedrun_timer_q3\timer_helper.h" />
     <ClInclude Include="..\speedrun\strafe_helper\strafe_helper.h" />
     <ClInclude Include="..\speedrun\strafe_helper_includes.h" />
     <ClInclude Include="..\ui\gameinfo.h" />

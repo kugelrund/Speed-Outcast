@@ -1839,10 +1839,12 @@ void G_StopCinematicSkip( void )
 {
 	gi.cvar_set("skippingCinematic", "0");
 	gi.cvar_set("timescale", "1");
+	cgi_SpeedrunUnpauseTimer();
 }
 
 void G_StartCinematicSkip( void )
 {
+	cgi_SpeedrunPauseTimer();
 	
 	if (cinematicSkipScript[0])
 	{
@@ -2109,6 +2111,7 @@ extern cvar_t	*g_skippingcin;
 			{//We're skipping the cinematic and it's over now
 				gi.cvar_set("timescale", "1");
 				gi.cvar_set("skippingCinematic", "0");
+				cgi_SpeedrunUnpauseTimer();
 			}
 			if ( ent->client->ps.pm_type == PM_DEAD && cg.missionStatusDeadTime < level.time )
 			{//mission status screen is up because player is dead, stop all scripts

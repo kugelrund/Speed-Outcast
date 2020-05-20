@@ -16,6 +16,8 @@
 #endif // _IMMERSION
 #include "../ghoul2/g2.h"
 
+#include "../speedrun/speedrun_timer_q3/timer.h"
+
 #define	RETRANSMIT_TIMEOUT	3000	// time between connection packet retransmits
 
 cvar_t	*cl_nodelta;
@@ -270,6 +272,10 @@ void CL_Disconnect( void ) {
 
 	cls.state = CA_DISCONNECTED;
 
+	if ( cl_skippingcin->integer )
+	{
+		SpeedrunUnpauseTimer();
+	}
 	// allow cheats locally
 	Cvar_Set( "timescale", "1" );//jic we were skipping
 	Cvar_Set( "skippingCinematic", "0" );//jic we were skipping
@@ -406,6 +412,8 @@ Restart the video subsystem
 =================
 */
 void CL_Vid_Restart_f( void ) {
+	SpeedrunPauseTimer();
+
 	S_StopAllSounds();		// don't let them loop during the restart
 	S_BeginRegistration();	// all sound handles are now invalid
 	CL_ShutdownRef();

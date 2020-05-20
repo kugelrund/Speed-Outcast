@@ -9,6 +9,7 @@
 #include "..\game\g_items.h"
 #include "..\game\statindex.h"
 
+#include "..\speedrun\speedrun_timer_q3\timer.h"
 
 /*
 ===============================================================================
@@ -202,6 +203,7 @@ static void SV_Map_f( void )
 	}
 
 	SV_Map_( eForceReload );
+	SpeedrunResetTimer();
 
 	// set the cheat value
 	// if the level was started with "map <levelname>", then

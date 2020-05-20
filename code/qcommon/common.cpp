@@ -9,6 +9,7 @@
 #include <windows.h>	// for Sleep for Z_Malloc recovery attempy
 #endif
 
+#include "../speedrun/speedrun_timer_q3/timer.h"
 
 #define	MAXPRINTMSG	4096
 
@@ -2087,6 +2088,8 @@ try
 	int		msec, minMsec;
 	static int	lastTime;
 	char		msg[MAXPRINTMSG];
+
+	SpeedrunUpdateTimer();
 
 	// write config file if anything changed
 	Com_WriteConfiguration(); 

@@ -3431,6 +3431,11 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 
 		if ( self->NPC->tempGoal )
 		{
+			if ( self->client->NPC_class == CLASS_DESANN && !strcmp(level.mapname, "yavin_final") )
+			{
+				// final boss (desann) on final map is dead, speedrun is over
+				cgi_SpeedrunRunFinished();
+			}
 			G_FreeEntity( self->NPC->tempGoal );
 			self->NPC->tempGoal = NULL;
 		}

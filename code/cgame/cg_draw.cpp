@@ -9,6 +9,7 @@
 #include "..\game\objectives.h"
 #include "..\speedrun\PlayerOverbouncePrediction.hpp"
 #include "..\speedrun\strafe_helper\strafe_helper.h"
+#include "..\speedrun\speedrun_timer_q3\timer_helper.h"
 #include <cmath>
 
 void CG_DrawIconBackground(void);
@@ -2322,6 +2323,18 @@ static void CG_DrawStrafeHelper( void ) {
 }
 
 /*
+=============================
+CG_DrawFormattedMilliseconds
+=============================
+*/
+static float CG_DrawFormattedMilliseconds( int milliseconds, int accuracy, float y ) {
+	const std::string time_string = GetTimeStringFromMilliseconds(milliseconds, accuracy);
+	const int width = cgi_R_Font_StrLenPixels(time_string.c_str(), cgs.media.qhFontMedium, 1.0f);
+	cgi_R_Font_DrawString(635 - width, y + 2, time_string.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f);
+	return y + BIGCHAR_HEIGHT + 10;
+}
+
+/*
 =================
 CG_Draw2D
 =================
@@ -2441,6 +2454,14 @@ static void CG_Draw2D( void )
 	}
 	if (cg_drawTimer.integer) {
 		y=CG_DrawTimer(y);
+	}
+	if (cg_drawSpeedrunTotalTimer.integer > 0) {
+		y=CG_DrawFormattedMilliseconds(cgi_SpeedrunGetTotalTimeMilliseconds(),
+			cg_drawSpeedrunTotalTimer.integer - 1, y);
+	}
+	if (cg_drawSpeedrunLevelTimer.integer > 0) {
+		y=CG_DrawFormattedMilliseconds(cgi_SpeedrunGetLevelTimeMilliseconds(),
+			cg_drawSpeedrunLevelTimer.integer - 1, y);
 	}
 
 	if ( cg_drawOverbounceInfo.integer )

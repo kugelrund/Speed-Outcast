@@ -575,3 +575,31 @@ int cgi_EndGame(void)
 	//CMD_CGCam_Disable();	//can't do it here because it will draw the hud when we're out of camera
 	return syscall( CG_SENDCONSOLECOMMAND, "cam_disable; set nextmap disconnect; cinematic outcast\n" );
 }
+
+void cgi_SpeedrunPauseTimer(void)
+{
+	syscall(CG_SPEEDRUN_PAUSE_TIMER);
+}
+
+void cgi_SpeedrunUnpauseTimer(void)
+{
+	syscall(CG_SPEEDRUN_UNPAUSE_TIMER);
+}
+
+void cgi_SpeedrunLevelFinished(void)
+{
+	syscall(CG_SPEEDRUN_LEVEL_FINISHED);
+}
+
+void cgi_SpeedrunRunFinished(void)
+{
+	syscall(CG_SPEEDRUN_RUN_FINISHED);
+}
+
+int cgi_SpeedrunGetTotalTimeMilliseconds(void) {
+	return syscall(CG_SPEEDRUN_GET_TOTAL_TIME_MILLISECONDS);
+}
+
+int cgi_SpeedrunGetLevelTimeMilliseconds(void) {
+	return syscall(CG_SPEEDRUN_GET_LEVEL_TIME_MILLISECONDS);
+}

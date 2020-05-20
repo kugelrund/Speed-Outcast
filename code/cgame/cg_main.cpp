@@ -314,6 +314,8 @@ vmCvar_t	cg_smoothPlayerPlat;
 vmCvar_t	cg_smoothPlayerPlatAccel;
 
 // Additions for Speed Outcast
+vmCvar_t	cg_drawSpeedrunTotalTimer;
+vmCvar_t	cg_drawSpeedrunLevelTimer;
 vmCvar_t	cg_drawOverbounceInfo;
 vmCvar_t	cg_drawStrafeHelper;
 vmCvar_t	cg_strafeHelperCenter;
@@ -430,6 +432,8 @@ Ghoul2 Insert End
 	{ &cg_smoothPlayerPlatAccel, "cg_smoothPlayerPlatAccel", "3.25", 0},
 
 	// Additions for Speed Outcast
+	{ &cg_drawSpeedrunTotalTimer, "cg_drawSpeedrunTotalTimer", "1", CVAR_ARCHIVE  },
+	{ &cg_drawSpeedrunLevelTimer, "cg_drawSpeedrunLevelTimer", "0", CVAR_ARCHIVE  },
 	{ &cg_drawOverbounceInfo, "cg_drawOverbounceInfo", "0", CVAR_ARCHIVE },
 	{ &cg_drawStrafeHelper, "cg_drawStrafeHelper", "0", CVAR_ARCHIVE },
 	{ &cg_strafeHelperCenter, "cg_strafeHelperCenter", "1", CVAR_ARCHIVE },
@@ -1908,6 +1912,7 @@ void CG_Init( int serverCommandSequence ) {
 	cg.missionInfoFlashTime = 0;
 	cg.missionStatusShow = qfalse;
 
+	cgi_SpeedrunUnpauseTimer();
 }
 
 /*

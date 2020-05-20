@@ -72,6 +72,12 @@
       <UniqueIdentifier>{005f1d01-08ae-4097-a028-15a35dd6380a}</UniqueIdentifier>
       <Extensions>*.dll</Extensions>
     </Filter>
+    <Filter Include="speedrun">
+      <UniqueIdentifier>{82513919-efc7-48d0-a4d3-9bafbeaa36f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="speedrun\speedrun_timer_q3">
+      <UniqueIdentifier>{caefa591-8515-4aec-9a98-8cc324c26c07}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="0_compiled_first\0_SH_Leak.cpp">
@@ -583,6 +589,12 @@
     </ClCompile>
     <ClCompile Include="ff\ff_utils.cpp">
       <Filter>FF %28Immersion%29</Filter>
+    </ClCompile>
+    <ClCompile Include="speedrun\speedrun_timer_q3\timer.cpp">
+      <Filter>speedrun\speedrun_timer_q3</Filter>
+    </ClCompile>
+    <ClCompile Include="speedrun\speedrun_timer_q3\timer_helper.cpp">
+      <Filter>speedrun\speedrun_timer_q3</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1131,6 +1143,12 @@
     </ClInclude>
     <ClInclude Include="ff\ff_utils.h">
       <Filter>FF %28Immersion%29</Filter>
+    </ClInclude>
+    <ClInclude Include="speedrun\speedrun_timer_q3\timer.h">
+      <Filter>speedrun\speedrun_timer_q3</Filter>
+    </ClInclude>
+    <ClInclude Include="speedrun\speedrun_timer_q3\timer_helper.h">
+      <Filter>speedrun\speedrun_timer_q3</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,8 @@
 #include "..\game\objectives.h"
 #include "..\game\b_local.h"
 
+#include "..\speedrun\speedrun_timer_q3\timer_helper.h"
+
 #define	SCOREBOARD_WIDTH	(26*BIGCHAR_WIDTH)
 
 
@@ -147,6 +149,12 @@ w = cgi_R_Font_StrLenPixels(text, cgs.media.qhFontMedium, 1.2f);
 
 	x = 75;
 	y =86;
+w = cgi_R_Font_StrLenPixels("Level Time: ", cgs.media.qhFontSmall, 0.8f);
+	cgi_R_Font_DrawString(x, y, "Level Time: ", colorTable[CT_LTGOLD1], cgs.media.qhFontSmall, -1, 0.8f);
+	const std::string levelTimeText = GetTimeStringFromMilliseconds(cgi_SpeedrunGetLevelTimeMilliseconds(), 3);
+	cgi_R_Font_DrawString(x+w, y, levelTimeText.c_str(), colorTable[CT_GREEN], cgs.media.qhFontSmall, -1, 0.8f);
+	y +=pad;
+
 	cgi_SP_GetStringTextString( "INGAME_SECRETAREAS", text, sizeof(text) );
 w = cgi_R_Font_StrLenPixels(text, cgs.media.qhFontSmall, 0.8f);	
 	cgi_R_Font_DrawString(x,    y, text, colorTable[CT_LTGOLD1], cgs.media.qhFontSmall, -1, 0.8f);
@@ -200,6 +208,12 @@ w = cgi_R_Font_StrLenPixels(text, cgs.media.qhFontSmall, 0.8f);
 
 	x = 334+70;
 	y = 86;
+w = cgi_R_Font_StrLenPixels("Total Time: ", cgs.media.qhFontSmall, 0.8f);
+	cgi_R_Font_DrawString(x, y, "Total Time: ", colorTable[CT_LTGOLD1], cgs.media.qhFontSmall, -1, 0.8f);
+	const std::string totalTimeText = GetTimeStringFromMilliseconds(cgi_SpeedrunGetTotalTimeMilliseconds(), 3);
+	cgi_R_Font_DrawString(x+w, y, totalTimeText.c_str(), colorTable[CT_GREEN], cgs.media.qhFontSmall, -1, 0.8f);
+	y +=pad;
+
 	cgi_SP_GetStringTextString( "INGAME_SHOTSFIRED", text, sizeof(text) );
 w = cgi_R_Font_StrLenPixels(text, cgs.media.qhFontSmall, 0.8f);	
 	cgi_R_Font_DrawString(x, y, text, colorTable[CT_LTGOLD1], cgs.media.qhFontSmall, -1, 0.8f);

@@ -1420,6 +1420,9 @@ void G_ChangeMap (const char *mapname, const char *spawntarget, qboolean hub)
 		return;
 	}
 
+	cgi_SpeedrunPauseTimer();
+	cgi_SpeedrunLevelFinished();
+
 	if ( spawntarget == NULL ) {
 		spawntarget = "";	//prevent it from becoming "(null)"
 	}

@@ -4,3 +4,6 @@
 [submodule "code/speedrun/overbounce_prediction"]
 	path = code/speedrun/overbounce_prediction
 	url = https://github.com/kugelrund/overbounce_prediction.git
+[submodule "code/speedrun/speedrun_timer_q3"]
+	path = code/speedrun/speedrun_timer_q3
+	url = https://github.com/kugelrund/speedrun_timer_q3.git
