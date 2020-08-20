@@ -402,7 +402,7 @@ void S_Init( void ) {
 	Cmd_AddCommand("music", S_Music_f);
 	Cmd_AddCommand("soundlist", S_SoundList_f);
 	Cmd_AddCommand("soundinfo", S_SoundInfo_f);
-	Cmd_AddCommand("soundstop", S_StopAllSounds);
+	Cmd_AddCommand("soundstop", S_StopSounds);
 	Cmd_AddCommand("mp3_calcvols", S_MP3_CalcVols_f);
 	Cmd_AddCommand("s_dynamic", S_SetDynamicMusic_f);
 
