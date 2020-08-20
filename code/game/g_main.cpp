@@ -133,6 +133,9 @@ cvar_t	*g_saberMoveSpeed;
 cvar_t	*g_saberAnimSpeed;
 cvar_t	*g_saberAutoAim;
 
+// Additions for Speed-Outcast
+cvar_t	*g_speedFactorLanding;
+
 qboolean	stop_icarus = qfalse;
 
 extern char *G_GetLocationForEnt( gentity_t *ent );
@@ -551,6 +554,8 @@ void G_InitCvars( void ) {
 	g_saberMoveSpeed = gi.cvar( "g_saberMoveSpeed", "1", CVAR_ARCHIVE|CVAR_CHEAT );//how fast you run while attacking with a saber
 	g_saberAnimSpeed = gi.cvar( "g_saberAnimSpeed", "1", CVAR_ARCHIVE|CVAR_CHEAT );//how fast saber animations run
 	g_saberAutoAim = gi.cvar( "g_saberAutoAim", "1", CVAR_ARCHIVE|CVAR_CHEAT );//auto-aims at enemies when not moving or when just running forward
+
+	g_speedFactorLanding = gi.cvar( "g_speedFactorLanding", "1.0", CVAR_ARCHIVE|CVAR_CHEAT );
 
 	g_AIsurrender = gi.cvar( "g_AIsurrender", "0", CVAR_CHEAT );
 	g_numEntities = gi.cvar( "g_numEntities", "0", CVAR_CHEAT );

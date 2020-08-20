@@ -208,6 +208,9 @@ extern	cvar_t	*g_removeDoors;
 
 extern	cvar_t	*g_ICARUSDebug;
 
+// Additions for Speed-Outcast
+extern	cvar_t	*g_speedFactorLanding;
+
 extern gentity_t *player;
 //
 // g_spawn.c

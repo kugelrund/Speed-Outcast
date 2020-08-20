@@ -2276,6 +2276,16 @@ static float PM_CrashLandDelta( vec3_t prev_vel, int waterlevel )
 	return delta;
 }
 
+void PM_StickLanding( void )
+{
+	// "stick landings some" as it says in Jedi Academy. With this general
+	// multiplier we can allow all kinds of shenanigans. Value of 1.0 is default
+	// and original Jedi Outcast behaviour, i.e. no slowdown. Value of 0.5 gives
+	// Jedi Academy behaviour.
+	pm->ps->velocity[0] *= g_speedFactorLanding->value;
+	pm->ps->velocity[1] *= g_speedFactorLanding->value;
+}
+
 int PM_GetLandingAnim( void )
 {
 	int anim = pm->ps->legsAnim;
@@ -2288,34 +2298,42 @@ int PM_GetLandingAnim( void )
 	case BOTH_FORCEJUMPLEFT1:
 	case BOTH_FORCEINAIRLEFT1:
 		anim = BOTH_FORCELANDLEFT1;
+		PM_StickLanding();
 		break;
 	case BOTH_FORCEJUMPRIGHT1:
 	case BOTH_FORCEINAIRRIGHT1:
 		anim = BOTH_FORCELANDRIGHT1;
+		PM_StickLanding();
 		break;
 	case BOTH_FORCEJUMP1:
 	case BOTH_FORCEINAIR1:
 		anim = BOTH_FORCELAND1;
+		PM_StickLanding();
 		break;
 	case BOTH_FORCEJUMPBACK1:
 	case BOTH_FORCEINAIRBACK1:
 		anim = BOTH_FORCELANDBACK1;
+		PM_StickLanding();
 		break;
 	case BOTH_JUMPLEFT1:
 	case BOTH_INAIRLEFT1:
 		anim = BOTH_LANDLEFT1;
+		PM_StickLanding();
 		break;
 	case BOTH_JUMPRIGHT1:
 	case BOTH_INAIRRIGHT1:
 		anim = BOTH_LANDRIGHT1;
+		PM_StickLanding();
 		break;
 	case BOTH_JUMP1:
 	case BOTH_INAIR1:
 		anim = BOTH_LAND1;
+		PM_StickLanding();
 		break;
 	case BOTH_JUMPBACK1:
 	case BOTH_INAIRBACK1:
 		anim = BOTH_LANDBACK1;
+		PM_StickLanding();
 		break;
 	case BOTH_BUTTERFLY_LEFT:
 	case BOTH_BUTTERFLY_RIGHT:
@@ -2348,6 +2366,7 @@ int PM_GetLandingAnim( void )
 		{
 			anim = BOTH_LAND1;
 		}
+		PM_StickLanding();
 		break;
 	}
 	return anim;
