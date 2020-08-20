@@ -483,6 +483,13 @@ static void RE_KillDissolve(void)
 								Dissolve.pImage = NULL;
 	}
 }
+
+// Speed-Outcast addition to explicitly delete dissolve image (e.g. in case of a vid_restart)
+void RE_DeleteDissolveImage(void)
+{
+	RE_KillDissolve();
+}
+
 // Draw the dissolve pic to the screen, over the top of what's already been rendered.
 //
 // return = qtrue while still processing, for those interested...

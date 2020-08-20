@@ -1779,6 +1779,7 @@ void RE_LAGoggles( void );
 void RE_Scissor ( float x, float y, float w, float h);
 void RE_BeginFrame( stereoFrame_t stereoFrame );
 void RE_EndFrame( int *frontEndMsec, int *backEndMsec );
+void RE_DeleteDissolveImage(void);
 qboolean	RE_ProcessDissolve(void);
 qboolean	RE_InitDissolve(qboolean bForceCircularExtroWipe);
 

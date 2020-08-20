@@ -1927,6 +1927,11 @@ R_DeleteTextures
 // (only gets called during vid_restart now (and app exit), not during map load)
 //
 void R_DeleteTextures( void ) {
+	// The dissolve image is not part of the images that R_Images_Clear clears.
+	// It can therefore happen that the dissolve image will not be freed
+	// properly during a vid_restart, which caused crashes. We therefore now
+	// make sure to explicitly get rid of the dissolve image here.
+	RE_DeleteDissolveImage();
 
 	R_Images_Clear();	
 	GL_ResetBinds();
