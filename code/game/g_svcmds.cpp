@@ -149,48 +149,25 @@ gentity_t *G_GetSelfForPlayerCmd( void )
 	}
 }
 
+extern saber_colors_t TranslateSaberColor( const char* name );
 static void Svcmd_SaberColor_f()
 {
 	char *color = gi.argv(1);
-	if ( !VALIDSTRING( color ))
+	if ( !VALIDSTRING( color ) || ( Q_stricmp( color, "red" ) &&
+	                                Q_stricmp( color, "green" ) &&
+	                                Q_stricmp( color, "yellow" ) &&
+	                                Q_stricmp( color, "orange" ) &&
+	                                Q_stricmp( color, "purple" ) &&
+	                                Q_stricmp( color, "blue" ) ) )
 	{
 		gi.Printf( "Usage:  saberColor <color>\n" );
 		gi.Printf( "valid colors:  red, orange, yellow, green, blue, and purple\n" );
-
 		return;
 	}
-	
-	gentity_t *self = G_GetSelfForPlayerCmd();
 
-	if ( !Q_stricmp( color, "red" ))
-	{
-		self->client->ps.saberColor = SABER_RED;
-	}
-	else if ( !Q_stricmp( color, "green" ))
-	{
-		self->client->ps.saberColor = SABER_GREEN;
-	}
-	else if ( !Q_stricmp( color, "yellow" ))
-	{
-		self->client->ps.saberColor = SABER_YELLOW;
-	}
-	else if ( !Q_stricmp( color, "orange" ))
-	{
-		self->client->ps.saberColor = SABER_ORANGE;
-	}
-	else if ( !Q_stricmp( color, "purple" ))
-	{
-		self->client->ps.saberColor = SABER_PURPLE;
-	}
-	else if ( !Q_stricmp( color, "blue" ))
-	{
-		self->client->ps.saberColor = SABER_BLUE;
-	}
-	else
-	{
-		gi.Printf( "Usage:  saberColor <color>\n" );
-		gi.Printf( "valid colors:  red, orange, yellow, green, blue, and purple\n" );
-	}
+	gi.cvar_set( "g_saber_color", color );
+	gentity_t *self = G_GetSelfForPlayerCmd();
+	self->client->ps.saberColor = TranslateSaberColor( color );
 }
 
 void Svcmd_ForceJump_f( void )
@@ -762,11 +739,6 @@ qboolean	ConsoleCommand( void ) {
 
 	if ( Q_stricmp( cmd, "saberColor" ) == 0 )	
 	{
-		if ( !g_cheats->integer ) 
-		{
-			gi.SendServerCommand( 0, "print \"Cheats are not enabled on this server.\n\"");
-			return qfalse;
-		}
 		Svcmd_SaberColor_f();
 		return qtrue;
 	}

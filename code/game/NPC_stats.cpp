@@ -217,7 +217,7 @@ static rank_t TranslateRankName( const char *name )
 
 	return RANK_CIVILIAN;
 }
-static saber_colors_t TranslateSaberColor( const char *name ) 
+saber_colors_t TranslateSaberColor( const char *name )
 {
 	if ( !Q_stricmp( name, "red" ) ) 
 	{

@@ -134,6 +134,7 @@ cvar_t	*g_saberAnimSpeed;
 cvar_t	*g_saberAutoAim;
 
 // Additions for Speed-Outcast
+cvar_t	*g_saber_color;
 cvar_t	*g_speedFactorLanding;
 
 qboolean	stop_icarus = qfalse;
@@ -555,6 +556,7 @@ void G_InitCvars( void ) {
 	g_saberAnimSpeed = gi.cvar( "g_saberAnimSpeed", "1", CVAR_ARCHIVE|CVAR_CHEAT );//how fast saber animations run
 	g_saberAutoAim = gi.cvar( "g_saberAutoAim", "1", CVAR_ARCHIVE|CVAR_CHEAT );//auto-aims at enemies when not moving or when just running forward
 
+	g_saber_color = gi.cvar( "g_saber_color", "blue", CVAR_ARCHIVE|CVAR_NORESTART );
 	g_speedFactorLanding = gi.cvar( "g_speedFactorLanding", "1.0", CVAR_ARCHIVE|CVAR_CHEAT );
 
 	g_AIsurrender = gi.cvar( "g_AIsurrender", "0", CVAR_CHEAT );
