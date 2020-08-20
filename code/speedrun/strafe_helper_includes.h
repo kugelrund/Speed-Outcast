@@ -5,16 +5,16 @@
 extern "C" {
 #endif
 
-typedef float vec_t;
-typedef vec_t vec4_t[4];
+#include <math.h>
+#include <stdio.h>
 
+static const float shi_color_accelerating[4] = {0.0f, 0.5f, 0.125f, 0.375f};
+static const float shi_color_optimal[4] = {0.0f, 1.0f, 0.25f, 0.75f};
+static const float shi_color_center_marker[4] = {1.0f, 1.0f, 1.0f, 0.75f};
+static const float shi_color_speed[4] = {1.0f, 1.0f, 1.0f, 0.9f};
 
-static const vec4_t shi_color_accelerating = { 0.0f, 0.5f, 0.125f, 0.375f };
-static const vec4_t shi_color_optimal = { 0.0f, 1.0f, 0.25f, 0.75f };
-static const vec4_t shi_color_center_marker = { 1.0f, 1.0f,  1.0f, 0.75f };
-
-void shi_drawFilledRectangle(float x, float y, float w, float h,
-                             const vec4_t color);
+void shi_drawFilledRectangle(float x, float y, float w, float h, const float color[4]);
+void shi_drawString(float x, float y, const char* string, float scale, const float color[4]);
 
 #ifdef __cplusplus
 } // extern "C"
