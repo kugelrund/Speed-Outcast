@@ -769,6 +769,13 @@ void ReadGEntities(qboolean qbAutosave)
 			gNPC_t tempNPC;
 
 			EvaluateFields(savefields_gNPC, (byte *)&tempNPC,(byte *)pEntOriginal->NPC, 'GNPC', sizeof (*pEnt->NPC),qfalse);
+			// To include all pointers of gNPC_t, it seems like savefields_gNPC should have had
+			// {strNPCOFS(watchTarget), F_GENTITY} as last member. Apparently this was overlooked.
+			// And indeed, in Jedi Academy this is the case. Unfortunately we cant change that
+			// after the fact, as it would break old saves. As it stands here, I don't see how
+			// watchTarget from the save could ever have a usable value. So let us set it to NULL
+			// so that at least this potentially dangling pointer won't be used later on.
+			tempNPC.watchTarget = NULL;
 
 			// so can we pinch the original's one or do we have to alloc a new one?...
 			//
