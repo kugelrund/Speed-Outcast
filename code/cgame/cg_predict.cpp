@@ -202,6 +202,11 @@ int		CG_PointContents( const vec3_t point, int passEntityNum ) {
 
 void CG_SetClientViewAngles( vec3_t angles, qboolean overrideViewEnt )
 {
+	if ( cg.snap == nullptr )
+	{
+		return;
+	}
+
 	if ( cg.snap->ps.viewEntity <= 0 || cg.snap->ps.viewEntity >= ENTITYNUM_WORLD || overrideViewEnt )
 	{//don't clamp angles when looking through a viewEntity
 		for( int i = 0; i < 3; i++ ) 
