@@ -768,7 +768,14 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		else 
 		{
 			s = CG_ConfigString( CS_SOUNDS + es->eventParm );
-			CG_TryPlayCustomSound(NULL, es->number, CHAN_AUTO, s, CS_BASIC );
+			if (s[0] == '\0') {
+				// This happens on artus_topside when skipping the initial cutscene and doing vid_restart instantly after that.
+				// It would then proceed to terminate the game in S_FindName when calling CG_TryPlayCustomSound. So seems
+				// reasonable to just not play the sound here... Unfortunately not sure what the underlying problem is. It seems
+				// like es->eventParam is something invalid, all the stringoffsets at and around that index are 0.
+				break;
+			}
+			CG_TryPlayCustomSound(NULL, es->number, CHAN_AUTO, s, CS_BASIC);
 		}
 		break;
 
