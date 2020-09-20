@@ -28,6 +28,7 @@ qboolean cg_forceCrosshair = qfalse;
 extern int g_rocketLockEntNum;
 extern int g_rocketLockTime;
 extern int g_rocketSlackTime;
+extern cvar_t *g_cheats;
 
 vec3_t	vfwd;
 vec3_t	vright;
@@ -2072,6 +2073,20 @@ static void CG_DrawIntermission( void ) {
 
 /*
 ==================
+CG_DrawCheatsNotice
+==================
+*/
+static float CG_DrawCheatsNotice( float y ) {
+	const char* s = "Cheats";
+	const int w = cgi_R_Font_StrLenPixels(s, cgs.media.qhFontMedium, 1.0f);	
+	cgi_R_Font_DrawString(635 - w, y+2, s, colorTable[CT_LTRED1], cgs.media.qhFontMedium, -1, 1.0f);
+
+	return y + BIGCHAR_HEIGHT + 10;
+}
+
+
+/*
+==================
 CG_DrawSnapshot
 ==================
 */
@@ -2445,6 +2460,9 @@ static void CG_Draw2D( void )
 	CG_SaberClashFlare();
 
 	float y = 0;
+	if (g_cheats->integer) {
+		y=CG_DrawCheatsNotice(y);
+	}
 	if (cg_drawSnapshot.integer) {
 		y=CG_DrawSnapshot(y);
 	} 
