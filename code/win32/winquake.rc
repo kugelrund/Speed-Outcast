@@ -54,6 +54,47 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON1               ICON    DISCARDABLE     "starwars.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+#include "AutoVersion.h"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION VERSION_MAJOR_RELEASE,VERSION_MINOR_RELEASE,VERSION_EXTERNAL_BUILD,VERSION_INTERNAL_BUILD
+ PRODUCTVERSION VERSION_MAJOR_RELEASE,VERSION_MINOR_RELEASE,VERSION_EXTERNAL_BUILD,VERSION_INTERNAL_BUILD
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "Originally: Raven Software"
+            VALUE "CompanyName", "Originally: Activision Inc"
+            VALUE "FileDescription", "Source port of Jedi Outcast SP"
+            VALUE "FileVersion",  VERSION_STRING
+            VALUE "InternalName", "JK2SP"
+            VALUE "LegalCopyright", "Originally: Raven Software, Activision Inc"
+            VALUE "OriginalFilename", "jk2sp.exe"
+            VALUE "ProductName", "Speed Outcast"
+            VALUE "ProductVersion",  VERSION_STRING
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
