@@ -150,6 +150,16 @@ void SV_Player_EndOfLevelSave(void)
 	}
 }
 
+static void SV_UpdateFpsCvar(void)
+{
+	cvar_t *sv_fps = Cvar_Get( "sv_fps", "", 0 );  // force reloading latched value of sv_fps now
+	if ( Cvar_Get( "helpUsObi", "", 0 )->integer )
+	{
+		// if cheats are enabled, do not latch sv_fps anymore
+		sv_fps->flags = CVAR_TEMP;
+	}
+}
+
 // Restart the server on a different map
 //
 extern void	SCR_PrecacheScreenshot();  //scr_scrn.cpp
@@ -171,6 +181,8 @@ static void SV_MapTransition_f(void)
 	}
 
 	SV_Map_( eForceReload_NOTHING );
+
+	SV_UpdateFpsCvar();
 }
 
 /*
@@ -215,6 +227,8 @@ static void SV_Map_f( void )
 		Cvar_Set( "helpUsObi", "0" );
 	}
 	Cvar_Set( "cg_missionstatusscreen", "0" );//reset
+
+	SV_UpdateFpsCvar();
 }
 
 /*

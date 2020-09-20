@@ -340,6 +340,14 @@ cvar_t *Cvar_Set2( const char *var_name, const char *value, qboolean force ) {
 
 	if (!force)
 	{
+		if (!strcmp(var_name, "sv_fps") && !cvar_cheats->integer &&
+		    atoi(value) != 20 && atoi(value) != 125)
+		{
+			// hack to constrain allowed sv_fps values
+			Com_Printf ("Invalid value for sv_fps. Possible values are 20 or 125.\n");
+			return var;
+		}
+
 		if (var->flags & CVAR_ROM)
 		{
 			Com_Printf ("%s is read only.\n", var_name);
@@ -456,6 +464,15 @@ void Cvar_SetCheatState( void ) {
 		if ( var->flags & CVAR_CHEAT) {
 			Cvar_Set( var->name, var->resetString );
 		}
+	}
+
+	// hack to reset sv_fps to constrained values and being latched once cheats
+	// are turned off
+	cvar_t *sv_fps = Cvar_FindVar( "sv_fps" );
+	sv_fps->flags = CVAR_LATCH;
+	if (sv_fps->integer != 20 && sv_fps->integer != 125)
+	{
+		Cvar_Set( sv_fps->name, sv_fps->resetString );
 	}
 }
 
