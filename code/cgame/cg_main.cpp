@@ -314,6 +314,7 @@ vmCvar_t	cg_smoothPlayerPlat;
 vmCvar_t	cg_smoothPlayerPlatAccel;
 
 // Additions for Speed Outcast
+vmCvar_t	cg_drawSecrets;
 vmCvar_t	cg_drawSpeedrunTotalTimer;
 vmCvar_t	cg_drawSpeedrunLevelTimer;
 vmCvar_t	cg_drawOverbounceInfo;
@@ -434,6 +435,7 @@ Ghoul2 Insert End
 	{ &cg_smoothPlayerPlatAccel, "cg_smoothPlayerPlatAccel", "3.25", 0},
 
 	// Additions for Speed Outcast
+	{ &cg_drawSecrets, "cg_drawSecrets", "0", CVAR_ARCHIVE },
 	{ &cg_drawSpeedrunTotalTimer, "cg_drawSpeedrunTotalTimer", "1", CVAR_ARCHIVE  },
 	{ &cg_drawSpeedrunLevelTimer, "cg_drawSpeedrunLevelTimer", "0", CVAR_ARCHIVE  },
 	{ &cg_drawOverbounceInfo, "cg_drawOverbounceInfo", "0", CVAR_ARCHIVE },

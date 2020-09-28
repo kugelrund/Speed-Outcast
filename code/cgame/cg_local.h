@@ -617,6 +617,7 @@ extern	vmCvar_t		cg_smoothPlayerPlat;
 extern	vmCvar_t		cg_smoothPlayerPlatAccel;
 
 // Additions for Speed Outcast
+extern	vmCvar_t		cg_drawSecrets;
 extern	vmCvar_t		cg_drawSpeedrunTotalTimer;
 extern	vmCvar_t		cg_drawSpeedrunLevelTimer;
 extern	vmCvar_t		cg_drawOverbounceInfo;

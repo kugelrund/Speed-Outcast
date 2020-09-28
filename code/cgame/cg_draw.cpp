@@ -2323,6 +2323,20 @@ static void CG_DrawOverbounceInfo( void ) {
 }
 
 /*
+===============
+CG_DrawSecrets
+===============
+*/
+static float CG_DrawSecrets( float y ) {
+	const char *secrets_string = va( "Secrets %i/%i",
+		cg_entities[0].gent->client->sess.missionStats.secretsFound,
+		cg_entities[0].gent->client->sess.missionStats.totalSecrets );
+	const int width = cgi_R_Font_StrLenPixels( secrets_string, cgs.media.qhFontMedium, 1.0f );
+	cgi_R_Font_DrawString( 635 - width, y + 2, secrets_string, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
+	return y + BIGCHAR_HEIGHT + 10;
+}
+
+/*
 ====================
 CG_DrawStrafeHelper
 ====================
@@ -2462,6 +2476,9 @@ static void CG_Draw2D( void )
 	float y = 0;
 	if (g_cheats->integer) {
 		y=CG_DrawCheatsNotice(y);
+	}
+	if (cg_drawSecrets.integer) {
+		y=CG_DrawSecrets(y);
 	}
 	if (cg_drawSnapshot.integer) {
 		y=CG_DrawSnapshot(y);
