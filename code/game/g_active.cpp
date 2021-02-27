@@ -1839,12 +1839,12 @@ void G_StopCinematicSkip( void )
 {
 	gi.cvar_set("skippingCinematic", "0");
 	gi.cvar_set("timescale", "1");
-	cgi_SpeedrunUnpauseTimer();
+	cgi_SpeedrunUnpauseTimer(1);
 }
 
 void G_StartCinematicSkip( void )
 {
-	cgi_SpeedrunPauseTimer();
+	cgi_SpeedrunPauseTimer(1);
 	
 	if (cinematicSkipScript[0])
 	{

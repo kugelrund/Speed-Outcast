@@ -824,10 +824,10 @@ Ghoul2 Insert End
 		return strlen(text);
 		//break;
 	case CG_SPEEDRUN_PAUSE_TIMER:
-		SpeedrunPauseTimer();
+		SpeedrunPauseTimer(args[1]);
 		break;
 	case CG_SPEEDRUN_UNPAUSE_TIMER:
-		SpeedrunUnpauseTimer();
+		SpeedrunUnpauseTimer(args[1]);
 		break;
 	case CG_SPEEDRUN_LEVEL_FINISHED:
 		SpeedrunLevelFinished();

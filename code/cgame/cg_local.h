@@ -1189,8 +1189,8 @@ void	cgi_UI_String_Init(void);
 
 void	SetWeaponSelectTime(void);
 
-void cgi_SpeedrunPauseTimer(void);
-void cgi_SpeedrunUnpauseTimer(void);
+void cgi_SpeedrunPauseTimer(int priority = 0);
+void cgi_SpeedrunUnpauseTimer(int priority = 0);
 void cgi_SpeedrunLevelFinished(void);
 void cgi_SpeedrunRunFinished(void);
 int cgi_SpeedrunGetTotalTimeMilliseconds(void);
