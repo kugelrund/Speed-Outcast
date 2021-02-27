@@ -113,22 +113,11 @@ void Com_EndRedirect (void)
 
 /*
 =============
-Com_Printf
+Com_Printf_Impl
 
-Both client and server can use this, and it will output
-to the apropriate place.
-
-A raw string should NEVER be passed as fmt, because of "%f" type crashers.
-=============
+Actual implementation to be called from Com_Printf and Com_PrintfNoNotify.
 */
-void QDECL Com_Printf( const char *fmt, ... ) {
-	va_list		argptr;
-	char		msg[MAXPRINTMSG];
-
-	va_start (argptr,fmt);
-	vsprintf (msg,fmt,argptr);
-	va_end (argptr);
-
+static void Com_Printf_Impl( bool notify, char *msg ) {
 	if ( rd_buffer ) {
 		if ((strlen (msg) + strlen(rd_buffer)) > (rd_buffersize - 1)) {
 			rd_flush(rd_buffer);
@@ -138,7 +127,11 @@ void QDECL Com_Printf( const char *fmt, ... ) {
 		return;
 	}
 
-	CL_ConsolePrint( msg );
+	if ( notify ) {
+		CL_ConsolePrint( msg );
+	} else {
+		CL_ConsolePrintNoNotify( msg );
+	}
 
 	// echo to dedicated console and early console
 	Sys_Print( msg );
@@ -157,6 +150,46 @@ void QDECL Com_Printf( const char *fmt, ... ) {
 			FS_Write(msg, strlen(msg), logfile);
 		}
 	}
+}
+
+/*
+=============
+Com_Printf
+
+Both client and server can use this, and it will output
+to the apropriate place.
+
+A raw string should NEVER be passed as fmt, because of "%f" type crashers.
+=============
+*/
+void QDECL Com_Printf( const char *fmt, ... ) {
+	va_list		argptr;
+	char		msg[MAXPRINTMSG];
+
+	va_start (argptr,fmt);
+	vsprintf (msg,fmt,argptr);
+	va_end (argptr);
+
+	Com_Printf_Impl (true, msg);
+}
+
+/*
+=============
+Com_PrintfNoNotify
+
+Same as Com_Printf but explicitly avoids printing to the notify area in the top
+left corner, even if con_notifytime is not 0.
+=============
+*/
+void QDECL Com_PrintfNoNotify( const char *fmt, ... ) {
+	va_list		argptr;
+	char		msg[MAXPRINTMSG];
+
+	va_start (argptr,fmt);
+	vsprintf (msg,fmt,argptr);
+	va_end (argptr);
+
+	Com_Printf_Impl (false, msg);
 }
 
 
