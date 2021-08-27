@@ -135,6 +135,10 @@ extern void ( APIENTRY * qglPNTrianglesiATI )( GLenum pname, GLint param );
 //extern void ( APIENTRY * qglPNTrianglesfATI )( GLenum pname, GLfloat param );
 #endif // _NPATCH
 
+// Additions for Speed-Outcast loading time improvements
+extern	void ( APIENTRY * qglTexStorage2D )(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
+extern	void ( APIENTRY * qglGenerateMipmap )(GLenum target);
+
 //===========================================================================
 
 // non-windows systems will just redefine qgl* to gl*

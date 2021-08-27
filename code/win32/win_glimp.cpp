@@ -1223,6 +1223,10 @@ static void GLW_InitExtensions( void )
 	}
 */
 #endif // _NPATCH
+
+	// Additions for Speed-Outcast loading time improvements
+	qglTexStorage2D = reinterpret_cast<decltype(qglTexStorage2D)>(qwglGetProcAddress("glTexStorage2D"));
+	qglGenerateMipmap = reinterpret_cast<decltype(qglGenerateMipmap)>(qwglGetProcAddress("glGenerateMipmap"));
 }
 
 /*

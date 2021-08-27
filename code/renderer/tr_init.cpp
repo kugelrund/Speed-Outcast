@@ -181,6 +181,10 @@ void ( APIENTRY * qglPointParameterfvEXT)( GLenum, GLfloat *);
 void ( APIENTRY * qglPNTrianglesiATI )( GLenum pname, GLint param );
 #endif // _NPATCH
 
+// Additions for Speed-Outcast loading time improvements
+void ( APIENTRY * qglTexStorage2D )(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
+void ( APIENTRY * qglGenerateMipmap )(GLenum target);
+
 void RE_SetLightStyle(int style, int color);
 
 static void AssertCvarRange( cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral,  qboolean shouldBeMult2)

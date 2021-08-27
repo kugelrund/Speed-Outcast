@@ -3555,6 +3555,10 @@ qboolean QGL_Init( const char *dllname )
 	qglPNTrianglesiATI = NULL;
 #endif // _NPATCH
 
+	// Additions for Speed-Outcast loading time improvements
+	qglTexStorage2D = NULL;
+	qglGenerateMipmap = NULL;
+
 	// check logging
 	QGL_EnableLogging( r_logFile->integer );
 
