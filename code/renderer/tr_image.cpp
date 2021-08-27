@@ -564,92 +564,101 @@ static void Upload32( unsigned *data,
 		height >>= 1;
 	}
 
-	//
-	// scan the texture for each channel's max values
-	// and verify if the alpha channel is being used or not
-	//
-	c = width*height;
-	scan = ((byte *)data);
-	samples = 3;
-	for ( i = 0; i < c; i++ )
+	if (r_textureForceRGBA8->integer)
 	{
-		if ( scan[i*4+0] > rMax )
-		{
-			rMax = scan[i*4+0];
-		}
-		if ( scan[i*4+1] > gMax )
-		{
-			gMax = scan[i*4+1];
-		}
-		if ( scan[i*4+2] > bMax )
-		{
-			bMax = scan[i*4+2];
-		}
-		if ( scan[i*4 + 3] != 255 ) 
-		{
-			samples = 4;
-			break;
-		}
+		// qglTexImage2D is much faster when the internal format is the same as the input,
+		// so at least for loading times, simply using GL_RGBA8 should be the best solution.
+		*pformat = GL_RGBA8;
 	}
-
-	// select proper internal format
-	if ( samples == 3 )
+	else
 	{
-		if ( glConfig.textureCompression == TC_S3TC && allowTC )
+		//
+		// scan the texture for each channel's max values
+		// and verify if the alpha channel is being used or not
+		//
+		c = width*height;
+		scan = ((byte *)data);
+		samples = 3;
+		for ( i = 0; i < c; i++ )
 		{
-			*pformat = GL_RGB4_S3TC;
-		}
-		else if ( glConfig.textureCompression == TC_S3TC_DXT && allowTC )
-		{	// Compress purely color - no alpha
-			if ( r_texturebits->integer == 16 ) {
-				*pformat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;	//this format cuts to 16 bit
+			if ( scan[i*4+0] > rMax )
+			{
+				rMax = scan[i*4+0];
 			}
-			else {//if we aren't using 16 bit then, use 32 bit compression
-				*pformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			if ( scan[i*4+1] > gMax )
+			{
+				gMax = scan[i*4+1];
+			}
+			if ( scan[i*4+2] > bMax )
+			{
+				bMax = scan[i*4+2];
+			}
+			if ( scan[i*4 + 3] != 255 ) 
+			{
+				samples = 4;
+				break;
 			}
 		}
-		else if ( isLightmap && r_texturebitslm->integer > 0 )
+
+		// select proper internal format
+		if ( samples == 3 )
 		{
-			// Allow different bit depth when we are a lightmap
-			if ( r_texturebitslm->integer == 16 )
+			if ( glConfig.textureCompression == TC_S3TC && allowTC )
+			{
+				*pformat = GL_RGB4_S3TC;
+			}
+			else if ( glConfig.textureCompression == TC_S3TC_DXT && allowTC )
+			{	// Compress purely color - no alpha
+				if ( r_texturebits->integer == 16 ) {
+					*pformat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;	//this format cuts to 16 bit
+				}
+				else {//if we aren't using 16 bit then, use 32 bit compression
+					*pformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+				}
+			}
+			else if ( isLightmap && r_texturebitslm->integer > 0 )
+			{
+				// Allow different bit depth when we are a lightmap
+				if ( r_texturebitslm->integer == 16 )
+				{
+					*pformat = GL_RGB5;
+				}
+				else if ( r_texturebitslm->integer == 32 )
+				{
+					*pformat = GL_RGB8;
+				}
+			}
+			else if ( r_texturebits->integer == 16 )
 			{
 				*pformat = GL_RGB5;
 			}
-			else if ( r_texturebitslm->integer == 32 )
+			else if ( r_texturebits->integer == 32 )
 			{
 				*pformat = GL_RGB8;
 			}
+			else
+			{
+				*pformat = 3;
+			}
 		}
-		else if ( r_texturebits->integer == 16 )
+		else if ( samples == 4 )
 		{
-			*pformat = GL_RGB5;
-		}
-		else if ( r_texturebits->integer == 32 )
-		{
-			*pformat = GL_RGB8;
-		}
-		else
-		{
-			*pformat = 3;
-		}
-	}
-	else if ( samples == 4 )
-	{
-		if ( glConfig.textureCompression == TC_S3TC_DXT && allowTC)
-		{	// Compress both alpha and color
-			*pformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-		}
-		else if ( r_texturebits->integer == 16 )
-		{
-			*pformat = GL_RGBA4;
-		}
-		else if ( r_texturebits->integer == 32 )
-		{
-			*pformat = GL_RGBA8;
-		}
-		else
-		{
-			*pformat = 4;
+			if ( glConfig.textureCompression == TC_S3TC_DXT && allowTC)
+			{	// Compress both alpha and color
+				*pformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			}
+			else if ( r_texturebits->integer == 16 )
+			{
+				*pformat = GL_RGBA4;
+			}
+			else if ( r_texturebits->integer == 32 )
+			{
+				*pformat = GL_RGBA8;
+			}
+			else
+			{
+				*pformat = 4;
+			}
 		}
 	}
 
