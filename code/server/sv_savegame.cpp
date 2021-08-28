@@ -6,7 +6,7 @@
 
 // a little naughty, since these are in the renderer, but I need access to them for savegames, so...
 //
-extern void Decompress_JPG( const char *filename, byte *pJPGData, unsigned char **pic, int *width, int *height );
+extern void Decompress_JPG( const char *filename, byte *pJPGData, unsigned long jpg_input_size, unsigned char **pic, int *width, int *height );
 extern byte *Compress_JPG(int *pOutputSize, int quality, int image_width, int image_height, byte *image_buffer, qboolean bInvertDuringCompression);
 
 #define JPEG_IMAGE_QUALITY 95
@@ -812,10 +812,7 @@ static qboolean SG_ReadScreenshot(qboolean qbSetAsLoadingScreen, void *pvDest/*=
 	//
 	int iScreenShotLength = 0;
 	SG_Read('SHLN', &iScreenShotLength, sizeof(iScreenShotLength));
-	//
-	// alloc enough space plus extra 4K for sloppy JPG-decode reader to not do memory access violation...
-	//
-	byte *pJPGData = (byte *) Z_Malloc(iScreenShotLength + 4096,TAG_TEMP_SAVEGAME_WORKSPACE, qfalse);
+	byte *pJPGData = (byte *) Z_Malloc(iScreenShotLength,TAG_TEMP_SAVEGAME_WORKSPACE, qfalse);
 	//
 	// now read the JPG data...
 	//
@@ -825,7 +822,7 @@ static qboolean SG_ReadScreenshot(qboolean qbSetAsLoadingScreen, void *pvDest/*=
 	//
 	byte *pDecompressedPic = NULL;
 	int iWidth, iHeight;
-	Decompress_JPG( "[savegame]", pJPGData, &pDecompressedPic, &iWidth, &iHeight );
+	Decompress_JPG( "[savegame]", pJPGData, iScreenShotLength, &pDecompressedPic, &iWidth, &iHeight );
 	//
 	// if the loaded image is the same size as the game is expecting, then copy it to supplied arg (if present)...
 	//
