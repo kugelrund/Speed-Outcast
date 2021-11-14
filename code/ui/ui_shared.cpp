@@ -272,6 +272,17 @@ qboolean PC_ParseRect(rectDef_t *r)
 }
 
 
+static char* strcpyIntoRange(const char* src, char* dst_begin, char* dst_end) {
+	const auto src_len = strlen(src);
+	if ( src_len+1 > (dst_end - dst_begin) )
+	{	//do the error here instead of in Q_strncpyz to get a meaningful msg
+		Com_Error(ERR_FATAL,"strcpyIntoRange: \"%s\" is too large to be copied into range", src);
+		return nullptr;
+	}
+	strcpy(dst_begin, src);
+	return dst_begin + src_len;
+}
+
 /*
 =================
 PC_Script_Parse
@@ -298,6 +309,8 @@ qboolean PC_Script_Parse(const char **out)
 	    return qfalse;
 	}
 
+	char* script_end = script + sizeof(script);
+	char* script_ptr = script;
 	while ( 1 ) 
 	{
 		token2 = PC_ParseExt();
@@ -314,13 +327,13 @@ qboolean PC_Script_Parse(const char **out)
 
 		if (*(token2 +1) != '\0') 
 		{
-			Q_strcat(script, 1024, va("\"%s\"", token2));
+			script_ptr = strcpyIntoRange(va("\"%s\"", token2), script_ptr, script_end);
 		} 
 		else 
 		{
-			Q_strcat(script, 1024, token2);
+			script_ptr = strcpyIntoRange(token2, script_ptr, script_end);
 		}
-		Q_strcat(script, 1024, " ");
+		script_ptr = strcpyIntoRange(" ", script_ptr, script_end);
 	}
 }
 
