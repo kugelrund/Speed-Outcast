@@ -78,6 +78,9 @@
     <Filter Include="speedrun\speedrun_timer_q3">
       <UniqueIdentifier>{caefa591-8515-4aec-9a98-8cc324c26c07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="zlib">
+      <UniqueIdentifier>{15b24960-b673-4d74-b9f2-bac18ddf2215}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="0_compiled_first\0_SH_Leak.cpp">
@@ -634,6 +637,24 @@
     </ClCompile>
     <ClCompile Include="speedrun\speedrun_timer_includes.cpp">
       <Filter>speedrun</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\adler32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\crc32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inffast.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inftrees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\zutil.c">
+      <Filter>zlib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

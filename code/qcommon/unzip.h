@@ -9,6 +9,7 @@ typedef void* unzFile;
 #endif
 
 #include "../encryption/encryption.h"
+#include "../zlib/zlib.h"
 
 #ifdef _ENCRYPTION_
 
@@ -72,29 +73,6 @@ typedef void* (*alloc_func) (void* opaque, unsigned int items, unsigned int size
 typedef void   (*free_func) (void* opaque, void* address);
 
 struct internal_state;
-
-typedef struct z_stream_s {
-    unsigned char    *next_in;  /* next input unsigned char */
-    unsigned int     avail_in;  /* number of unsigned chars available at next_in */
-    unsigned long    total_in;  /* total nb of input unsigned chars read so */
-
-    unsigned char    *next_out; /* next output unsigned char should be put there */
-    unsigned int     avail_out; /* remaining free space at next_out */
-    unsigned long    total_out; /* total nb of unsigned chars output so */
-
-    char     *msg;      /* last error message, NULL if no error */
-    struct internal_state *state; /* not visible by applications */
-
-    alloc_func zalloc;  /* used to allocate the internal state */
-    free_func  zfree;   /* used to free the internal state */
-    unsigned char*     opaque;  /* private data object passed to zalloc and zfree */
-
-    int     data_type;  /* best guess about the data type: ascii or binary */
-    unsigned long   adler;      /* adler32 value of the uncompressed data */
-    unsigned long   reserved;   /* reserved for future use */
-} z_stream;
-
-typedef z_stream *z_streamp;
 
 
 /* file_in_zip_read_info_s contain internal information about a file in zipfile,
