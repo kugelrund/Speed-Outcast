@@ -1490,9 +1490,12 @@ char **FS_ListFiles( const char *path, const char *extension, int *numfiles ) {
 
 				// check for directory match
 				name = buildBuffer[i].name;
+				if ( Q_stricmpn( name, path, pathLength ) ) {
+					continue;
+				}
 				zpathLen = FS_ReturnPath(name, zpath, &depth);
 
-				if ( (depth-pathDepth)>2 || pathLength > zpathLen || Q_stricmpn( name, path, pathLength ) ) {
+				if ( (depth-pathDepth)>2 || pathLength > zpathLen ) {
 					continue;
 				}
 
@@ -1658,9 +1661,12 @@ int	FS_GetFileList(  const char *path, const char *extension, char *listbuf, int
 
 				// check for directory match
 				name = buildBuffer[i].name;
+				if ( Q_stricmpn( name, path, pathLength ) ) {
+					continue;
+				}
 				zpathLen = FS_ReturnPath(name, zpath, &depth);
 
-				if ( (depth-pathDepth)>2 || pathLength > zpathLen || Q_stricmpn( name, path, pathLength ) ) {
+				if ( (depth-pathDepth)>2 || pathLength > zpathLen ) {
 					continue;
 				}
 
