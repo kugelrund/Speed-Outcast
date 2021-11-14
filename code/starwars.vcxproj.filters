@@ -78,6 +78,9 @@
     <Filter Include="speedrun\speedrun_timer_q3">
       <UniqueIdentifier>{caefa591-8515-4aec-9a98-8cc324c26c07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="wuffs">
+      <UniqueIdentifier>{07bd2e9a-99fd-4feb-99cf-2e234effe910}</UniqueIdentifier>
+    </Filter>
     <Filter Include="zlib">
       <UniqueIdentifier>{15b24960-b673-4d74-b9f2-bac18ddf2215}</UniqueIdentifier>
     </Filter>
@@ -637,6 +640,9 @@
     </ClCompile>
     <ClCompile Include="speedrun\speedrun_timer_includes.cpp">
       <Filter>speedrun</Filter>
+    </ClCompile>
+    <ClCompile Include="wuffs-mirror-release-c\release\c\wuffs-v0.3.c">
+      <Filter>wuffs</Filter>
     </ClCompile>
     <ClCompile Include="zlib\adler32.c">
       <Filter>zlib</Filter>
