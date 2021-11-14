@@ -1207,12 +1207,10 @@ void G2_FreeSaveBuffer(char *buffer)
 
 int G2_FindConfigStringSpace(char *name, int start, int max)
 {
-	char	s[MAX_STRING_CHARS];
-
 	int i;
 	for ( i=1 ; i<max ; i++ )
 	{
-		SV_GetConfigstring( start + i, s, sizeof( s ) );
+		const char* s = SV_GetConfigstring( start + i );
 		if ( !s[0] ) 
 		{
 			break;
