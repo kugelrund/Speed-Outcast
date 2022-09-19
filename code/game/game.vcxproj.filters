@@ -436,7 +436,7 @@
     <ClCompile Include="..\speedrun\strafe_helper\strafe_helper.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\speedrun\strafe_helper_includes.cpp">
+    <ClCompile Include="..\speedrun\strafe_helper_customization.cpp">
       <Filter>speedrun</Filter>
     </ClCompile>
     <ClCompile Include="..\speedrun\speedrun_timer_q3\timer_helper.cpp">
@@ -667,6 +667,9 @@
       <Filter>speedrun</Filter>
     </ClInclude>
     <ClInclude Include="..\speedrun\strafe_helper\strafe_helper.h">
+      <Filter>speedrun\strafe_helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\speedrun\strafe_helper\strafe_helper_customization.h">
       <Filter>speedrun\strafe_helper</Filter>
     </ClInclude>
     <ClInclude Include="..\speedrun\strafe_helper_includes.h">
