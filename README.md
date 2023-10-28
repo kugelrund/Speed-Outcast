@@ -45,6 +45,26 @@ Draw a current level timer.
 Higher values show more decimals.
 Default: `0`.
 
+#### `cg_drawSpeed` (0 or 1)
+
+Draw the current player speed.
+Default: `0`.
+
+#### `cg_speedScale` (#)
+
+Scale of the text for speed display.
+Default: `0.9`.
+
+#### `cg_speedX` (#)
+
+Horizontal offset for drawing speed text, relative to the center of the screen.
+Default: `0.0` (center of the screen).
+
+#### `cg_speedY` (#)
+
+Vertical offset for drawing speed text, relative to the center of the screen.
+Default: `75.0` (Slightly below center of the screen).
+
 #### `cg_drawStrafeHelper` (0 or 1)
 
 Draw a strafe helper.
@@ -73,7 +93,10 @@ Default: `4.0`.
 
 #### `cg_strafeHelperSpeedScale` (#)
 
-Scale of the text for speed display.
+Scale of the text for speed display tied to strafe helper.
+Note that this shows the speed after friction but prior to acceleration, as this is what is relevant for optimal strafing.
+It is not the intuitive current player speed.
+For that, see `cg_drawSpeed`.
 Default: `0.9`.
 
 #### `cg_strafeHelperSpeedX` (#)
@@ -143,6 +166,10 @@ Default: `0`.
 ## New Commands
 
 ### HUD
+
+#### `speedColor <r> <g> <b> <a>` (components in range 0.0 to 1.0)
+
+Sets the color for the speed display to the given red, green, blue and alpha values.
 
 #### `strafeHelperColor[...] <r> <g> <b> <a>` (components in range 0.0 to 1.0)
 

@@ -168,6 +168,22 @@ static void CG_InfoUp_f( void )
 //	cg.showInformation = qfalse;
 }
 
+static void CG_SetSpeedColor_f( void ) {
+	if (cgi_Argc() != 5) {
+		Com_Printf("Usage: speedColor <red 0-1> <green 0-1> <blue 0-1> <alpha 0-1>\n" );
+		Com_Printf("Current color is: %f %f %f %f\n",
+		           cg_speedColorR.value,
+		           cg_speedColorG.value,
+		           cg_speedColorB.value,
+		           cg_speedColorA.value);
+		return;
+	}
+	cgi_Cvar_Set("cg_speedColorR", CG_Argv(1));
+	cgi_Cvar_Set("cg_speedColorG", CG_Argv(2));
+	cgi_Cvar_Set("cg_speedColorB", CG_Argv(3));
+	cgi_Cvar_Set("cg_speedColorA", CG_Argv(4));
+}
+
 static void CG_SetStrafeHelperColorAccelerating_f( void ) {
 	if (cgi_Argc() != 5) {
 		Com_Printf("Usage: strafeHelperColorAccelerating <red 0-1> <green 0-1> <blue 0-1> <alpha 0-1>\n" );
@@ -283,6 +299,7 @@ Ghoul2 Insert End
 	{ "dpforcenext", CG_DPNextForcePower_f },
 	{ "dpforceprev", CG_DPPrevForcePower_f },
 
+	{ "speedColor", CG_SetSpeedColor_f },
 	{ "strafeHelperColorAccelerating", CG_SetStrafeHelperColorAccelerating_f },
 	{ "strafeHelperColorOptimal", CG_SetStrafeHelperColorOptimal_f },
 	{ "strafeHelperColorCenterMarker", CG_SetStrafeHelperColorCenterMarker_f },
