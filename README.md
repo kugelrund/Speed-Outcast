@@ -45,6 +45,59 @@ Draw a current level timer.
 Higher values show more decimals.
 Default: `0`.
 
+#### `cg_drawJumpHelper` (0 or 1)
+
+Draw a helper for correctly timing jump release and crouch jumping.
+
+#### `cg_jumpHelperX` (#)
+
+Horizontal position of the jump helper.
+Default: `0.0` (center of the screen).
+
+#### `cg_jumpHelperY` (#)
+
+Vertical position of the jump helper.
+Default: `0.0` (center of the screen).
+
+#### `cg_jumpHelperWidth` (#)
+
+Width of the jump helper.
+Note that this becomes height when using the vertical jump helper (`cg_jumpHelperHorizontal 0`).
+Default: `300`.
+
+#### `cg_jumpHelperHeight` (#)
+
+Height of the jump helper.
+Note that this becomes width when using the vertical jump helper (`cg_jumpHelperHorizontal 0`).
+Default: `20`.
+
+#### `cg_jumpHelperHorizontal` (-1, 0 or 1)
+
+Whether to draw the jump helper horizontally left-to-right (`1`), horizontally right-to-left (`-1`) or vertically bottom-to-top (`0`).
+Default: `1`.
+
+#### `cg_jumpHelperMirror` (0 or 1)
+
+Whether to mirror the jump helper.
+Mirrors horizontally when drawing horizontally, vertically otherwise.
+Default: `1`.
+
+#### `cg_jumpHelperAutoScale` (0 or 1)
+
+Whether to rescale the jump helper to the same size for each force level.
+Default: `0`.
+
+#### `cg_jumpHelperCrouch` (0 or 1)
+
+Show an additional height section for crouch jumping, appended to normal jump height.
+Default: `1`.
+
+#### `cg_jumpHelperCurrentScale` (#)
+
+Scale of the indicator for the current height within the jump helper.
+Negative values draw from top to bottom, positive values from bottom to top.
+Default: `0.5`.
+
 #### `cg_drawSpeed` (0 or 1)
 
 Draw the current player speed.
@@ -166,6 +219,10 @@ Default: `0`.
 ## New Commands
 
 ### HUD
+
+#### `jumpHelperColor[...] <r> <g> <b> <a>` (components in range 0.0 to 1.0)
+
+Sets the color for one of the jump helper elements `Background`, `Crouch`, `CrouchExtend`, `Extend`, `Optimal`, `Current` or `Cancel` to the given red, green, blue and alpha values.
 
 #### `speedColor <r> <g> <b> <a>` (components in range 0.0 to 1.0)
 
