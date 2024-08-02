@@ -41,6 +41,11 @@ typedef struct {
 	int				timeResidual;		// <= 1000 / sv_frame->value					//   during savegame.
 	float			timeResidualFraction;	// fraction of a msec accumulated
 	int				nextFrameTime;		// when time > nextFrameTime, process world		// this doesn't get used anywhere! -Ste
+	// Last server time before a load back into the past of the same map happened.
+	// Value of 0 means that we are not in the timeline of such a load.
+	// This is used to fix jumping into the future with save/load spamming without
+	// that being tracked by the speedrun timer.
+	int				timeBeforeLoad;
 	struct cmodel_s	*models[MAX_MODELS];
 	char			*configstrings[MAX_CONFIGSTRINGS];
 	//

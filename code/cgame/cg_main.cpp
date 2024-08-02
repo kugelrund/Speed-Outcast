@@ -2047,8 +2047,6 @@ void CG_Init( int serverCommandSequence ) {
 
 	cg.missionInfoFlashTime = 0;
 	cg.missionStatusShow = qfalse;
-
-	cgi_SpeedrunUnpauseTimer();
 }
 
 /*
