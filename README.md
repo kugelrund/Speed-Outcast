@@ -175,6 +175,12 @@ Colors can be set more conveniently with the corresponding commands.
 
 ### Cosmetics
 
+#### `cg_fovThirdPerson` (#)
+
+Sets the field of view for third person view in degrees.
+If set to `0`, uses third person FOV equal to the normal first person FOV given by `cg_fov`.
+Default: `0`
+
 #### `g_saber_color` (color)
 
 Set saber color.

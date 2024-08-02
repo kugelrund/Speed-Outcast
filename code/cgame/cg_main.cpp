@@ -389,6 +389,7 @@ vmCvar_t	cg_strafeHelperColorSpeedR;
 vmCvar_t	cg_strafeHelperColorSpeedG;
 vmCvar_t	cg_strafeHelperColorSpeedB;
 vmCvar_t	cg_strafeHelperColorSpeedA;
+vmCvar_t	cg_fovThirdPerson;
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -573,6 +574,7 @@ Ghoul2 Insert End
 	{ &cg_strafeHelperColorSpeedG, "cg_strafeHelperColorSpeedG", "1.0", CVAR_ARCHIVE },
 	{ &cg_strafeHelperColorSpeedB, "cg_strafeHelperColorSpeedB", "1.0", CVAR_ARCHIVE },
 	{ &cg_strafeHelperColorSpeedA, "cg_strafeHelperColorSpeedA", "0.9", CVAR_ARCHIVE },
+	{ &cg_fovThirdPerson, "cg_fovThirdPerson", "0", CVAR_ARCHIVE },
 };
 
 int		cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
