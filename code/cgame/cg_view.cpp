@@ -1852,7 +1852,7 @@ wasForceSpeed=isForceSpeed;
 	{//pointless check, but..
 		if ( cg_entities[0].gent->s.eFlags & EF_LOCKED_TO_WEAPON ) 
 		{
-			speed *= 0.25f;
+			speed *= cg_sensitivityFactorTurret.value;
 		}
 		if ( cg_entities[0].gent->s.eFlags & EF_IN_ATST ) 
 		{
