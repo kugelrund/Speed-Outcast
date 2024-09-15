@@ -209,6 +209,7 @@ extern	cvar_t	*g_removeDoors;
 extern	cvar_t	*g_ICARUSDebug;
 
 // Additions for Speed-Outcast
+extern	cvar_t	*g_overbounceWithoutInputs;
 extern	cvar_t	*g_speedFactorLanding;
 
 extern gentity_t *player;

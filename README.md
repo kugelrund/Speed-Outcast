@@ -195,6 +195,13 @@ Allows changing how much the sensitivity is scaled by when steering a turret.
 The normal `sensitivity` is multiplied with this factor when in a turret, so a value of `1.0` means the usual sensitivity is used.
 Default: `0.25`.
 
+#### `g_overbounceWithoutInputs` (0 or 1)
+In JKO and JKA, overbounces only happen when holding a directional key (WASD) on landing.
+This allows enabling overbounces without any of those inputs, like in original Quake 3.
+That also allows vertical overbounces.
+**Cheat protected**.
+Default: `0`.
+
 #### `g_speedFactorLanding` (0 or 1)
 
 To play with factors to multiply speed by on landing.

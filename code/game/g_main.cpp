@@ -134,6 +134,7 @@ cvar_t	*g_saberAnimSpeed;
 cvar_t	*g_saberAutoAim;
 
 // Additions for Speed-Outcast
+cvar_t	*g_overbounceWithoutInputs;
 cvar_t	*g_saber_color;
 cvar_t	*g_speedFactorLanding;
 
@@ -558,6 +559,7 @@ void G_InitCvars( void ) {
 
 	g_saber_color = gi.cvar( "g_saber_color", "blue", CVAR_ARCHIVE|CVAR_NORESTART );
 	g_speedFactorLanding = gi.cvar( "g_speedFactorLanding", "1.0", CVAR_ARCHIVE|CVAR_CHEAT );
+	g_overbounceWithoutInputs = gi.cvar( "g_overbounceWithoutInputs", "0", CVAR_ARCHIVE|CVAR_CHEAT );
 
 	g_AIsurrender = gi.cvar( "g_AIsurrender", "0", CVAR_CHEAT );
 	g_numEntities = gi.cvar( "g_numEntities", "0", CVAR_CHEAT );
