@@ -1483,7 +1483,7 @@ static void CG_RegisterGraphics( void ) {
 	CG_LoadingString( cgs.mapname );
 
 	cgi_R_LoadWorldMap( cgs.mapname );
-
+	
 	cg.loadLCARSStage = 4;
 	CG_LoadingString( "game media shaders" );
 

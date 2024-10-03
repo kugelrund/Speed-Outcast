@@ -465,6 +465,59 @@ void SP_NPC_Droid_R2D2( gentity_t *self );
 void SP_NPC_Droid_R5D2( gentity_t *self );
 void SP_NPC_Droid_Protocol( gentity_t *self );
 
+// Posto : Ajouter toutes les fonctions qui permettent de faire spawn en random ou non
+void SP_NPC_Spawn_Random(gentity_t* self);
+void SP_NPC_Kyle_Random(gentity_t* self);
+void SP_NPC_Lando_Random(gentity_t* self);
+void SP_NPC_Jan_Random(gentity_t* self);
+void SP_NPC_Luke_Random(gentity_t* self);
+void SP_NPC_MonMothma_Random(gentity_t* self);
+void SP_NPC_Tavion_Random(gentity_t* self);
+void SP_NPC_Reelo_Random(gentity_t* self);
+void SP_NPC_Galak_Random(gentity_t* self);
+void SP_NPC_Desann_Random(gentity_t* self);
+void SP_NPC_Bartender_Random(gentity_t* self);
+void SP_NPC_MorganKatarn_Random(gentity_t* self);
+void SP_NPC_Jedi_Random(gentity_t* self);
+void SP_NPC_Prisoner_Random(gentity_t* self);
+void SP_NPC_Rebel_Random(gentity_t* self);
+void SP_NPC_Stormtrooper_Random(gentity_t* self);
+void SP_NPC_StormtrooperOfficer_Random(gentity_t* self);
+void SP_NPC_Tie_Pilot_Random(gentity_t* self);
+void SP_NPC_Ugnaught_Random(gentity_t* self);
+void SP_NPC_Gran_Random(gentity_t* self);
+void SP_NPC_Rodian_Random(gentity_t* self);
+void SP_NPC_Weequay_Random(gentity_t* self);
+void SP_NPC_Trandoshan_Random(gentity_t* self);
+void SP_NPC_SwampTrooper_Random(gentity_t* self);
+void SP_NPC_Imperial_Random(gentity_t* self);
+void SP_NPC_ImpWorker_Random(gentity_t* self);
+void SP_NPC_BespinCop_Random(gentity_t* self);
+void SP_NPC_Reborn_Random(gentity_t* self);
+void SP_NPC_ShadowTrooper_Random(gentity_t* self);
+void SP_NPC_Monster_Murjj_Random(gentity_t* self);
+void SP_NPC_Monster_Swamp_Random(gentity_t* self);
+void SP_NPC_Monster_Howler_Random(gentity_t* self);
+void SP_NPC_Monster_Claw_Random(gentity_t* self);
+void SP_NPC_Monster_Glider_Random(gentity_t* self);
+void SP_NPC_Monster_Flier2_Random(gentity_t* self);
+void SP_NPC_Monster_Lizard_Random(gentity_t* self);
+void SP_NPC_Monster_Fish_Random(gentity_t* self);
+void SP_NPC_MineMonster_Random(gentity_t* self);
+void SP_NPC_Droid_Interrogator_Random(gentity_t* self);
+void SP_NPC_Droid_Probe_Random(gentity_t* self);
+void SP_NPC_Droid_Mark1_Random(gentity_t* self);
+void SP_NPC_Droid_Mark2_Random(gentity_t* self);
+void SP_NPC_Droid_ATST_Random(gentity_t* self);
+void SP_NPC_Droid_Seeker_Random(gentity_t* self);
+void SP_NPC_Droid_Remote_Random(gentity_t* self);
+void SP_NPC_Droid_Sentry_Random(gentity_t* self);
+void SP_NPC_Droid_Gonk_Random(gentity_t* self);
+void SP_NPC_Droid_Mouse_Random(gentity_t* self);
+void SP_NPC_Droid_R2D2_Random(gentity_t* self);
+void SP_NPC_Droid_R5D2_Random(gentity_t* self);
+void SP_NPC_Droid_Protocol_Random(gentity_t* self);
+
 void SP_waypoint (gentity_t *ent);
 void SP_waypoint_small (gentity_t *ent);
 void SP_waypoint_navgoal (gentity_t *ent);
@@ -596,6 +649,7 @@ spawn_t	spawns[] = {
 	//new NPC ents
 	{"NPC_spawner", SP_NPC_spawner},
 
+	/*
 	{"NPC_Kyle", SP_NPC_Kyle },
 	{"NPC_Lando", SP_NPC_Lando },
 	{"NPC_Jan", SP_NPC_Jan },
@@ -646,6 +700,59 @@ spawn_t	spawns[] = {
 	{"NPC_Droid_R2D2", SP_NPC_Droid_R2D2 },
 	{"NPC_Droid_R5D2", SP_NPC_Droid_R5D2 },
 	{"NPC_Droid_Protocol", SP_NPC_Droid_Protocol },
+	*/
+
+	// Posto
+	{ "NPC_Kyle", SP_NPC_Kyle_Random },
+	{ "NPC_Lando", SP_NPC_Lando_Random },
+	{ "NPC_Jan", SP_NPC_Jan_Random },
+	{ "NPC_Luke", SP_NPC_Luke_Random },
+	{ "NPC_MonMothma", SP_NPC_MonMothma_Random },
+	{ "NPC_Tavion", SP_NPC_Tavion_Random },
+	{ "NPC_Reelo", SP_NPC_Reelo_Random },
+	{ "NPC_Galak", SP_NPC_Galak_Random },
+	{ "NPC_Desann", SP_NPC_Desann_Random },
+	{ "NPC_Bartender", SP_NPC_Bartender_Random },
+	{ "NPC_MorganKatarn", SP_NPC_MorganKatarn_Random },
+	{ "NPC_Jedi", SP_NPC_Jedi_Random },
+	{ "NPC_Prisoner", SP_NPC_Prisoner_Random },
+	{ "NPC_Rebel", SP_NPC_Rebel_Random },
+	{ "NPC_Stormtrooper", SP_NPC_Stormtrooper_Random },
+	{ "NPC_StormtrooperOfficer", SP_NPC_StormtrooperOfficer_Random },
+	{ "NPC_Tie_Pilot", SP_NPC_Tie_Pilot_Random },
+	{ "NPC_Ugnaught", SP_NPC_Ugnaught_Random },
+	{ "NPC_Gran", SP_NPC_Gran_Random },
+	{ "NPC_Rodian", SP_NPC_Rodian_Random },
+	{ "NPC_Weequay", SP_NPC_Weequay_Random },
+	{ "NPC_Trandoshan", SP_NPC_Trandoshan_Random },
+	{ "NPC_SwampTrooper", SP_NPC_SwampTrooper_Random },
+	{ "NPC_Imperial", SP_NPC_Imperial_Random },
+	{ "NPC_ImpWorker", SP_NPC_ImpWorker_Random },
+	{ "NPC_BespinCop", SP_NPC_BespinCop_Random },
+	{ "NPC_Reborn", SP_NPC_Reborn_Random },
+	{ "NPC_ShadowTrooper", SP_NPC_ShadowTrooper_Random },
+	{ "NPC_Monster_Murjj", SP_NPC_Monster_Murjj_Random },
+	{ "NPC_Monster_Swamp", SP_NPC_Monster_Swamp_Random },
+	{ "NPC_Monster_Howler", SP_NPC_Monster_Howler_Random },
+	{ "NPC_MineMonster",	SP_NPC_MineMonster_Random },
+	{ "NPC_Monster_Claw", SP_NPC_Monster_Claw_Random },
+	{ "NPC_Monster_Glider", SP_NPC_Monster_Glider_Random },
+	{ "NPC_Monster_Flier2", SP_NPC_Monster_Flier2_Random },
+	{ "NPC_Monster_Lizard", SP_NPC_Monster_Lizard_Random },
+	{ "NPC_Monster_Fish", SP_NPC_Monster_Fish_Random },
+	{ "NPC_Droid_Interrogator", SP_NPC_Droid_Interrogator_Random },
+	{ "NPC_Droid_Probe", SP_NPC_Droid_Probe_Random },
+	{ "NPC_Droid_Mark1", SP_NPC_Droid_Mark1_Random },
+	{ "NPC_Droid_Mark2", SP_NPC_Droid_Mark2_Random },
+	{ "NPC_Droid_ATST", SP_NPC_Droid_ATST_Random },
+	{ "NPC_Droid_Seeker", SP_NPC_Droid_Seeker_Random },
+	{ "NPC_Droid_Remote", SP_NPC_Droid_Remote_Random },
+	{ "NPC_Droid_Sentry", SP_NPC_Droid_Sentry_Random },
+	{ "NPC_Droid_Gonk", SP_NPC_Droid_Gonk_Random },
+	{ "NPC_Droid_Mouse", SP_NPC_Droid_Mouse_Random },
+	{ "NPC_Droid_R2D2", SP_NPC_Droid_R2D2_Random },
+	{ "NPC_Droid_R5D2", SP_NPC_Droid_R5D2_Random },
+	{ "NPC_Droid_Protocol", SP_NPC_Droid_Protocol_Random },
 
 	{"waypoint", SP_waypoint},
 	{"waypoint_small", SP_waypoint_small},

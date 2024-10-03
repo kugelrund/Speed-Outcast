@@ -2783,6 +2783,388 @@ void SP_NPC_Droid_Protocol( gentity_t *self)
 	NPC_Protocol_Precache();
 }
 
+// The Posto is for faster search so I know what I edited
+void SP_NPC_Spawn_Random(gentity_t* self)
+{
+	// Pas besoin de srand puisqu'il ets call déjà sur g_main.cpp (???????)
+	// Modulo de 49 car il y a 49 entités si j'ai bien compté. +1 pour skip Kyle, même si avoir 2 Kyle n'est potentiellement pas un problème.
+	int who = rand() % 50 ;
+	switch (who)
+	{
+	case 0:
+		SP_NPC_Kyle(self);
+		break;
+	case 1:
+		SP_NPC_Lando(self);
+		break;
+	case 2:
+		SP_NPC_Jan(self);
+		break;
+	case 3:
+		SP_NPC_Luke(self);
+		break;
+	case 4: // Elle a une IA au moins ?
+		SP_NPC_MonMothma(self);
+		break;
+	case 5:
+		SP_NPC_Tavion(self);
+		break;
+	case 6: // Il a une IA au moins ?
+		SP_NPC_Reelo(self);
+		break;
+	case 7:
+		SP_NPC_Galak(self);
+		break;
+	case 8: 
+		SP_NPC_Desann(self);
+		break;
+	case 9: // Il a une IA au moins ?
+		SP_NPC_Bartender(self);
+		break;
+	case 10:
+		SP_NPC_MorganKatarn(self);
+		break;
+	case 11:
+		SP_NPC_Jedi(self);
+		break;
+	case 12:
+		SP_NPC_Prisoner(self);
+		break;
+	case 13:
+		SP_NPC_Rebel(self);
+		break;
+	case 14: // Le classique
+		SP_NPC_Stormtrooper(self);
+		break;
+	case 15:
+		SP_NPC_StormtrooperOfficer(self);
+		break;
+	case 16:
+		SP_NPC_Tie_Pilot(self);
+		break;
+	case 17: // C'est qui ?
+		SP_NPC_Ugnaught(self);
+		break;
+	case 18: // C'est qui ?
+		SP_NPC_Gran(self);
+		break;
+	case 19:
+		SP_NPC_Rodian(self);
+		break;
+	case 20:
+		SP_NPC_Weequay(self);
+		break;
+	case 21:
+		SP_NPC_Trandoshan(self);
+		break;
+	case 22:
+		SP_NPC_SwampTrooper(self);
+		break;
+	case 23:
+		SP_NPC_Imperial(self);
+		break;
+	case 24:
+		SP_NPC_ImpWorker(self);
+		break;
+	case 25:
+		SP_NPC_BespinCop(self);
+		break;
+	case 26:
+		SP_NPC_Reborn(self);
+		break;
+	case 27:
+		SP_NPC_ShadowTrooper(self);
+		break;
+	case 28: // Attention
+		SP_NPC_Monster_Murjj(self);
+		//SP_NPC_Stormtrooper(self);
+		break;
+	case 29: // Attention
+		SP_NPC_Monster_Swamp(self);
+		//SP_NPC_Stormtrooper(self);
+		break;
+	case 30: // Attention
+		SP_NPC_Monster_Howler(self);
+		//SP_NPC_Stormtrooper(self);
+		break;
+	case 31:
+		SP_NPC_MineMonster(self);
+		break;
+	case 32: // Attention
+		SP_NPC_Monster_Claw(self);
+		//SP_NPC_Stormtrooper(self);
+		break;
+	case 33: // Attention
+		SP_NPC_Monster_Glider(self);
+		//SP_NPC_Stormtrooper(self);
+		break;
+	case 34: // Attention
+		SP_NPC_Monster_Flier2(self);
+		//SP_NPC_Stormtrooper(self);
+		break;
+	case 35: // Attention
+		SP_NPC_Monster_Lizard(self);
+		//SP_NPC_Stormtrooper(self);
+		break;
+	case 36: // Attention
+		SP_NPC_Monster_Fish(self);
+		//SP_NPC_Stormtrooper(self);
+		break;
+	case 37:
+		SP_NPC_Droid_Interrogator(self);
+		break;
+	case 38:
+		SP_NPC_Droid_Probe(self);
+		break;
+	case 39:
+		SP_NPC_Droid_Mark1(self);
+		break;
+	case 40:
+		SP_NPC_Droid_Mark2(self);
+		break;
+	case 41: // Attention
+		SP_NPC_Droid_ATST(self);
+		//SP_NPC_Stormtrooper(self);
+		break;
+	case 42:
+		SP_NPC_Droid_Seeker(self);
+		break;
+	case 43:
+		SP_NPC_Droid_Remote(self);
+		break;
+	case 44:
+		SP_NPC_Droid_Sentry(self);
+		break;
+	case 45:
+		SP_NPC_Droid_Gonk(self);
+		break;
+	case 46:
+		SP_NPC_Droid_Mouse(self);
+		break;
+	case 47:
+		SP_NPC_Droid_R2D2(self);
+		break;
+	case 48:
+		SP_NPC_Droid_R5D2(self);
+		break;
+	case 49:
+		SP_NPC_Droid_Protocol(self);
+		break;
+	default: // Secours
+		SP_NPC_Stormtrooper(self);
+		break;
+	}
+}
+void SP_NPC_Kyle_Random(gentity_t* self) // Kyle should always spawn as Kyle
+{
+	string mapname = level.mapname; // It works, just need to do a list of NPC to lock and everything
+	SP_NPC_Kyle(self);
+}
+void SP_NPC_Lando_Random(gentity_t* self) // Lando should always spawn as Lando
+{
+	SP_NPC_Lando(self);
+}
+void SP_NPC_Jan_Random(gentity_t* self) // Jan should always spawn as Jan
+{
+	SP_NPC_Jan(self);
+}
+void SP_NPC_Luke_Random(gentity_t* self) // Luke should always spawn as Luke
+{
+	SP_NPC_Luke(self);
+}
+void SP_NPC_MonMothma_Random(gentity_t* self) // MonMothma should always spawn as MonMothma
+{
+	SP_NPC_MonMothma(self);
+}
+void SP_NPC_Tavion_Random(gentity_t* self) // Tavion should always spawn as Tavion
+{
+	SP_NPC_Tavion(self);
+}
+void SP_NPC_Reelo_Random(gentity_t* self) // Reelo should always spawn as Reelo
+{
+	SP_NPC_Reelo(self);
+}
+void SP_NPC_Galak_Random(gentity_t* self) // Galak should always spawn as Galak
+{
+	SP_NPC_Galak(self);
+}
+void SP_NPC_Desann_Random(gentity_t* self) // Desann should always spawn as Desann
+{
+	SP_NPC_Desann(self);
+}
+void SP_NPC_Bartender_Random(gentity_t* self) // Bartender should always spawn as Bartender
+{
+	SP_NPC_Bartender(self);
+}
+void SP_NPC_MorganKatarn_Random(gentity_t* self) // Morgarn should always spawn as Morgarn
+{
+	SP_NPC_MorganKatarn(self);
+}
+void SP_NPC_Jedi_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Prisoner_Random(gentity_t* self) // Prisoners should spawn as themselves
+{
+	SP_NPC_Prisoner(self);
+}
+void SP_NPC_Rebel_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Stormtrooper_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_StormtrooperOfficer_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Tie_Pilot_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Ugnaught_Random(gentity_t* self) // Ugnaught should spawn as Ugnaught
+{
+	SP_NPC_Ugnaught(self);
+}
+void SP_NPC_Gran_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Rodian_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Weequay_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Trandoshan_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_SwampTrooper_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Imperial_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_ImpWorker_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_BespinCop_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Reborn_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_ShadowTrooper_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Monster_Murjj_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Monster_Swamp_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Monster_Howler_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Monster_Claw_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Monster_Glider_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Monster_Flier2_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Monster_Lizard_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Monster_Fish_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_MineMonster_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Droid_Interrogator_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Droid_Probe_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Droid_Mark1_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Droid_Mark2_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Droid_ATST_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Droid_Seeker_Random(gentity_t* self) // Seekers should always be seekers, at least in speedruns
+{
+	SP_NPC_Droid_Seeker(self);
+}
+void SP_NPC_Droid_Remote_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Droid_Sentry_Random(gentity_t* self) // Who is that ?
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Droid_Gonk_Random(gentity_t* self)
+{
+	SP_NPC_Spawn_Random(self);
+}
+void SP_NPC_Droid_Mouse_Random(gentity_t* self) // Mouse should spawn as Mouse
+{
+	SP_NPC_Droid_Mouse(self);
+}
+void SP_NPC_Droid_R2D2_Random(gentity_t* self) // R2D2 should spawn as self
+{
+	SP_NPC_Droid_R2D2(self);
+}
+void SP_NPC_Droid_R5D2_Random(gentity_t* self)
+{
+	SP_NPC_Droid_R5D2(self);
+}
+void SP_NPC_Droid_Protocol_Random(gentity_t* self)
+{
+	SP_NPC_Droid_Protocol(self);
+}
+
+
+
+
+
+
+
+
+
 
 //NPC console commands
 /*

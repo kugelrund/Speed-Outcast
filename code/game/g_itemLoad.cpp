@@ -206,6 +206,7 @@ static void IT_Name(const char **holdBuf)
 	{
 		itemNum = ITM_BATTERY_PICKUP;
 	}
+	// Posto : TODO
 	else if (!Q_stricmp(tokenStr,"ITM_SEEKER_PICKUP"))	
 		itemNum = ITM_SEEKER_PICKUP;
 	else if (!Q_stricmp(tokenStr,"ITM_SHIELD_PICKUP"))	
