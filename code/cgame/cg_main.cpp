@@ -2034,6 +2034,8 @@ void CG_Init( int serverCommandSequence ) {
 	cgi_AddCommand ("kill");
 	cgi_AddCommand ("give");
 	cgi_AddCommand ("god");
+	// Posto : we might need that
+	cgi_AddCommand("randomizerdebug");
 	cgi_AddCommand ("notarget");
 	cgi_AddCommand ("noclip");
 	cgi_AddCommand ("undying");

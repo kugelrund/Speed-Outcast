@@ -2805,7 +2805,6 @@ void MapChanged()
 }
 void CheckIfMapChanged()
 {
-	// Strange things are occuring, lastKnownMap is getting his 4 first byte are getting overwritten, but I don't know why or how. 
 	if (strcmp(lastKnownMap, level.mapname) != 0)
 	{
 		strcpy(lastKnownMap, level.mapname);
@@ -2836,6 +2835,10 @@ void PopulateNPCTab(int source)
 		currentTabPosition++;
 	}
 }
+void RandomizerPrintAll()
+{
+	gi.Printf(S_COLOR_GREEN"We are getting to this function, we can log things here !\n");
+}
 
 void SP_NPC_Spawn_Random(gentity_t* self)
 {
@@ -2847,9 +2850,6 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 
 	//string messageToWrite = "Random NPC Spawn, number generated is : "+std::to_string(rng)+"\n";
 	//gi.Printf(S_COLOR_YELLOW,messageToWrite.c_str()); // We can't catch that, too much logging between that and the moment we have access to the console.
-
-	// Wait, in my video, there were CLEARLY more than 10 kind of NPCs, what did I do wrong ? Ok fixed (if I don't suck)
-	// Edit : check line 2808
 
 	// Case : We have a duplicate in our locking NPC array, and we want to have different NPCs
 	while (IsThereDuplicateInTab(rng) && currentTabPosition!=tabSize)

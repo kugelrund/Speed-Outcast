@@ -6,6 +6,9 @@
 #include "objectives.h"
 #include "wp_saber.h"
 
+//#include <..\game\NPC_spawn.cpp>
+extern void RandomizerPrintAll(); // It's declared in NPC_spawn.cpp
+
 extern	bool		in_camera;
 
 extern void ForceThrow( gentity_t *self, qboolean pull );
@@ -1030,8 +1033,11 @@ void ClientCommand( int clientNum ) {
 		return;
 	}
 	
-	if (Q_stricmp (cmd, "give") == 0)
-		Cmd_Give_f (ent);
+	// Posto : maybe adding a command is here ?
+	if (Q_stricmp(cmd, "give") == 0)
+		Cmd_Give_f(ent);
+	else if (Q_stricmp(cmd, "randomizerdebug") == 0)
+		RandomizerPrintAll();
 	else if (Q_stricmp (cmd, "god") == 0)
 		Cmd_God_f (ent);
 	else if (Q_stricmp (cmd, "undying") == 0)

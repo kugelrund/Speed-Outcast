@@ -7,6 +7,9 @@
 #include "g_icarus.h"
 #include "wp_saber.h"
 
+//#include <..\game\NPC_spawn.cpp>
+extern void RandomizerPrintAll(); // It's declared in NPC_spawn.cpp
+
 extern void Q3_SetViewEntity(int entID, const char *name);
 extern qboolean G_ClearViewEntity( gentity_t *ent );
 
@@ -922,6 +925,13 @@ qboolean	ConsoleCommand( void ) {
 	if ( Q_stricmp( cmd, "exitview" ) == 0 )
 	{
 		Svcmd_ExitView_f();
+	}
+
+	// Posto : Maybe adding a command is here ?
+	if (Q_stricmp(cmd, "randomizerdebug") == 0)
+	{
+		
+		RandomizerPrintAll();
 	}
 	
 	return qfalse;
