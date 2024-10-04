@@ -2783,377 +2783,555 @@ void SP_NPC_Droid_Protocol( gentity_t *self)
 	NPC_Protocol_Precache();
 }
 
+
 // The Posto is for faster search so I know what I edited
+const int tabSize = 10;
+short tabLockedInNPC[tabSize] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
+short currentTabPosition = 0;
+char lastKnownMap[32] = "first_iteration";
+
+void MapChanged()
+{
+	//strcpy(lastKnownMap, level.mapname);
+	//lastKnownMap = level.mapname;
+	for (int i = 0; i < tabSize; i++)
+	{
+		tabLockedInNPC[i] = -1;
+	}
+	currentTabPosition = 0;
+	// We might have to lock Kyle, we will see what happen.
+	// tabLockedInNPC[0] = 0;
+	// currentTabPosition = 1;
+}
+void CheckIfMapChanged()
+{
+	// Strange things are occuring, lastKnownMap is getting his 4 first byte are getting overwritten, but I don't know why or how. 
+	if (strcmp(lastKnownMap, level.mapname) != 0)
+	{
+		strcpy(lastKnownMap, level.mapname);
+		MapChanged();
+	}
+}
+bool IsRNGInTab(int source)
+{
+	for (int i = 0; i < tabSize; i++)
+	{
+		if (tabLockedInNPC[i] == source) return 1;
+	}
+	return 0;
+}
+bool IsThereDuplicateInTab(int source)
+{
+	for (int i = 0; i < tabSize; i++)
+	{
+		if (tabLockedInNPC[i] == source) return 1;
+	}
+	return 0;
+}
+void PopulateNPCTab(int source)
+{
+	if (!IsThereDuplicateInTab(source)) // Safe measure to not corrupt lastKnownMap
+	{
+		tabLockedInNPC[currentTabPosition] = source;
+		currentTabPosition++;
+	}
+}
+
 void SP_NPC_Spawn_Random(gentity_t* self)
 {
-	// Pas besoin de srand puisqu'il ets call déjà sur g_main.cpp (???????)
+	// Pas besoin de srand puisqu'il est call déjà sur g_main.cpp (???????)
 	// Modulo de 49 car il y a 49 entités si j'ai bien compté. +1 pour skip Kyle, même si avoir 2 Kyle n'est potentiellement pas un problème.
-	int who = rand() % 50 ;
-	switch (who)
+	int rng = rand() % 50 ;
+	// Idée d'Amber : limiter le nombre de NPc plutôt que de modifier d'autres valeurs in game qui peuvent potentiellement faire crash le jeu.
+	// Du coup, tableau de 10 emplacements déclaré plus haut afin de faire mes tests.
+
+	//string messageToWrite = "Random NPC Spawn, number generated is : "+std::to_string(rng)+"\n";
+	//gi.Printf(S_COLOR_YELLOW,messageToWrite.c_str()); // We can't catch that, too much logging between that and the moment we have access to the console.
+
+	// Wait, in my video, there were CLEARLY more than 10 kind of NPCs, what did I do wrong ? Ok fixed (if I don't suck)
+	// Edit : check line 2808
+
+	// Case : We have a duplicate in our locking NPC array, and we want to have different NPCs
+	while (IsThereDuplicateInTab(rng) && currentTabPosition!=tabSize)
+	{
+		rng = rand() % 50;
+	}
+	// Case : We already have 10 NPC loaded, so we want to roll one of them. This can take time, but only during a map load.
+	while ((currentTabPosition == tabSize && !IsRNGInTab(rng)))
+	{
+		rng = rand() % 50;
+	}
+
+	switch (rng)
 	{
 	case 0:
 		SP_NPC_Kyle(self);
+		PopulateNPCTab(rng);
 		break;
 	case 1:
 		SP_NPC_Lando(self);
+		PopulateNPCTab(rng);
 		break;
 	case 2:
 		SP_NPC_Jan(self);
+		PopulateNPCTab(rng);
 		break;
 	case 3:
 		SP_NPC_Luke(self);
+		PopulateNPCTab(rng);
 		break;
 	case 4: // Elle a une IA au moins ?
 		SP_NPC_MonMothma(self);
+		PopulateNPCTab(rng);
 		break;
 	case 5:
 		SP_NPC_Tavion(self);
+		PopulateNPCTab(rng);
 		break;
 	case 6: // Il a une IA au moins ?
 		SP_NPC_Reelo(self);
+		PopulateNPCTab(rng);
 		break;
 	case 7:
 		SP_NPC_Galak(self);
+		PopulateNPCTab(rng);
 		break;
 	case 8: 
 		SP_NPC_Desann(self);
+		PopulateNPCTab(rng);
 		break;
 	case 9: // Il a une IA au moins ?
 		SP_NPC_Bartender(self);
+		PopulateNPCTab(rng);
 		break;
 	case 10:
 		SP_NPC_MorganKatarn(self);
+		PopulateNPCTab(rng);
 		break;
 	case 11:
 		SP_NPC_Jedi(self);
+		PopulateNPCTab(rng);
 		break;
 	case 12:
 		SP_NPC_Prisoner(self);
+		PopulateNPCTab(rng);
 		break;
 	case 13:
 		SP_NPC_Rebel(self);
+		PopulateNPCTab(rng);
 		break;
 	case 14: // Le classique
 		SP_NPC_Stormtrooper(self);
+		PopulateNPCTab(rng);
 		break;
 	case 15:
 		SP_NPC_StormtrooperOfficer(self);
+		PopulateNPCTab(rng);
 		break;
 	case 16:
 		SP_NPC_Tie_Pilot(self);
+		PopulateNPCTab(rng);
 		break;
 	case 17: // C'est qui ?
 		SP_NPC_Ugnaught(self);
+		PopulateNPCTab(rng);
 		break;
 	case 18: // C'est qui ?
 		SP_NPC_Gran(self);
+		PopulateNPCTab(rng);
 		break;
 	case 19:
 		SP_NPC_Rodian(self);
+		PopulateNPCTab(rng);
 		break;
 	case 20:
 		SP_NPC_Weequay(self);
+		PopulateNPCTab(rng);
 		break;
 	case 21:
 		SP_NPC_Trandoshan(self);
+		PopulateNPCTab(rng);
 		break;
 	case 22:
 		SP_NPC_SwampTrooper(self);
+		PopulateNPCTab(rng);
 		break;
 	case 23:
 		SP_NPC_Imperial(self);
+		PopulateNPCTab(rng);
 		break;
 	case 24:
 		SP_NPC_ImpWorker(self);
+		PopulateNPCTab(rng);
 		break;
 	case 25:
 		SP_NPC_BespinCop(self);
+		PopulateNPCTab(rng);
 		break;
 	case 26:
 		SP_NPC_Reborn(self);
+		PopulateNPCTab(rng);
 		break;
 	case 27:
 		SP_NPC_ShadowTrooper(self);
+		PopulateNPCTab(rng);
 		break;
-	case 28: // Attention
-		SP_NPC_Monster_Murjj(self);
+	case 28: // This entity doesn't work, retry
+		//SP_NPC_Monster_Murjj(self);
 		//SP_NPC_Stormtrooper(self);
+		SP_NPC_Spawn_Random(self);
 		break;
-	case 29: // Attention
-		SP_NPC_Monster_Swamp(self);
+	case 29: // This entity doesn't work, retry
+		//SP_NPC_Monster_Swamp(self);
 		//SP_NPC_Stormtrooper(self);
+		SP_NPC_Spawn_Random(self);
 		break;
-	case 30: // Attention
-		SP_NPC_Monster_Howler(self);
+	case 30: // This entity doesn't work, retry
+		//SP_NPC_Monster_Howler(self);
 		//SP_NPC_Stormtrooper(self);
+		SP_NPC_Spawn_Random(self);
 		break;
 	case 31:
 		SP_NPC_MineMonster(self);
+		PopulateNPCTab(rng);
 		break;
-	case 32: // Attention
-		SP_NPC_Monster_Claw(self);
+	case 32: // This entity doesn't work, retry
+		//SP_NPC_Monster_Claw(self);
 		//SP_NPC_Stormtrooper(self);
+		SP_NPC_Spawn_Random(self);
 		break;
-	case 33: // Attention
-		SP_NPC_Monster_Glider(self);
+	case 33: // This entity doesn't work, retry
+		//SP_NPC_Monster_Glider(self);
 		//SP_NPC_Stormtrooper(self);
+		SP_NPC_Spawn_Random(self);
 		break;
-	case 34: // Attention
-		SP_NPC_Monster_Flier2(self);
+	case 34: // This entity doesn't work, retry
+		//SP_NPC_Monster_Flier2(self);
 		//SP_NPC_Stormtrooper(self);
+		SP_NPC_Spawn_Random(self);
 		break;
-	case 35: // Attention
-		SP_NPC_Monster_Lizard(self);
+	case 35: // This entity doesn't work, retry
+		//SP_NPC_Monster_Lizard(self);
 		//SP_NPC_Stormtrooper(self);
+		SP_NPC_Spawn_Random(self);
 		break;
-	case 36: // Attention
-		SP_NPC_Monster_Fish(self);
+	case 36: // This entity doesn't work, retry
+		//SP_NPC_Monster_Fish(self);
 		//SP_NPC_Stormtrooper(self);
+		SP_NPC_Spawn_Random(self);
 		break;
 	case 37:
 		SP_NPC_Droid_Interrogator(self);
+		PopulateNPCTab(rng);
 		break;
 	case 38:
 		SP_NPC_Droid_Probe(self);
+		PopulateNPCTab(rng);
 		break;
 	case 39:
 		SP_NPC_Droid_Mark1(self);
+		PopulateNPCTab(rng);
 		break;
 	case 40:
 		SP_NPC_Droid_Mark2(self);
+		PopulateNPCTab(rng);
 		break;
 	case 41: // Attention
 		SP_NPC_Droid_ATST(self);
+		PopulateNPCTab(rng);
 		//SP_NPC_Stormtrooper(self);
 		break;
 	case 42:
 		SP_NPC_Droid_Seeker(self);
+		PopulateNPCTab(rng);
 		break;
 	case 43:
 		SP_NPC_Droid_Remote(self);
+		PopulateNPCTab(rng);
 		break;
 	case 44:
 		SP_NPC_Droid_Sentry(self);
+		PopulateNPCTab(rng);
 		break;
 	case 45:
 		SP_NPC_Droid_Gonk(self);
+		PopulateNPCTab(rng);
 		break;
 	case 46:
 		SP_NPC_Droid_Mouse(self);
+		PopulateNPCTab(rng);
 		break;
 	case 47:
 		SP_NPC_Droid_R2D2(self);
+		PopulateNPCTab(rng);
 		break;
 	case 48:
 		SP_NPC_Droid_R5D2(self);
+		PopulateNPCTab(rng);
 		break;
 	case 49:
 		SP_NPC_Droid_Protocol(self);
+		PopulateNPCTab(rng);
 		break;
 	default: // Secours
-		SP_NPC_Stormtrooper(self);
+		//SP_NPC_Stormtrooper(self);
+		SP_NPC_Spawn_Random(self);
 		break;
 	}
 }
 void SP_NPC_Kyle_Random(gentity_t* self) // Kyle should always spawn as Kyle
 {
-	string mapname = level.mapname; // It works, just need to do a list of NPC to lock and everything
+	CheckIfMapChanged();
 	SP_NPC_Kyle(self);
 }
 void SP_NPC_Lando_Random(gentity_t* self) // Lando should always spawn as Lando
 {
+	CheckIfMapChanged();
 	SP_NPC_Lando(self);
 }
 void SP_NPC_Jan_Random(gentity_t* self) // Jan should always spawn as Jan
 {
+	CheckIfMapChanged();
+	//if (lastKnownMap == "kejim_post") // That's not C
+	if (strcmp(lastKnownMap,"kejim_post") == 0 )
+	{
+		int proofOfConcept = 777;
+	}
 	SP_NPC_Jan(self);
 }
 void SP_NPC_Luke_Random(gentity_t* self) // Luke should always spawn as Luke
 {
+	CheckIfMapChanged();
 	SP_NPC_Luke(self);
 }
 void SP_NPC_MonMothma_Random(gentity_t* self) // MonMothma should always spawn as MonMothma
 {
+	CheckIfMapChanged();
 	SP_NPC_MonMothma(self);
 }
 void SP_NPC_Tavion_Random(gentity_t* self) // Tavion should always spawn as Tavion
 {
+	CheckIfMapChanged();
 	SP_NPC_Tavion(self);
 }
 void SP_NPC_Reelo_Random(gentity_t* self) // Reelo should always spawn as Reelo
 {
+	CheckIfMapChanged();
 	SP_NPC_Reelo(self);
 }
 void SP_NPC_Galak_Random(gentity_t* self) // Galak should always spawn as Galak
 {
+	CheckIfMapChanged();
 	SP_NPC_Galak(self);
 }
 void SP_NPC_Desann_Random(gentity_t* self) // Desann should always spawn as Desann
 {
+	CheckIfMapChanged();
 	SP_NPC_Desann(self);
 }
 void SP_NPC_Bartender_Random(gentity_t* self) // Bartender should always spawn as Bartender
 {
+	CheckIfMapChanged();
 	SP_NPC_Bartender(self);
 }
 void SP_NPC_MorganKatarn_Random(gentity_t* self) // Morgarn should always spawn as Morgarn
 {
+	CheckIfMapChanged();
 	SP_NPC_MorganKatarn(self);
 }
 void SP_NPC_Jedi_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Prisoner_Random(gentity_t* self) // Prisoners should spawn as themselves
 {
+	CheckIfMapChanged();
 	SP_NPC_Prisoner(self);
 }
 void SP_NPC_Rebel_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Stormtrooper_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_StormtrooperOfficer_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Tie_Pilot_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Ugnaught_Random(gentity_t* self) // Ugnaught should spawn as Ugnaught
 {
+	CheckIfMapChanged();
 	SP_NPC_Ugnaught(self);
 }
 void SP_NPC_Gran_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Rodian_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Weequay_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Trandoshan_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_SwampTrooper_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Imperial_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_ImpWorker_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_BespinCop_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Reborn_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_ShadowTrooper_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Monster_Murjj_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Monster_Swamp_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Monster_Howler_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Monster_Claw_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Monster_Glider_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Monster_Flier2_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Monster_Lizard_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Monster_Fish_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_MineMonster_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Droid_Interrogator_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Droid_Probe_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Droid_Mark1_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Droid_Mark2_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Droid_ATST_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Droid_Seeker_Random(gentity_t* self) // Seekers should always be seekers, at least in speedruns
 {
+	CheckIfMapChanged();
 	SP_NPC_Droid_Seeker(self);
 }
 void SP_NPC_Droid_Remote_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Droid_Sentry_Random(gentity_t* self) // Who is that ?
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Droid_Gonk_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Droid_Mouse_Random(gentity_t* self) // Mouse should spawn as Mouse
 {
+	CheckIfMapChanged();
 	SP_NPC_Droid_Mouse(self);
 }
 void SP_NPC_Droid_R2D2_Random(gentity_t* self) // R2D2 should spawn as self
 {
+	CheckIfMapChanged();
 	SP_NPC_Droid_R2D2(self);
 }
 void SP_NPC_Droid_R5D2_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Droid_R5D2(self);
 }
 void SP_NPC_Droid_Protocol_Random(gentity_t* self)
 {
+	CheckIfMapChanged();
 	SP_NPC_Droid_Protocol(self);
 }
 
