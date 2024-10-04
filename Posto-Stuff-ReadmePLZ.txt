@@ -13,3 +13,7 @@ TODO :
 Crash : common.cpp, line 296
 It happens because of G_FindConfigstringIndex each time it seems.
 I don't know how to fix that, because if it's truly this case every time, it could be a cool mod :/
+q_shared : upped the max sounds and models.
+
+For items :
+classname : item_bacta, origin : X,Y,Z

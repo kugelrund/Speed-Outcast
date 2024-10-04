@@ -1165,9 +1165,11 @@ typedef struct {
 #define	ENTITYNUM_WORLD		(MAX_GENTITIES-2)
 #define	ENTITYNUM_MAX_NORMAL	(MAX_GENTITIES-2)
 
+//#define	MAX_MODELS			256		// these are sent over the net as 8 bits
+//#define	MAX_SOUNDS			256		// so they cannot be blindly increased
 
-#define	MAX_MODELS			256		// these are sent over the net as 8 bits
-#define	MAX_SOUNDS			256		// so they cannot be blindly increased
+#define	MAX_MODELS			512		// Posto : For the Randomizer, we might need to increase it.
+#define	MAX_SOUNDS			512		// Same for that
 
 #ifdef _IMMERSION
 #define MAX_FORCES			96
@@ -1185,7 +1187,8 @@ Ghoul2 Insert Start
 Ghoul2 Insert End
 */
 
-#define	MAX_CONFIGSTRINGS	1024
+//#define	MAX_CONFIGSTRINGS	1024
+#define	MAX_CONFIGSTRINGS	2048 // Posto : we might need to double this, I understand if we have performance issue
 
 // these are the only configstrings that the system reserves, all the
 // other ones are strictly for servergame to clientgame communication
