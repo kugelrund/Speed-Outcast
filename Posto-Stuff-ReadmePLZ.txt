@@ -66,4 +66,13 @@ CURRENT SITUATION : I locked the number of max unique NPC to 10 for now.
 In DEBUG, the game is way less permissing and throw errors often.
 But in RELEASE ? It seems plyable, I will do a full playthrought to confirm that.
 
-
+I tried to do entire playthought, here is a list of softlock I had (stopped at topside) : 
+- Two or more NPC spawn location being too close is a problem, if for exemple ATSTs tried to spawn, only one will THEN the other when there is enough space
+- kejim_base : the NPC that spawned behind the door could'nt spawn, it was a big droid. Making it impossible for the cutscene to execute
+- artus_detention :
+NPC will NOT respect that truce when the guard is activated, not really a softlock but careful. Also, any NPC can trigger the guard, not only Kyle.
+The guard being too big will not work.
+Fortunatly, no matter which team the NPC spawned, it will be overwritten and will always be havin the same path and behavior as the guardian.
+- artus_topside :
+Didn't manage to load the map under unknown conditions
+The path finding of NPC that spawn instead of the stormtrooper seems to always be broken

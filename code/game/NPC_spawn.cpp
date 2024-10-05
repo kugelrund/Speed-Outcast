@@ -2835,27 +2835,192 @@ void PopulateNPCTab(int source)
 		currentTabPosition++;
 	}
 }
-void RandomizerPrintAll()
+char* GetNPCNames(int source)
 {
-	gi.Printf(S_COLOR_GREEN"We are getting to this function, we can log things here !\n");
+	switch (source)
+	{
+	case 0:
+		return "Kyle";
+	case 1:
+		return "Lando";
+	case 2:
+		return "Jan";
+	case 3:
+		return "Luke";
+	case 4:
+		return "MonMothma";
+	case 5:
+		return "Tavion";
+	case 6:
+		return "Reelo";
+	case 7:
+		return "Galak";
+	case 8:
+		return "Desann";
+	case 9:
+		return "Bartender";
+	case 10:
+		return "Morgan";
+	case 11:
+		return "Jedi";
+	case 12:
+		return "Prisoner";
+	case 13:
+		return "Rebel";
+	case 14:
+		return "StormTrooper";
+	case 15:
+		return "StormTrooperOfficier";
+	case 16:
+		return "TiePilot";
+	case 17:
+		return "Ugnaught";
+	case 18:
+		return "Gran";
+	case 19:
+		return "Rodian";
+	case 20:
+		return "Weequay";
+	case 21:
+		return "Trandoshan";
+	case 22:
+		return "SwampTrooper";
+	case 23:
+		return "Imperial";
+	case 24:
+		return "ImpWorker";
+	case 25:
+		return "BespinCop";
+	case 26:
+		return "Reborn";
+	case 27:
+		return "ShadowTrooper";
+	case 28: // This entity doesn't work, retry
+		return "UNKNOWN";
+	case 29: // This entity doesn't work, retry
+		return "UNKNOWN";
+	case 30: // This entity doesn't work, retry
+		return "UNKNOWN";
+	case 31:
+		return "MineMonster";
+	case 32: // This entity doesn't work, retry
+		return "UNKNOWN";
+	case 33: // This entity doesn't work, retry
+		return "UNKNOWN";
+	case 34: // This entity doesn't work, retry
+		return "UNKNOWN";
+	case 35: // This entity doesn't work, retry
+		return "UNKNOWN";
+	case 36: // This entity doesn't work, retry
+		return "UNKNOWN";
+	case 37:
+		return "DroidInterrogator";
+	case 38:
+		return "DroidProbe";
+	case 39:
+		return "DroidMark1"; // Chicken Robot
+	case 40:
+		return "DroidMark2"; // Small bot (found in comms)
+	case 41: // Attention
+		return "ATST";
+	case 42:
+		return "DroidSeeker";
+	case 43:
+		return "DroidRemote";
+	case 44:
+		return "DroidSentry";
+	case 45:
+		return "DroidGonk";
+	case 46:
+		return "DroidMouse";
+	case 47:
+		return "DroidR2D2";
+	case 48:
+		return "DroidR5D2";
+	case 49:
+		return "DroidProtocol";
+		break;
+	default: // Secours
+		return "UNKONWN";
+	}
+}
+void RandomizerDebugCommandCatcher(int page)
+{
+	// List of colors
+	//S_COLOR_BLACK, S_COLOR_BLUE, S_COLOR_CYAN, S_COLOR_GREEN, S_COLOR_MAGENTA, S_COLOR_RED, S_COLOR_WHITE, S_COLOR_YELLOW
+
+	//gi.Printf(S_COLOR_GREEN"We are getting to this function, we can log things here !\n");
+	//gi.Printf(S_COLOR_GREEN"Page number received : %d\n",page);
+
+	// Just for information : the console is 30 lines long,
+	if (page <= 0 || page >= 5) // The help page, when we reach an undefined number.
+	{
+		gi.Printf(S_COLOR_RED"Oops, it seems that you didn't provide a valid page number.\n");
+		gi.Printf(S_COLOR_RED"Welcome to the default page.\n");
+		gi.Printf(S_COLOR_MAGENTA"Here is the correct syntax : randomizer_debug <page>.\n");
+		gi.Printf(S_COLOR_WHITE"Page 1 : General information.\n");
+		gi.Printf(S_COLOR_WHITE"Page 2 : Currently generated NPCs on this map (%s).\n",level.mapname);
+		gi.Printf(S_COLOR_WHITE"Page 3 : Rules for NPCs.\n");
+		gi.Printf(S_COLOR_WHITE"Page 4 : Rules for maps.\n");
+		gi.Printf(S_COLOR_WHITE"Page 5+ : Todo\n");
+		return; // So that we won't go to the switch bellow
+	}
+	switch (page)
+	{
+	case 1: // General informations
+		gi.Printf(S_COLOR_MAGENTA"Todo ?\n");
+		break;
+	case 2: // Informations about tabLockedInNPC
+		gi.Printf(S_COLOR_MAGENTA"The maximum number of unique NPCs authorized is currently %d.\n",tabSize);
+		gi.Printf(S_COLOR_MAGENTA"The map is : %s.\n", level.mapname);
+		for (int i = 0; i < tabSize; i++)
+		{
+			gi.Printf(S_COLOR_CYAN"NPC number %d is : %s.\n",i+1 ,GetNPCNames(tabLockedInNPC[i]));
+		}
+		break;
+	case 3: // Which NPC are forced no matter which map (Jan for exemple, not having her breaks the first map and yavin_swamp cutscene as far as I know). Update this if needed
+		gi.Printf(S_COLOR_MAGENTA"Some spawn have been forced. It might not be necessarry, but for now thta's how it is.\n");
+		gi.Printf(S_COLOR_MAGENTA"Here is the list of characters that will ALWAYS spawn as themselves, no matter which map you are on :\n");
+		gi.Printf(S_COLOR_CYAN"Kyle, Jan, Luke, Lando, Tavion, Desann, MonMothma, Reelo, Galak, Bartender, Prisoner, Morgan, Ugnaught, MouseDroid, R2D2, R5D2 and SeekerDrones.\n");
+		break;
+	case 4: // Map specific locked NPCs (thinking about the officer in assembly to open the first door)(maybe other NPCs can do it, but idk). Update this if needed.
+		gi.Printf(S_COLOR_MAGENTA"Some spawn on specific maps are forced, so that we don't softlock the game.\n");
+		gi.Printf(S_COLOR_MAGENTA"Unfortunatly, it means that every iteration of the same NPC on this map will spawn normally.\n");
+		gi.Printf(S_COLOR_MAGENTA"Here is the list of maps that have specific NPC locked :\n");
+		gi.Printf(S_COLOR_CYAN"Todo.\n");
+		break;
+	default:
+		return;
+	}
+
 }
 
 void SP_NPC_Spawn_Random(gentity_t* self)
 {
 	// Pas besoin de srand puisqu'il est call déjà sur g_main.cpp (???????)
-	// Modulo de 49 car il y a 49 entités si j'ai bien compté. +1 pour skip Kyle, même si avoir 2 Kyle n'est potentiellement pas un problème.
 	int rng = rand() % 50 ;
-	// Idée d'Amber : limiter le nombre de NPc plutôt que de modifier d'autres valeurs in game qui peuvent potentiellement faire crash le jeu.
+
+	// Idée d'Amber : limiter le nombre de NPC plutôt que de modifier d'autres valeurs in game qui peuvent potentiellement faire crash le jeu.
 	// Du coup, tableau de 10 emplacements déclaré plus haut afin de faire mes tests.
 
 	//string messageToWrite = "Random NPC Spawn, number generated is : "+std::to_string(rng)+"\n";
 	//gi.Printf(S_COLOR_YELLOW,messageToWrite.c_str()); // We can't catch that, too much logging between that and the moment we have access to the console.
 
 	// Case : We have a duplicate in our locking NPC array, and we want to have different NPCs
-	while (IsThereDuplicateInTab(rng) && currentTabPosition!=tabSize)
+	// This can be commented if in the future we find a way to have any kind of NPC to spawn without restiction
+	while (IsThereDuplicateInTab(rng) && currentTabPosition!=tabSize && tabSize!=50)
 	{
 		rng = rand() % 50;
 	}
+
+	// Let's suppose we find a way to have any kind of NPC, we can authorize anything in our big array, so that we don't have to change "much" of the code.
+	/*
+	if (tabSize == 50)
+	{
+		for (int i = 0; i < tabSize; i++) tabLockedInNPC[i] = i;
+	}
+	*/
+
 	// Case : We already have 10 NPC loaded, so we want to roll one of them. This can take time, but only during a map load.
 	while ((currentTabPosition == tabSize && !IsRNGInTab(rng)))
 	{
@@ -3324,7 +3489,7 @@ void SP_NPC_Droid_R2D2_Random(gentity_t* self) // R2D2 should spawn as self
 	CheckIfMapChanged();
 	SP_NPC_Droid_R2D2(self);
 }
-void SP_NPC_Droid_R5D2_Random(gentity_t* self)
+void SP_NPC_Droid_R5D2_Random(gentity_t* self) // R5D2 should spawn as self
 {
 	CheckIfMapChanged();
 	SP_NPC_Droid_R5D2(self);

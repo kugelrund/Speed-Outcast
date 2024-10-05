@@ -8,7 +8,7 @@
 #include "wp_saber.h"
 
 //#include <..\game\NPC_spawn.cpp>
-extern void RandomizerPrintAll(); // It's declared in NPC_spawn.cpp
+extern void RandomizerDebugCommandCatcher(int page); // It's declared in NPC_spawn.cpp
 
 extern void Q3_SetViewEntity(int entID, const char *name);
 extern qboolean G_ClearViewEntity( gentity_t *ent );
@@ -927,11 +927,14 @@ qboolean	ConsoleCommand( void ) {
 		Svcmd_ExitView_f();
 	}
 
-	// Posto : Maybe adding a command is here ?
-	if (Q_stricmp(cmd, "randomizerdebug") == 0)
+	// Posto : This is caught first
+	if (Q_stricmp(cmd, "randomizer_debug") == 0)
 	{
-		
-		RandomizerPrintAll();
+		// After randomizer_debug, we want to catch the first arg. If not set (page is a 0 size char array), send page -1 (equivalent to a help page)
+		// Does that mean that a page 0 exist ? No, if a page is not referenced, we print the help page.
+		char* page = gi.argv(1);
+		if (strlen(page)==0) RandomizerDebugCommandCatcher(-1); // Show the 'help page'
+		else RandomizerDebugCommandCatcher(atoi(page));
 	}
 	
 	return qfalse;
