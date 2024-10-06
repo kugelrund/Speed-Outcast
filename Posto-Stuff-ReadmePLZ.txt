@@ -66,9 +66,10 @@ CURRENT SITUATION : I locked the number of max unique NPC to 10 for now.
 In DEBUG, the game is way less permissing and throw errors often.
 But in RELEASE ? It seems plyable, I will do a full playthrought to confirm that.
 
-I tried to do entire playthought, here is a list of softlock I had (stopped at topside) : 
+I DID an entire playthought without ATST, and a max of 10 random unique NPC, here is a list of softlock I had  : 
+Chicken robots are really too big, I think we should make them spawn naturally and not randomly.
 - Two or more NPC spawn location being too close is a problem, if for exemple ATSTs tried to spawn, only one will THEN the other when there is enough space
-- kejim_base : the NPC that spawned behind the door could'nt spawn, it was a big droid. Making it impossible for the cutscene to execute
+- kejim_base : the NPC that spawned behind the door couldn't spawn, it was a big droid and Reelo. Making it impossible for the cutscene to execute
 - artus_detention :
 NPC will NOT respect that truce when the guard is activated, not really a softlock but careful. Also, any NPC can trigger the guard, not only Kyle.
 The guard being too big will not work.
@@ -76,3 +77,12 @@ Fortunatly, no matter which team the NPC spawned, it will be overwritten and wil
 - artus_topside :
 Didn't manage to load the map under unknown conditions
 The path finding of NPC that spawn instead of the stormtrooper seems to always be broken
+- ns_starpad crashes during the final against Reelo, I should retry this
+- cairn_assembly : if the imperial opening the door is too small (for exmeple a small droid), you can't reach the hitbox to hit persuasion
+If the NPC remplacin the two reborn dies or don't spawn (don't know which), the ATST door won't open.
+- cairn_dock : the map is imposible to play because the new NPCs are having undefefined behavior, making the discretion impossible and you are spoted instantly when by the window
+The shadowtropper have to spawn as a shadowtrooper I think because the platform where it spawns DON'T ELEVATE other NPCs (humanoid or droids)
+- doom_detention : I didn't any problem with the guard opening the doors, but there might be the same problem as cairn_assembly
+
+
+

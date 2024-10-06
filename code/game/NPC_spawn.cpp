@@ -2785,8 +2785,12 @@ void SP_NPC_Droid_Protocol( gentity_t *self)
 
 
 // The Posto is for faster search so I know what I edited
-const int tabSize = 10;
-short tabLockedInNPC[tabSize] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
+const int tabSize = 50;
+short tabLockedInNPC[tabSize]={ -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+								-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+								-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+								-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+								-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, };
 short currentTabPosition = 0;
 char lastKnownMap[32] = "first_iteration";
 
@@ -2968,20 +2972,29 @@ void RandomizerDebugCommandCatcher(int page)
 	switch (page)
 	{
 	case 1: // General informations
-		gi.Printf(S_COLOR_MAGENTA"Todo ?\n");
+		gi.Printf(S_COLOR_MAGENTA"NPC spawns are determined during the first load of a map. Meaning that if youn load a map, quicksave and quickload, the NPCs will always be the sames.\n");
+		gi.Printf(S_COLOR_MAGENTA"But, if you reload the map using the save files that the game generate, a new set of random NPCs will be generated.\n");
+		gi.Printf(S_COLOR_MAGENTA"All random NPCs remplacing ones carrying keys to open doors (eg : kejim_base), will also carry said keys. So kill them to get keys (even if they are friendly or neutral) !\n");
 		break;
 	case 2: // Informations about tabLockedInNPC
 		gi.Printf(S_COLOR_MAGENTA"The maximum number of unique NPCs authorized is currently %d.\n",tabSize);
 		gi.Printf(S_COLOR_MAGENTA"The map is : %s.\n", level.mapname);
-		for (int i = 0; i < tabSize; i++)
+		if (tabSize != 50)
 		{
-			gi.Printf(S_COLOR_CYAN"NPC number %d is : %s.\n",i+1 ,GetNPCNames(tabLockedInNPC[i]));
+			for (int i = 0; i < tabSize; i++)
+			{
+				gi.Printf(S_COLOR_CYAN"NPC number %d is : %s.\n", i + 1, GetNPCNames(tabLockedInNPC[i]));
+			}
 		}
+		else gi.Printf(S_COLOR_CYAN"ALL NPC can spawn (except the ones banned do to them being unstable / broken).\n");
+		
 		break;
 	case 3: // Which NPC are forced no matter which map (Jan for exemple, not having her breaks the first map and yavin_swamp cutscene as far as I know). Update this if needed
 		gi.Printf(S_COLOR_MAGENTA"Some spawn have been forced. It might not be necessarry, but for now thta's how it is.\n");
 		gi.Printf(S_COLOR_MAGENTA"Here is the list of characters that will ALWAYS spawn as themselves, no matter which map you are on :\n");
-		gi.Printf(S_COLOR_CYAN"Kyle, Jan, Luke, Lando, Tavion, Desann, MonMothma, Reelo, Galak, Bartender, Prisoner, Morgan, Ugnaught, MouseDroid, R2D2, R5D2 and SeekerDrones.\n");
+		gi.Printf(S_COLOR_CYAN"Kyle, Jan, Luke, Lando, Tavion, Desann, MonMothma, Reelo, Galak, Bartender, Prisoner, Morgan, Ugnaught, MouseDroid, ATST, Mark1, Mark2 (Chicken robot), R2D2, R5D2 and SeekerDrones.\n");
+		gi.Printf(S_COLOR_MAGENTA"Here is the list of characters that will NEVER randomly spawn, no matter which map you are on :\n");
+		gi.Printf(S_COLOR_CYAN"");
 		break;
 	case 4: // Map specific locked NPCs (thinking about the officer in assembly to open the first door)(maybe other NPCs can do it, but idk). Update this if needed.
 		gi.Printf(S_COLOR_MAGENTA"Some spawn on specific maps are forced, so that we don't softlock the game.\n");
@@ -3014,12 +3027,12 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 	}
 
 	// Let's suppose we find a way to have any kind of NPC, we can authorize anything in our big array, so that we don't have to change "much" of the code.
-	/*
+	
 	if (tabSize == 50)
 	{
 		for (int i = 0; i < tabSize; i++) tabLockedInNPC[i] = i;
 	}
-	*/
+	
 
 	// Case : We already have 10 NPC loaded, so we want to roll one of them. This can take time, but only during a map load.
 	while ((currentTabPosition == tabSize && !IsRNGInTab(rng)))
@@ -3193,18 +3206,21 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		SP_NPC_Droid_Probe(self);
 		PopulateNPCTab(rng);
 		break;
-	case 39:
-		SP_NPC_Droid_Mark1(self);
-		PopulateNPCTab(rng);
+	case 39: // Chicken robot are way too big, let's keep them out
+		//SP_NPC_Droid_Mark1(self);
+		//PopulateNPCTab(rng);
+		SP_NPC_Spawn_Random(self);
 		break;
-	case 40:
-		SP_NPC_Droid_Mark2(self);
-		PopulateNPCTab(rng);
+	case 40: // Chicken robot are way too big, let's keep them out
+		//SP_NPC_Droid_Mark2(self);
+		//PopulateNPCTab(rng);
+		SP_NPC_Spawn_Random(self);
 		break;
-	case 41: // Attention
-		SP_NPC_Droid_ATST(self);
-		PopulateNPCTab(rng);
+	case 41: // ATST are very buggy, let's keep them out for the moment
+		//SP_NPC_Droid_ATST(self);
+		//PopulateNPCTab(rng);
 		//SP_NPC_Stormtrooper(self);
+		SP_NPC_Spawn_Random(self);
 		break;
 	case 42:
 		SP_NPC_Droid_Seeker(self);
@@ -3444,20 +3460,23 @@ void SP_NPC_Droid_Probe_Random(gentity_t* self) // Who is that ?
 	CheckIfMapChanged();
 	SP_NPC_Spawn_Random(self);
 }
-void SP_NPC_Droid_Mark1_Random(gentity_t* self) // Who is that ?
+void SP_NPC_Droid_Mark1_Random(gentity_t* self) // Chicken robot, make then static and not in the random pool (they are big). Wait, two chicken robot entities ?
 {
 	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	//SP_NPC_Spawn_Random(self);
+	SP_NPC_Droid_Mark1(self);
 }
-void SP_NPC_Droid_Mark2_Random(gentity_t* self) // Who is that ?
+void SP_NPC_Droid_Mark2_Random(gentity_t* self) // Chicken robot, make then static and not in the random pool (they are big). Wait, two chicken robot entities ?
 {
 	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	//SP_NPC_Spawn_Random(self);
+	SP_NPC_Droid_Mark2(self);
 }
-void SP_NPC_Droid_ATST_Random(gentity_t* self)
+void SP_NPC_Droid_ATST_Random(gentity_t* self) // Since they are buggy, let's keep the one existing intact.
 {
 	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	//SP_NPC_Spawn_Random(self);
+	SP_NPC_Droid_ATST(self);
 }
 void SP_NPC_Droid_Seeker_Random(gentity_t* self) // Seekers should always be seekers, at least in speedruns
 {
