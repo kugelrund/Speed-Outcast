@@ -59,6 +59,9 @@ extern void NPC_GalakMech_Init( gentity_t *ent );
 extern void NPC_Protocol_Precache( void );
 extern int WP_SetSaberModel( gclient_t *client, class_t npcClass );
 
+extern	vmCvar_t		cg_useSetSeed;
+extern	vmCvar_t		cg_setSeed;
+
 #define	NSF_DROP_TO_FLOOR	16
 
 
@@ -2794,6 +2797,14 @@ short tabLockedInNPC[tabSize]={ -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 short currentTabPosition = 0;
 char lastKnownMap[32] = "first_iteration";
 
+//I hate working in c++ so much
+void AddCharArrayToInt(char chars[], int* value)
+{
+	for (int i = 0; i < sizeof(chars); i++) {
+		*value += chars[i];
+	}
+}
+
 void MapChanged()
 {
 	//strcpy(lastKnownMap, level.mapname);
@@ -2806,7 +2817,20 @@ void MapChanged()
 	// We might have to lock Kyle, we will see what happen.
 	// tabLockedInNPC[0] = 0;
 	// currentTabPosition = 1;
+
+	// We want to ensure seed consistenty per level
+	// i.e. for a given seed a player will always get the same enemy spawn for that level
+	// regardless of any other uses of rand() in the game. Thus we should set the seed
+	// on level change, and use the level string as a part of the seed to get
+	// unique enemy sets per level
+	if (cg_setSeed.string != "") { //If we have no set seed just use random seed -- should we warn user?
+		int seed = 0;
+		AddCharArrayToInt(cg_setSeed.string, &seed);
+		AddCharArrayToInt(level.mapname, &seed);
+		srand(seed);
+	}
 }
+
 void CheckIfMapChanged()
 {
 	if (strcmp(lastKnownMap, level.mapname) != 0)

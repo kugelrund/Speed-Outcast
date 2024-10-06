@@ -390,6 +390,11 @@ vmCvar_t	cg_strafeHelperColorSpeedG;
 vmCvar_t	cg_strafeHelperColorSpeedB;
 vmCvar_t	cg_strafeHelperColorSpeedA;
 
+// Additions for Randomizer
+vmCvar_t	cg_drawSeed;
+vmCvar_t	cg_useSetSeed;
+vmCvar_t	cg_setSeed;
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -573,6 +578,11 @@ Ghoul2 Insert End
 	{ &cg_strafeHelperColorSpeedG, "cg_strafeHelperColorSpeedG", "1.0", CVAR_ARCHIVE },
 	{ &cg_strafeHelperColorSpeedB, "cg_strafeHelperColorSpeedB", "1.0", CVAR_ARCHIVE },
 	{ &cg_strafeHelperColorSpeedA, "cg_strafeHelperColorSpeedA", "0.9", CVAR_ARCHIVE },
+
+	// Additions for Randomizer
+	{ &cg_drawSeed, "cg_drawSeed", "0", CVAR_ARCHIVE },
+	{ &cg_useSetSeed, "cg_useSetSeed", "", CVAR_ARCHIVE },
+	{ &cg_setSeed, "cg_setSeed", "", CVAR_ARCHIVE }
 };
 
 int		cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -1962,6 +1972,12 @@ Ghoul2 Insert End
 	iCGResetCount = 0;
 
 	CG_RegisterCvars();
+
+	//Reinitialise randomizer seed value if we're not using setSeed
+	if (cg_useSetSeed.value != 1)
+	{
+		*cg_setSeed.string = time(NULL); //bit cheeky but we should be doing this before anything else can touch the value
+	}
 
 //moved from CG_GameStateReceived because it's loaded sooner now
 	CG_InitLocalEntities();

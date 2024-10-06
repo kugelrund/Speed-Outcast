@@ -2336,6 +2336,18 @@ static float CG_DrawSecrets( float y ) {
 	return y + BIGCHAR_HEIGHT + 10;
 }
 
+/*
+===============
+CG_DrawSeed
+===============
+*/
+static float CG_DrawSeed(float y) {
+	const char* seed_string = va("Seed: %s", cg_setSeed.string);
+	const int width = cgi_R_Font_StrLenPixels(seed_string, cgs.media.qhFontMedium, 1.0f);
+	cgi_R_Font_DrawString(635 - width, y + 2, seed_string, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f);
+	return y + BIGCHAR_HEIGHT + 10;
+}
+
 static float jumpHelperGetRangeExtendingLength(const int force_jump_level) {
 	// TODO: This actually depends on FPS (or rather frametime in pmove)...
 	extern float forceJumpHeight[];
@@ -2691,6 +2703,10 @@ static void CG_Draw2D( void )
 	if ( cg_drawOverbounceInfo.integer )
 	{
 		CG_DrawOverbounceInfo();
+	}
+	if ( cg_drawSeed.integer ) 
+	{
+		CG_DrawSeed(y);
 	}
 
 	// don't draw center string if scoreboard is up

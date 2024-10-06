@@ -693,6 +693,10 @@ extern	vmCvar_t		cg_strafeHelperColorSpeedG;
 extern	vmCvar_t		cg_strafeHelperColorSpeedB;
 extern	vmCvar_t		cg_strafeHelperColorSpeedA;
 
+//Additions for Randomizer
+extern vmCvar_t			cg_drawSeed;
+extern vmCvar_t			cg_setSeed;
+
 void CG_NewClientinfo( int clientNum );
 //
 // cg_main.c
