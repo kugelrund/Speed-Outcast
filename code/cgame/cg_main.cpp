@@ -24,6 +24,8 @@ extern void CG_RegisterNPCEffects( team_t team );
 extern qboolean G_ParseAnimFileSet( const char *filename, const char *animCFG, int *animFileIndex );
 extern void CG_DrawDataPadInventorySelect( void );
 
+using namespace std::chrono;
+
 void CG_Init( int serverCommandSequence );
 qboolean CG_ConsoleCommand( void );
 void CG_Shutdown( void );
@@ -1976,7 +1978,28 @@ Ghoul2 Insert End
 	//Reinitialise randomizer seed value if we're not using setSeed
 	if (cg_useSetSeed.value != 1)
 	{
-		*cg_setSeed.string = time(NULL); //bit cheeky but we should be doing this before anything else can touch the value
+		//Get System Epoch Time
+		auto duration = system_clock::now().time_since_epoch();
+
+		//Convert duration to milliseconds
+		long milliseconds
+			= chrono::duration_cast<chrono::milliseconds>(
+				duration)
+			.count();
+
+		//Hash the time to get a consistent length seed
+		hash<string> hasher;
+		string s = to_string(milliseconds);
+		size_t hash = hasher(s);
+
+		//Convert to string to make next conversion easier
+		string hashString = to_string(hash);
+
+		//Copy the value in hashString into cg_setSeed for use later
+		//I can't believe there's no better way to do this
+		for (int i = 0; i < 9; i++) {
+			cg_setSeed.string[i] = hashString.at(i);
+		}
 	}
 
 //moved from CG_GameStateReceived because it's loaded sooner now
