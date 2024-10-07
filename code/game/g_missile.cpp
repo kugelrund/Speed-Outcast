@@ -42,6 +42,21 @@ void G_MissileBounceEffect( gentity_t *ent, vec3_t org, vec3_t dir )
 		G_PlayEffect( "blaster/deflect", ent->currentOrigin, dir );
 #endif // _IMMERSION
 		break;
+		//Amber this should be a temp fix, we really need to figure out how to up GENTITYNUM_BITS value safely
+	case WP_REPEATER: //Reduce missile spam created by repeaters to reduce risk of going over entity limit
+		if (rand() % 2 == 0) {
+			gentity_t* tent = G_TempEntity(org, EV_GRENADE_BOUNCE);
+			VectorCopy(dir, tent->pos1);
+			tent->s.weapon = ent->s.weapon;
+#ifdef _IMMERSION
+			if (hitEntNum != -1)
+			{
+				tent->s.saberActive = 1;
+				tent->s.otherEntityNum = hitEntNum;
+			}
+		}
+		break;
+#endif // _IMMERSION
 	default:
 		{
 			gentity_t *tent = G_TempEntity( org, EV_GRENADE_BOUNCE );
