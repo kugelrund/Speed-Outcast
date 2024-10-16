@@ -103,7 +103,7 @@ static void IT_Name(const char **holdBuf)
 		return;
 	}
 
-
+	// Posto : hello, why not randomizing weapons and item drops ?
 	if (!Q_stricmp(tokenStr,"ITM_NONE"))	
 		itemNum = ITM_NONE;
 	else if (!Q_stricmp(tokenStr,"ITM_STUN_BATON_PICKUP"))	
@@ -206,7 +206,7 @@ static void IT_Name(const char **holdBuf)
 	{
 		itemNum = ITM_BATTERY_PICKUP;
 	}
-	// Posto : TODO
+	// Posto : hey, I was already here
 	else if (!Q_stricmp(tokenStr,"ITM_SEEKER_PICKUP"))	
 		itemNum = ITM_SEEKER_PICKUP;
 	else if (!Q_stricmp(tokenStr,"ITM_SHIELD_PICKUP"))	
@@ -684,12 +684,15 @@ static void IT_ParseParms(const char *buffer)
 
 }
 
-
-void IT_LoadItemParms (void)
+// Posto : wait what ? items.dat don't exist in the 'release' version of the game. How can it know which items are which then ?
+void IT_LoadItemParms (void) 
 {
 	char *buffer;
 	int len;
 
+	// This function is called at every map load, meaning we can shuffle the content using our seed !
+	// But ! I think we should keep items 'types' together (ammo roll for an other kind of ammo, weapon for a weapon etc...) IF it cause problem.
+	// If changing what kind of item it is doesn't provoke any kind of problem, I don't see why we shouldn't do a general shuffle
 	len = gi.FS_ReadFile("ext_data/items.dat",(void **) &buffer);
 
 	IT_ParseParms(buffer);

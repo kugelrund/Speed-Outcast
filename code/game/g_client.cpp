@@ -14,6 +14,9 @@ extern void G_CreateG2AttachedWeaponModel( gentity_t *ent, const char *weaponMod
 extern qboolean	CheatsOk( gentity_t *ent );
 extern vmCvar_t	cg_thirdPersonAlpha;
 
+// Posto / Randomizer : for the first weapon (It might roll a stun baton again, would be pretty funny)
+extern int GetRandomizedWeapon();
+
 // g_client.c -- client functions that don't happen every frame
 
 float DEFAULT_MINS_0 = -16;
@@ -1597,7 +1600,9 @@ qboolean ClientSpawn(gentity_t *ent, SavedGameJustLoaded_e eSavedGameJustLoaded 
 
 		// give default weapons
 		client->ps.stats[STAT_WEAPONS] = ( 1 << WP_NONE );
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_BRYAR_PISTOL );	//these are precached in g_items, ClearRegisteredItems()
+		// Posto : Hey, we can randomize our first weapon !
+		//client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_BRYAR_PISTOL );	//these are precached in g_items, ClearRegisteredItems()
+		client->ps.stats[STAT_WEAPONS] |= (1 << (weapon_t)(GetRandomizedWeapon()));
 		client->ps.inventory[INV_ELECTROBINOCULARS] = 1;
 
 		// always give the bryar pistol, but we have to give EITHER the saber or the stun baton..never both
@@ -1717,7 +1722,7 @@ qboolean ClientSpawn(gentity_t *ent, SavedGameJustLoaded_e eSavedGameJustLoaded 
 		ICARUS_FreeEnt( ent );	//FIXME: This shouldn't need to be done...?
 		ICARUS_InitEnt( ent );
 
-		if ( spawnPoint->spawnflags & 64 )
+		if ( spawnPoint->spawnflags & 64 ) // Posto : this is the case in yavin_temple
 		{//player starts with absolutely no weapons
 			ent->client->ps.stats[STAT_WEAPONS] = ( 1 << WP_NONE );
 			ent->client->ps.ammo[weaponData[WP_NONE].ammoIndex] = 32000;	// checkme	

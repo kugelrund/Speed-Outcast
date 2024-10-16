@@ -142,6 +142,13 @@ void WPN_AltChargeFrc(const char **holdBuf);
 void WPN_StopFrc(const char **holdBuf);
 void WPN_SelectFrc(const char **holdBuf);
 //#endif // _IMMERSION
+//#ifdef _RANDOMIZER
+// Posto : Get randomized weapons and ammo in the map
+int GetRandomizedAmmo();
+int GetRandomizedWeapon();
+//#endif _RANDOMIZER
+
+
 
 typedef struct 
 {
@@ -1322,6 +1329,8 @@ void WP_LoadWeaponParms (void)
 	char *buffer;
 	int len;
 
+	// Posto : this function is called at every map load, meaning we can shuffle the content using our seed !
+	// Also, we can reshuffle the content of wepaon/ammo rack on g_misc_model to have even more
 	len = gi.FS_ReadFile("ext_data/weapons.dat",(void **) &buffer);
 
 	// initialise the data area
@@ -1330,4 +1339,70 @@ void WP_LoadWeaponParms (void)
 	WP_ParseParms(buffer);
 
 	gi.FS_FreeFile( buffer );	//let go of the buffer
+}
+
+// Posto : Functions called when getting a new kind of ammo / weapon (exemple : g_misc_model for ammo racks)
+int GetRandomizedAmmo()
+{
+	// 8 kind of ammo, and we skip "none" and "force"
+	int rng = rand() % 8 + 2;
+	while (rng == 6) rng = rand() % 8 + 2; // In case we get a 6 (ammo_emplaced), reroll
+
+	switch (rng)
+	{
+	case 2:
+		return AMMO_BLASTER;
+	case 3:
+		return AMMO_POWERCELL;
+	case 4:
+		return AMMO_METAL_BOLTS;
+	case 5:
+		return AMMO_ROCKETS;
+	case 7:
+		return AMMO_THERMAL;
+	case 8:
+		return AMMO_TRIPMINE;
+	case 9:
+		return AMMO_DETPACK;
+	default: // Secours
+		return AMMO_BLASTER;
+	}
+}
+
+int GetRandomizedWeapon()
+{
+	// 13 kind of weapons, and we skip "none", and explosives maybe (?)
+	int rng = rand() % 13 + 1;
+
+	switch (rng)
+	{
+	case 1:
+		return WP_SABER;
+	case 2:
+		return WP_BRYAR_PISTOL;
+	case 3:
+		return WP_BLASTER;
+	case 4:
+		return WP_DISRUPTOR;
+	case 5:
+		return WP_BOWCASTER;
+	case 6:
+		return WP_REPEATER;
+	case 7:
+		return WP_DEMP2;
+	case 8:
+		return WP_FLECHETTE;
+	case 9:
+		return WP_ROCKET_LAUNCHER;
+	case 10:
+		return WP_THERMAL; // Something wrong is happening, they can't be 'used' when picked up
+	case 11:
+		return WP_TRIP_MINE; // Something wrong is happening, they can't be 'used' when picked up
+	case 12:
+		return WP_DET_PACK; // Something wrong is happening, they can't be 'used' when picked up
+	case 13:
+		return WP_STUN_BATON;
+	default: // Secours
+		return WP_BLASTER;
+	}
 }

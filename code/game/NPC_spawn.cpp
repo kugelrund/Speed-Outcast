@@ -2788,12 +2788,12 @@ void SP_NPC_Droid_Protocol( gentity_t *self)
 
 
 // The Posto is for faster search so I know what I edited
-const int tabSize = 50;
-short tabLockedInNPC[tabSize]={ -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-								-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-								-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-								-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-								-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, };
+const short tabSize = 20;
+short tabLockedInNPC[tabSize] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+								  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+								//-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+								//-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+								//-1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 short currentTabPosition = 0;
 char lastKnownMap[32] = "first_iteration";
 

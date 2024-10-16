@@ -8,6 +8,10 @@
 
 extern cvar_t *g_spskill;
 
+// Randomizer / Posto : funcitons
+extern int GetRandomizedWeapon();
+extern int GetRandomizedAmmo();
+
 //
 // Helper functions
 //
@@ -414,6 +418,8 @@ void SP_misc_model_gun_rack( gentity_t *ent )
 	{
 		for ( int i = 0; i < ct; i++ )
 		{
+			// Posto : I might be hated for this, but randomizing weapons here should be the best
+			itemList[i] = FindItemForWeapon((weapon_t)GetRandomizedWeapon());
 			GunRackAddItem( itemList[i], ent->s.origin, ent->s.angles, crandom() * 2, ( i - 1 ) * 9 + crandom() * 2, ofz[i] );
 		}
 	}
@@ -504,6 +510,7 @@ void SP_misc_model_ammo_rack( gentity_t *ent )
 	gi.linkentity( ent );
 }
 
+// Posto : let me edit a bit, just to test
 // AMMO RACK!!
 void spawn_rack_goods( gentity_t *ent )
 {
@@ -589,6 +596,8 @@ void spawn_rack_goods( gentity_t *ent )
 	{
 		for ( int i = 0; i < ct; i++ )
 		{
+			// Posto : I might be hated for this, but randomizing ammos here should be the best
+			itemList[i] = FindItemForAmmo((ammo_t)GetRandomizedAmmo());
 			GunRackAddItem( itemList[i], ent->s.origin, ent->s.angles, crandom() * 0.5f, (i-1)* 8, 7.0f );
 		}
 	}
@@ -627,6 +636,8 @@ void spawn_rack_goods( gentity_t *ent )
 			//	the gun so we don't put the pack on the same spot..so pick either the left or right side
 			pos = ( random() > .5 ) ? -1 : 1;
 
+			// Posto : Randomize the weapon here
+			it = FindItemForWeapon((weapon_t)GetRandomizedWeapon());
 			GunRackAddItem( it, ent->s.origin, ent->s.angles, crandom() * 2, ( random() * 6 + 4 ) * pos, v_off );
 		}
 	}
@@ -645,6 +656,7 @@ void spawn_rack_goods( gentity_t *ent )
 			pos *= -1;
 		}
 
+		// Posto : we should leave health as is, it would make the game too hard without any garanted health
 		GunRackAddItem( health, ent->s.origin, ent->s.angles, crandom() * 0.5f, ( random() * 4 + 4 ) * pos, 24 );
 	}
 
