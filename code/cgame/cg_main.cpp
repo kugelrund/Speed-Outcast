@@ -1997,7 +1997,7 @@ Ghoul2 Insert End
 
 		//Copy the value in hashString into cg_setSeed for use later
 		//I can't believe there's no better way to do this
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < hashString.size(); i++) {
 			cg_setSeed.string[i] = hashString.at(i);
 		}
 	}
