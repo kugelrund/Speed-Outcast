@@ -19,8 +19,12 @@ USER INTERFACE MAIN
 #include "ui_shared.h"
 
 #include "../qcommon/stv_version.h"
+#include <string>
+#include <chrono>
 
 #define LISTBUFSIZE 10240
+
+using namespace std::chrono;
 
 static struct 
 {
@@ -96,6 +100,8 @@ vmCvar_t	ui_menuFiles;
 vmCvar_t	ui_smallFont;
 vmCvar_t	ui_bigFont;
 vmCvar_t	ui_hudFiles;
+vmCvar_t	cg_setSeed;
+vmCvar_t	cg_useSetSeed;
 
 cvarTable_t		cvarTable[] = 
 {
@@ -456,6 +462,32 @@ static qboolean UI_DeferMenuScript ( const char **args )
 	return qfalse;
 }
 
+static void RegenerateSeed(void) {
+	//Reinitialise randomizer seed value if we're not using setSeed
+	if (cg_useSetSeed.value != 1)
+	{
+		//Get System Epoch Time
+		auto duration = system_clock::now().time_since_epoch();
+
+		//Convert duration to milliseconds
+		long milliseconds
+			= chrono::duration_cast<chrono::milliseconds>(
+				duration)
+			.count();
+
+		//Hash the time to get a consistent length seed
+		hash<string> hasher;
+		string s = to_string(milliseconds);
+		size_t hash = hasher(s);
+
+		//Convert to string
+		string hashString = to_string(hash);
+
+		//Update seed value
+		Cvar_Set("cg_setSeed",  hashString.c_str());
+	}
+}
+
 /*
 ===============
 UI_RunMenuScript
@@ -619,6 +651,7 @@ extern	void FS_Restart( void );
 		else if (Q_stricmp(name, "startgame") == 0) 
 		{
 			Menus_CloseAll();
+			RegenerateSeed();
 			if ( Cvar_VariableIntegerValue("com_demo") )
 			{
 #ifdef FINAL_BUILD
