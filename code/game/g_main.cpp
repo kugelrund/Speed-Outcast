@@ -15,6 +15,11 @@
 #include "objectives.h"
 #include "../cgame/cg_local.h"	// yeah I know this is naughty, but we're shipping soon...
 
+#include <string>
+#include <chrono>
+
+using namespace std::chrono;
+
 extern CNavigator		navigator;
 static int				navCalcPathTime = 0;
 int		eventClearTime = 0;
@@ -567,6 +572,33 @@ void G_InitCvars( void ) {
 	g_iscensored = gi.cvar( "ui_iscensored", "0", CVAR_ARCHIVE|CVAR_ROM|CVAR_INIT|CVAR_CHEAT|CVAR_NORESTART );
 }
 
+void RegenerateSeed(void) {
+	//Reinitialise randomizer seed value if we're not using setSeed
+	if (gi.Cvar_VariableIntegerValue("cg_useSetSeed") != 1)
+	{
+		//Get System Epoch Time
+		auto duration = system_clock::now().time_since_epoch();
+
+		//Convert duration to milliseconds
+		long milliseconds
+			= chrono::duration_cast<chrono::milliseconds>(
+				duration)
+			.count();
+
+		//Hash the time to get a consistent length seed
+		hash<string> hasher;
+		string s = to_string(milliseconds);
+		size_t hash = hasher(s);
+
+		//Convert to string
+		string hashString = to_string(hash);
+
+		//Update seed value
+		gi.cvar_set("cg_setSeed", hashString.c_str());
+		//Cvar_Set("cg_setSeed", hashString.c_str());
+	}
+}
+
 /*
 ============
 InitGame
@@ -587,6 +619,10 @@ void InitGame(  const char *mapname, const char *spawntarget, int checkSum, cons
 {
 	int		i;
 
+	//Reset randomiser seed on new load of kejim_post
+	if (!Q_stricmp(mapname, "kejim_post") && eSavedGameJustLoaded == eNO) {
+		RegenerateSeed();
+	}
 	giMapChecksum = checkSum;
 	g_eSavedGameJustLoaded = eSavedGameJustLoaded;
 	g_qbLoadTransition = qbLoadTransition;
