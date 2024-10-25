@@ -1371,13 +1371,13 @@ int GetRandomizedAmmo()
 
 int GetRandomizedWeapon()
 {
-	// 13 kind of weapons, and we skip "none", and explosives maybe (?)
-	int rng = rand() % 13 + 1;
+	// 13 kind of weapons, and we skip "none", the lightsaber, explosives and the stun baton
+	int rng = rand() % 8 + 2;
 
 	switch (rng)
 	{
-	case 1:
-		return WP_SABER;
+	case 1: 
+		return WP_SABER; // Impossible for now, it's rather buggy, let's just get it naturally at yavin_trial
 	case 2:
 		return WP_BRYAR_PISTOL;
 	case 3:
@@ -1395,11 +1395,11 @@ int GetRandomizedWeapon()
 	case 9:
 		return WP_ROCKET_LAUNCHER;
 	case 10:
-		return WP_THERMAL; // Something wrong is happening, they can't be 'used' when picked up
+		return WP_THERMAL; // Something wrong is happening, they have no ammo when picked up
 	case 11:
-		return WP_TRIP_MINE; // Something wrong is happening, they can't be 'used' when picked up
+		return WP_TRIP_MINE; // Something wrong is happening, they have no ammo when picked up
 	case 12:
-		return WP_DET_PACK; // Something wrong is happening, they can't be 'used' when picked up
+		return WP_DET_PACK; // Something wrong is happening, they have no ammo when picked up
 	case 13:
 		return WP_STUN_BATON;
 	default: // Secours

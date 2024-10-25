@@ -2788,12 +2788,12 @@ void SP_NPC_Droid_Protocol( gentity_t *self)
 
 
 // The Posto is for faster search so I know what I edited
-const short tabSize = 20;
+const short tabSize = 50;
 short tabLockedInNPC[tabSize] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+								  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+								  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+								  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 								  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
-								//-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-								//-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-								//-1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 short currentTabPosition = 0;
 char lastKnownMap[32] = "first_iteration";
 
@@ -2981,7 +2981,7 @@ void RandomizerDebugCommandCatcher(int page)
 	//gi.Printf(S_COLOR_GREEN"Page number received : %d\n",page);
 
 	// Just for information : the console is 30 lines long,
-	if (page <= 0 || page >= 5) // The help page, when we reach an undefined number.
+	if (page <= 0 || page >= 6) // The help page, when we reach an undefined number.
 	{
 		gi.Printf(S_COLOR_RED"Oops, it seems that you didn't provide a valid page number.\n");
 		gi.Printf(S_COLOR_RED"Welcome to the default page.\n");
@@ -2990,7 +2990,8 @@ void RandomizerDebugCommandCatcher(int page)
 		gi.Printf(S_COLOR_WHITE"Page 2 : Currently generated NPCs on this map (%s).\n",level.mapname);
 		gi.Printf(S_COLOR_WHITE"Page 3 : Rules for NPCs.\n");
 		gi.Printf(S_COLOR_WHITE"Page 4 : Rules for maps.\n");
-		gi.Printf(S_COLOR_WHITE"Page 5+ : Todo\n");
+		gi.Printf(S_COLOR_WHITE"Page 5 : Rules for weapons / ammo\n");
+		gi.Printf(S_COLOR_WHITE"Page 6 : Todo\n");
 		return; // So that we won't go to the switch bellow
 	}
 	switch (page)
@@ -3010,21 +3011,28 @@ void RandomizerDebugCommandCatcher(int page)
 				gi.Printf(S_COLOR_CYAN"NPC number %d is : %s.\n", i + 1, GetNPCNames(tabLockedInNPC[i]));
 			}
 		}
-		else gi.Printf(S_COLOR_CYAN"ALL NPC can spawn (except the ones banned do to them being unstable / broken).\n");
+		else gi.Printf(S_COLOR_CYAN"ALL NPC can spawn (except the ones banned due to them being unstable / broken / run-killers (Desann)).\n");
 		
 		break;
 	case 3: // Which NPC are forced no matter which map (Jan for exemple, not having her breaks the first map and yavin_swamp cutscene as far as I know). Update this if needed
-		gi.Printf(S_COLOR_MAGENTA"Some spawn have been forced. It might not be necessarry, but for now thta's how it is.\n");
+		gi.Printf(S_COLOR_MAGENTA"Some spawn have been forced. It might not be necessarry, but for now that's how it is.\n");
 		gi.Printf(S_COLOR_MAGENTA"Here is the list of characters that will ALWAYS spawn as themselves, no matter which map you are on :\n");
 		gi.Printf(S_COLOR_CYAN"Kyle, Jan, Luke, Lando, Tavion, Desann, MonMothma, Reelo, Galak, Bartender, Prisoner, Morgan, Ugnaught, MouseDroid, ATST, Mark1, Mark2 (Chicken robot), R2D2, R5D2 and SeekerDrones.\n");
 		gi.Printf(S_COLOR_MAGENTA"Here is the list of characters that will NEVER randomly spawn, no matter which map you are on :\n");
-		gi.Printf(S_COLOR_CYAN"");
+		gi.Printf(S_COLOR_CYAN"Tavion, Desann, ATST, Chicken Robot (Mark2) and bugged monsters (Glider...)\n");
 		break;
 	case 4: // Map specific locked NPCs (thinking about the officer in assembly to open the first door)(maybe other NPCs can do it, but idk). Update this if needed.
 		gi.Printf(S_COLOR_MAGENTA"Some spawn on specific maps are forced, so that we don't softlock the game.\n");
 		gi.Printf(S_COLOR_MAGENTA"Unfortunatly, it means that every iteration of the same NPC on this map will spawn normally.\n");
 		gi.Printf(S_COLOR_MAGENTA"Here is the list of maps that have specific NPC locked :\n");
 		gi.Printf(S_COLOR_CYAN"Todo.\n");
+		break;
+	case 5: //
+		gi.Printf(S_COLOR_MAGENTA"Here are the general rules for how weapons will work :\n");
+		gi.Printf(S_COLOR_CYAN"Weapons are replaced by other weapons (a E-11 blaster can become a bowcaster).\n");
+		gi.Printf(S_COLOR_CYAN"Ammo are replaced with another king of ammo. Explosives are considered ammo, so you can find them here and not in weapons slots.\n");
+		gi.Printf(S_COLOR_CYAN"Items on the ground (like the bowcaster on artus_mines or bactas in general) remain unchanged.\n");
+		gi.Printf(S_COLOR_CYAN"Health pack on weapon/ammo rack are constants too.\n");
 		break;
 	default:
 		return;
@@ -3051,7 +3059,6 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 	}
 
 	// Let's suppose we find a way to have any kind of NPC, we can authorize anything in our big array, so that we don't have to change "much" of the code.
-	
 	if (tabSize == 50)
 	{
 		for (int i = 0; i < tabSize; i++) tabLockedInNPC[i] = i;
@@ -3086,9 +3093,10 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		SP_NPC_MonMothma(self);
 		PopulateNPCTab(rng);
 		break;
-	case 5:
-		SP_NPC_Tavion(self);
-		PopulateNPCTab(rng);
+	case 5: // Desann and Tavion are too hard to handle, I will keep them out for now
+		//SP_NPC_Tavion(self);
+		//PopulateNPCTab(rng);
+		SP_NPC_Spawn_Random(self);
 		break;
 	case 6: // Il a une IA au moins ?
 		SP_NPC_Reelo(self);
@@ -3098,9 +3106,10 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		SP_NPC_Galak(self);
 		PopulateNPCTab(rng);
 		break;
-	case 8: 
-		SP_NPC_Desann(self);
-		PopulateNPCTab(rng);
+	case 8: // Desann and Tavion are too hard to handle, I will keep them out for now
+		//SP_NPC_Desann(self);
+		//PopulateNPCTab(rng);
+		SP_NPC_Spawn_Random(self);
 		break;
 	case 9: // Il a une IA au moins ?
 		SP_NPC_Bartender(self);
@@ -3270,9 +3279,10 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		SP_NPC_Droid_R2D2(self);
 		PopulateNPCTab(rng);
 		break;
-	case 48:
-		SP_NPC_Droid_R5D2(self);
-		PopulateNPCTab(rng);
+	case 48: // Spawning this droid on kejim_base is making the game crash ????
+		//SP_NPC_Droid_R5D2(self);
+		//PopulateNPCTab(rng);
+		SP_NPC_Spawn_Random(self);
 		break;
 	case 49:
 		SP_NPC_Droid_Protocol(self);
@@ -3284,6 +3294,62 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		break;
 	}
 }
+
+void SpawnValidKeyholder(gentity_t* self) // Presumably an humanoid, since droids crashes the game.
+{
+	// X being the number of valid NPC that can hold a key
+	int rng = rand() % 5;
+
+	// In the meantime, here is Kyle
+	//SP_NPC_Kyle(self);
+
+	switch (rng)
+	{
+	case 0:
+		break;
+	default:
+		break;
+	}
+}
+
+bool CheckForceSpawn(gentity_t* self, char whatWeCompare[], char whoToSpawn[]) // Used in maps when we will spawn something
+{
+	// It's either NPC_targetname or targetname, check for both and return when done.
+	if (self->NPC_targetname) // Check if NULL
+	{
+		if (strncmp(self->NPC_targetname, whatWeCompare, strlen(self->NPC_targetname)) == 0) // Got it, we have to spawn this entity
+		{
+			// Temporary : just spawn the 'normal' NPC
+			if (strcmp(whoToSpawn, "Rebel") == 0) SP_NPC_Rebel(self);
+			if (strcmp(whoToSpawn, "Imperial") == 0) SP_NPC_Imperial(self);
+			if (strcmp(whoToSpawn, "Rodian") == 0) SP_NPC_Rodian(self);
+			if (strcmp(whoToSpawn, "Stormtrooper") == 0) SP_NPC_Stormtrooper(self);
+			if (strcmp(whoToSpawn, "Weequay") == 0) SP_NPC_Weequay(self);
+			if (strcmp(whoToSpawn, "Gran") == 0) SP_NPC_Gran(self);
+			if (strcmp(whoToSpawn, "Reborn") == 0) SP_NPC_Reborn(self);
+
+			return true; // True, we forcefully spawned something
+		}
+	}
+	if (self->targetname) // Check if NULL
+	{
+		if (strncmp(self->targetname, whatWeCompare, strlen(self->targetname)) == 0) // Got it, we have to spawn this entity
+		{
+			// Temporary : just spawn the 'normal' NPC
+			if (strcmp(whoToSpawn, "Rebel") == 0) SP_NPC_Rebel(self);
+			if (strcmp(whoToSpawn, "Imperial") == 0) SP_NPC_Imperial(self);
+			if (strcmp(whoToSpawn, "Rodian") == 0) SP_NPC_Rodian(self);
+			if (strcmp(whoToSpawn, "Stormtrooper") == 0) SP_NPC_Stormtrooper(self);
+			if (strcmp(whoToSpawn, "Weequay") == 0) SP_NPC_Weequay(self);
+			if (strcmp(whoToSpawn, "Gran") == 0) SP_NPC_Gran(self);
+			if (strcmp(whoToSpawn, "Reborn") == 0) SP_NPC_Reborn(self);
+
+			return true; // True, we forcefully spawned something
+		}
+	}
+	return false; // False, it's not a forced spawn
+}
+
 void SP_NPC_Kyle_Random(gentity_t* self) // Kyle should always spawn as Kyle
 {
 	CheckIfMapChanged();
@@ -3297,11 +3363,6 @@ void SP_NPC_Lando_Random(gentity_t* self) // Lando should always spawn as Lando
 void SP_NPC_Jan_Random(gentity_t* self) // Jan should always spawn as Jan
 {
 	CheckIfMapChanged();
-	//if (lastKnownMap == "kejim_post") // That's not C
-	if (strcmp(lastKnownMap,"kejim_post") == 0 )
-	{
-		int proofOfConcept = 777;
-	}
 	SP_NPC_Jan(self);
 }
 void SP_NPC_Luke_Random(gentity_t* self) // Luke should always spawn as Luke
@@ -3357,11 +3418,24 @@ void SP_NPC_Prisoner_Random(gentity_t* self) // Prisoners should spawn as themse
 void SP_NPC_Rebel_Random(gentity_t* self)
 {
 	CheckIfMapChanged();
+	if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The rebel being shot on has to be constant
+	{
+		if (CheckForceSpawn(self, "rebel_target", "Rebel")) return;
+	}
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Stormtrooper_Random(gentity_t* self)
 {
 	CheckIfMapChanged();
+	if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The stormtooper shooting the rebel has to be constant
+	{
+		if (CheckForceSpawn(self, "shooter", "Stormtrooper")) return;
+	}
+	if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
+	{
+		SP_NPC_Stormtrooper(self);
+		return;
+	}
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_StormtrooperOfficer_Random(gentity_t* self)
@@ -3379,19 +3453,41 @@ void SP_NPC_Ugnaught_Random(gentity_t* self) // Ugnaught should spawn as Ugnaugh
 	CheckIfMapChanged();
 	SP_NPC_Ugnaught(self);
 }
-void SP_NPC_Gran_Random(gentity_t* self) // Who is that ?
+void SP_NPC_Gran_Random(gentity_t* self) // Who is that ? It's the TD guys
 {
 	CheckIfMapChanged();
+	if (strcmp(lastKnownMap, "bespin_undercity") == 0) // Undercity, the two TS thrower at the end of the mission
+	{
+		CheckForceSpawn(self, "t198", "Gran");
+		return;
+	}
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Rodian_Random(gentity_t* self)
 {
 	CheckIfMapChanged();
+	if (strcmp(lastKnownMap, "ns_streets") == 0)
+	{
+		if (CheckForceSpawn(self, "bouncer_main1", "Rodian")) return; // The two Rodians that will get our weapons
+		if (CheckForceSpawn(self, "bouncer_main2", "Rodian")) return; // The two Rodians that will get our weapons
+	}
+	if (strcmp(lastKnownMap, "ns_starpad") == 0)
+	{
+		if (CheckForceSpawn(self, "reelo_thug", "Rodian")) return; // The guys with Reelo at the end of the mission
+		if (CheckForceSpawn(self, "end_thug", "Rodian")) return; // The guys with Reelo at the end of the mission
+		if (CheckForceSpawn(self, "bea", "Weequay")) return; // The guys with Reelo at the end of the mission
+	}
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Weequay_Random(gentity_t* self)
 {
 	CheckIfMapChanged();
+	if (strcmp(lastKnownMap, "ns_starpad") == 0)
+	{
+		if (CheckForceSpawn(self, "reelo_thug", "Weequay")) return; // The guys with Reelo at the end of the mission
+		if (CheckForceSpawn(self, "end_thug", "Weequay")) return; // The guys with Reelo at the end of the mission
+		if (CheckForceSpawn(self, "bea", "Weequay")) return; // The guys with Reelo at the end of the mission
+	}
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Trandoshan_Random(gentity_t* self)
@@ -3407,11 +3503,93 @@ void SP_NPC_SwampTrooper_Random(gentity_t* self)
 void SP_NPC_Imperial_Random(gentity_t* self)
 {
 	CheckIfMapChanged();
+	// Won't make a special function, he is an unique case
+	if (strcmp(lastKnownMap, "cairn_assembly") == 0) // The officer we have to mindtrick has to be constant
+	{
+		if (self->behaviorSet[0]) // Check for NULL
+		{
+			if (strcmp(self->behaviorSet[0], "cairn_assembly/silent_stand") == 0)
+			{
+				SP_NPC_Imperial(self);
+				return;
+			}
+		}
+	}
+	if (strcmp(lastKnownMap, "kejim_base") == 0) 
+	{
+		if (CheckForceSpawn(self, "explosion_victims", "Imperial")) return; // The dead Imperial holding a security key
+		if (CheckForceSpawn(self, "ambush_io", "Imperial")) return; // The first Imperial
+		if (self->behaviorSet[0] && (strcmp(self->behaviorSet[0], "common/crouchshoot") == 0))
+		{
+			// ONLY the Imperial hiding in the corner, not the one standing (they both have the same target name)
+			CheckForceSpawn(self, "corridor_enemies", "Imperial");
+			return; 
+		}
+	}
+	if (strcmp(lastKnownMap, "artus_detention") == 0)
+	{
+		if (CheckForceSpawn(self, "warden", "Imperial")) return; // The warden that we have hostage
+	}
+	if (strcmp(lastKnownMap, "doom_detention") == 0)
+	{
+		if (CheckForceSpawn(self, "jailer", "Imperial")) return; // The jailer of Jan
+		if (self->message && strcmp(self->message, "ele_key2") == 0) // The Imperial holding a key in the big room
+		{
+			CheckForceSpawn(self, "squad7", "Imperial");
+			return;
+		}
+	}
+	if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
+	{
+		SP_NPC_Imperial(self);
+		return;
+	}
+	if (strcmp(lastKnownMap, "artus_topside") == 0)
+	{
+		if (self->message && strcmp(self->message, "shield_key") == 0) // The Imperial holding a key in the ATST room
+		{
+			// This guy doesn't have a target, so we just spawn him
+			SP_NPC_Imperial(self);
+			return;
+		}
+	}
+	if (strcmp(lastKnownMap, "bespin_streets") == 0)
+	{
+		if (self->message && strcmp(self->message, "exit_key") == 0) // The Imperial holding a key at the end of the level
+		{
+			// This guy doesn't have a target, so we just spawn him
+			SP_NPC_Imperial(self);
+			return;
+		}
+	}
+	if (strcmp(lastKnownMap, "bespin_platform") == 0)
+	{
+		if (self->message && strcmp(self->message, "control_room") == 0) // The Imperial holding a key at the end of the level
+		{
+			// This guy doesn't have a target, so we just spawn him
+			SP_NPC_Imperial(self);
+			return;
+		}
+	}
+	if (strcmp(lastKnownMap, "doom_comm") == 0)
+	{
+		if (self->message && strcmp(self->message, "hey_presto") == 0) // The Imperial holding a key to access the 'call room'
+		{
+			// This guy doesn't have a target, so we just spawn him
+			SP_NPC_Imperial(self);
+			return;
+		}
+	}
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_ImpWorker_Random(gentity_t* self)
 {
 	CheckIfMapChanged();
+	if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
+	{
+		SP_NPC_ImpWorker(self);
+		return;
+	}
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_BespinCop_Random(gentity_t* self)
@@ -3422,11 +3600,27 @@ void SP_NPC_BespinCop_Random(gentity_t* self)
 void SP_NPC_Reborn_Random(gentity_t* self)
 {
 	CheckIfMapChanged();
+	if (strcmp(lastKnownMap, "bespin_undercity") == 0) // Undercity, the two reborn at the end of the mission
+	{
+		CheckForceSpawn(self, "t179", "Reborn");
+		CheckForceSpawn(self, "t199", "Reborn");
+		return;
+	}
+	if (strcmp(lastKnownMap, "cairn_assembly") == 0) // The two reborn we have to kill in oprder to spawn the ATST at the end
+	{
+		CheckForceSpawn(self, "squad18", "Reborn");
+		return;
+	}
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_ShadowTrooper_Random(gentity_t* self)
 {
 	CheckIfMapChanged();
+	if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, too many undefined behaviours
+	{
+		SP_NPC_ShadowTrooper(self);
+		return;
+	}
 	SP_NPC_Spawn_Random(self);
 }
 void SP_NPC_Monster_Murjj_Random(gentity_t* self) // Who is that ?
