@@ -540,7 +540,7 @@ void NPC_BSFollowLeader (void)
 		return;
 	}
 
-	if ( !NPC->enemy  )
+	if ( !NPC->enemy && !NPCInfo->scriptFlags&SVF_IGNORE_ENEMIES) //Only look for an enemy if ignore enemies is not set
 	{//no enemy, find one
 		NPC_CheckEnemy( NPCInfo->confusionTime<level.time, qfalse );//don't find new enemy if this is tempbehav
 		if ( NPC->enemy )
@@ -588,7 +588,7 @@ void NPC_BSFollowLeader (void)
 			}
 		}
 	}
-	else 
+	else if (!NPCInfo->scriptFlags & SVF_IGNORE_ENEMIES)
 	{
 		if ( NPC->enemy->health <= 0 || (NPC->enemy->flags&FL_NOTARGET) )
 		{
