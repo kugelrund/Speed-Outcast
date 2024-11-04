@@ -777,6 +777,7 @@ free fall from their spawn points
 #ifndef FINAL_BUILD
 extern int delayedShutDown;
 #endif
+// Posto / Randomizer : might want to check when this is called, to randomize even items on the ground (shield and bacta are going here)
 void FinishSpawningItem( gentity_t *ent ) {
 	trace_t		tr;
 	vec3_t		dest;

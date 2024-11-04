@@ -16,6 +16,7 @@ extern vmCvar_t	cg_thirdPersonAlpha;
 
 // Posto / Randomizer : for the first weapon (It might roll a stun baton again, would be pretty funny)
 extern int GetRandomizedWeapon();
+extern vmCvar_t	cg_enableRandomizer;
 
 // g_client.c -- client functions that don't happen every frame
 
@@ -1522,7 +1523,10 @@ qboolean ClientSpawn(gentity_t *ent, SavedGameJustLoaded_e eSavedGameJustLoaded 
 		else
 		{
 			G_LoadAnimFileSet( ent, "kyle" );
+			//G_LoadAnimFileSet(ent, "jan");
+			// Posto : maybe it's here that we can 'randomize' how we look like ? Not being Kyle could be funny
 			G_SetSkin( ent, "kyle", NULL );
+			//G_SetSkin(ent, "jan", NULL);
 		}
 	}
 	else
@@ -1601,8 +1605,14 @@ qboolean ClientSpawn(gentity_t *ent, SavedGameJustLoaded_e eSavedGameJustLoaded 
 		// give default weapons
 		client->ps.stats[STAT_WEAPONS] = ( 1 << WP_NONE );
 		// Posto : Hey, we can randomize our first weapon !
-		//client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_BRYAR_PISTOL );	//these are precached in g_items, ClearRegisteredItems()
-		client->ps.stats[STAT_WEAPONS] |= (1 << (weapon_t)(GetRandomizedWeapon()));
+		if (cg_enableRandomizer.integer)
+		{
+			client->ps.stats[STAT_WEAPONS] |= (1 << (weapon_t)(GetRandomizedWeapon()));
+		}
+		else
+		{
+			client->ps.stats[STAT_WEAPONS] |= (1 << WP_BRYAR_PISTOL);	//these are precached in g_items, ClearRegisteredItems()
+		}
 		client->ps.inventory[INV_ELECTROBINOCULARS] = 1;
 
 		// always give the bryar pistol, but we have to give EITHER the saber or the stun baton..never both
@@ -1650,6 +1660,7 @@ qboolean ClientSpawn(gentity_t *ent, SavedGameJustLoaded_e eSavedGameJustLoaded 
 			G_KillBox( ent );
 			gi.linkentity (ent);
 			// force the base weapon up
+			// Posto : here's why we are loading kejim_base with the Bryal Pistol, might want to work on that
 			client->ps.weapon = WP_BRYAR_PISTOL;
 			client->ps.weaponstate = WEAPON_READY;
 		}
@@ -1683,7 +1694,9 @@ qboolean ClientSpawn(gentity_t *ent, SavedGameJustLoaded_e eSavedGameJustLoaded 
 		if (eSavedGameJustLoaded == eNO)
 		{
 			ent->weaponModel = -1;
+			// Posto : maybe it's here that we can 'randomize' how we look like ? Not being Kyle could be funny
 			G_SetG2PlayerModel( ent, "kyle", NULL, NULL, NULL );
+			//G_SetG2PlayerModel(ent, "jan", NULL, NULL, NULL);
 		}
 		else
 		{
@@ -1695,7 +1708,10 @@ qboolean ClientSpawn(gentity_t *ent, SavedGameJustLoaded_e eSavedGameJustLoaded 
 			else
 			{
 				G_LoadAnimFileSet( ent, "kyle" );
+				//G_LoadAnimFileSet(ent, "jan");
+				// Posto : maybe it's here that we can 'randomize' how we look like ? Not being Kyle could be funny
 				G_SetSkin( ent, "kyle", NULL );
+				//G_SetSkin(ent, "jan", NULL);
 			}
 		}
 		/*

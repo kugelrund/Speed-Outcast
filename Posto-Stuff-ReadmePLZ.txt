@@ -45,21 +45,17 @@ Here is what I could grab as the max number of different NPC on a map in Vanilla
 
 
 Needed NPC per map :
-- None (but need confirmation): kejim_post, kejim_base, artus_mine, yavin_trial, cairn_bay, cairn_reactor, doom_comm, doom_shield, yavin_swamp, yavin_canyon, 
-- artus_detention : the officer with the loooong sequence
-- artus_topside : the prisoners, Desann spawn naturally
-- valley : maybe ?????
-- yavin_temple : maybe Luke or C3P0 ????? need to confirm
-- ns_street : Bartender, but it's already forced. Also the entity that takes away the briar blaster need to be 'humanoid' or the game will crash, need to check that.
+- None (but need confirmation): kejim_post, artus_mine, yavin_trial, cairn_bay, cairn_reactor, doom_comm, doom_shield, yavin_swamp, yavin_canyon, 
+- kejim_base : the corpse that hold the security key to open the mouse droid pad
+- artus_detention : the officer/guard with the long sequence
+- ns_street : The entity that takes away the briar blaster need to be 'humanoid' / able to hold the blaster. So locking the rodians it is.
 - ns_hideout : Lando and Reelo, but both are already forced
-- ns_starpas : Lando and maybe Reelo
-- bespin_undercity : the guy who opens the door, and R5D2 are forced (need to confirm)
-- bespin_streets : R5D2 already forced
-- bespin_platform : Tavion is forced
-- cairn_assembly : The officer that open the door, maybe something else
-- cairn_dock1 : maybe forcing everything here, because random NPC behavior are strange, also Luke and Desann
-- doom_detention : the officer that open the door and Jan
-- yavin_courtyard : maybe locking everything here (the trooper shoioting the rebel, the jedis are maybe necessary to unlock the scene)
+- ns_starpas : The two waves of ennemies, it seems that if a neutral spawn, it's kill isn't counted (not sure)
+- bespin_undercity : the entity (don't know his name) that opens the door when using force mind trick
+- cairn_assembly : The officer that open the door with mind trick
+- cairn_dock1 : maybe forcing everything here, because random NPC behavior are strange (they start focusing you). This one I can just filter the mapo entirely
+- doom_detention : the officer that open the door to Jan cell
+- yavin_courtyard : the trooper shooting the rebel and the rebel being shot
 
 
 CURRENT SITUATION : I locked the number of max unique NPC to 10 for now.

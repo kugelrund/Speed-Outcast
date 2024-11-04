@@ -183,10 +183,14 @@ FindItemForWeapon
 ===============
 */
 gitem_t	*FindItemForWeapon( weapon_t weapon ) {
+	// Posto : this is called during map load, to know what kind of weapon is on the ground (ex : cairn_dock1). It's in this .cpp that I have to randomize things ?????!!!!!
+	
 	int		i;
 
 	for ( i = 1 ; i < bg_numItems ; i++ ) {
 		if ( bg_itemlist[i].giType == IT_WEAPON && bg_itemlist[i].giTag == weapon ) {
+			//int rng = rand() % 5 + 2;
+			//return &bg_itemlist[rng];
 			return &bg_itemlist[i];
 		}
 	}
@@ -198,12 +202,16 @@ gitem_t	*FindItemForWeapon( weapon_t weapon ) {
 //----------------------------------------------
 gitem_t	*FindItemForInventory( int inv ) 
 {
+	// Posto : when called in kejim_post, only bacta and binocular is returned; while on cairndock_1, a lot of things is returned (sentry, seeker).
+	// It MUST be here that I randomize things, but how ?
 	int		i;
 	gitem_t	*it;
 
 	// Now just check for any other kind of item.
 	for ( i = 1 ; i < bg_numItems ; i++ ) 
 	{
+		//int rng = i + rand() % 2;
+		//it = &bg_itemlist[rng];
 		it = &bg_itemlist[i];
 
 		if ( it->giType == IT_HOLDABLE )
@@ -233,6 +241,8 @@ gitem_t	*FindItemForAmmo( ammo_t ammo )
 	{
 		if ( bg_itemlist[i].giType == IT_AMMO && bg_itemlist[i].giTag == ammo ) 
 		{
+			//int rng = rand() % 4 + 1;
+			//return &bg_itemlist[rng];
 			return &bg_itemlist[i];
 		}
 	}
@@ -251,8 +261,12 @@ gitem_t	*FindItem( const char *className ) {
 	int		i;
 
 	for ( i = 1 ; i < bg_numItems ; i++ ) {
-		if ( !Q_stricmp( bg_itemlist[i].classname, className ) )
+		if (!Q_stricmp(bg_itemlist[i].classname, className))
+		{
+			//int rng = rand() % 4 + 1;
+			//return &bg_itemlist[rng];
 			return &bg_itemlist[i];
+		}
 	}
 
 	return NULL;

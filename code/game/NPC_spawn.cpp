@@ -59,6 +59,8 @@ extern void NPC_GalakMech_Init( gentity_t *ent );
 extern void NPC_Protocol_Precache( void );
 extern int WP_SetSaberModel( gclient_t *client, class_t npcClass );
 
+// Randomizer
+extern	vmCvar_t		cg_enableRandomizer;
 extern	vmCvar_t		cg_useSetSeed;
 extern	vmCvar_t		cg_setSeed;
 
@@ -2786,8 +2788,8 @@ void SP_NPC_Droid_Protocol( gentity_t *self)
 	NPC_Protocol_Precache();
 }
 
-
-// The Posto is for faster search so I know what I edited
+// Randomizer
+// The 'Posto' is for faster search so I know what I edited
 const short tabSize = 50;
 short tabLockedInNPC[tabSize] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 								  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -2981,6 +2983,7 @@ void RandomizerDebugCommandCatcher(int page)
 	//gi.Printf(S_COLOR_GREEN"Page number received : %d\n",page);
 
 	// Just for information : the console is 30 lines long,
+	// Even if the Randomizer is disabled, randomizer_debug (maybe renamed to randomizer_info) will still print this page.
 	if (page <= 0 || page >= 6) // The help page, when we reach an undefined number.
 	{
 		gi.Printf(S_COLOR_RED"Oops, it seems that you didn't provide a valid page number.\n");
@@ -3350,391 +3353,589 @@ bool CheckForceSpawn(gentity_t* self, char whatWeCompare[], char whoToSpawn[]) /
 	return false; // False, it's not a forced spawn
 }
 
+// If the Randomizer is disabled, just a bit of process time is added at every check, but at least it should be comptable with the standard SpeedOutcast
 void SP_NPC_Kyle_Random(gentity_t* self) // Kyle should always spawn as Kyle
 {
-	CheckIfMapChanged();
-	SP_NPC_Kyle(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Kyle(self);
+	}
+	else SP_NPC_Kyle(self);
 }
 void SP_NPC_Lando_Random(gentity_t* self) // Lando should always spawn as Lando
 {
-	CheckIfMapChanged();
-	SP_NPC_Lando(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Lando(self);
+	}
+	else SP_NPC_Lando(self);
 }
 void SP_NPC_Jan_Random(gentity_t* self) // Jan should always spawn as Jan
 {
-	CheckIfMapChanged();
-	SP_NPC_Jan(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Jan(self);
+	}
+	else SP_NPC_Jan(self);
 }
 void SP_NPC_Luke_Random(gentity_t* self) // Luke should always spawn as Luke
 {
-	CheckIfMapChanged();
-	SP_NPC_Luke(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Luke(self);
+	}
+	else SP_NPC_Luke(self);
 }
 void SP_NPC_MonMothma_Random(gentity_t* self) // MonMothma should always spawn as MonMothma
 {
-	CheckIfMapChanged();
-	SP_NPC_MonMothma(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_MonMothma(self);
+	}
+	else SP_NPC_MonMothma(self);
 }
 void SP_NPC_Tavion_Random(gentity_t* self) // Tavion should always spawn as Tavion
 {
-	CheckIfMapChanged();
-	SP_NPC_Tavion(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Tavion(self);
+	}
+	else SP_NPC_Tavion(self);
 }
 void SP_NPC_Reelo_Random(gentity_t* self) // Reelo should always spawn as Reelo
 {
-	CheckIfMapChanged();
-	SP_NPC_Reelo(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Reelo(self);
+	}
+	else SP_NPC_Reelo(self);
 }
 void SP_NPC_Galak_Random(gentity_t* self) // Galak should always spawn as Galak
 {
-	CheckIfMapChanged();
-	SP_NPC_Galak(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Galak(self);
+	}
+	else SP_NPC_Galak(self);
 }
 void SP_NPC_Desann_Random(gentity_t* self) // Desann should always spawn as Desann
 {
-	CheckIfMapChanged();
-	SP_NPC_Desann(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Desann(self);
+	}
+	else SP_NPC_Desann(self);
 }
 void SP_NPC_Bartender_Random(gentity_t* self) // Bartender should always spawn as Bartender
 {
-	CheckIfMapChanged();
-	SP_NPC_Bartender(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Bartender(self);
+	}
+	else SP_NPC_Bartender(self);
 }
 void SP_NPC_MorganKatarn_Random(gentity_t* self) // Morgarn should always spawn as Morgarn
 {
-	CheckIfMapChanged();
-	SP_NPC_MorganKatarn(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_MorganKatarn(self);
+	}
+	else SP_NPC_MorganKatarn(self);
 }
 void SP_NPC_Jedi_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Jedi(self);
 }
 void SP_NPC_Prisoner_Random(gentity_t* self) // Prisoners should spawn as themselves
 {
-	CheckIfMapChanged();
-	SP_NPC_Prisoner(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Prisoner(self);
+	}
+	else SP_NPC_Prisoner(self);
 }
 void SP_NPC_Rebel_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The rebel being shot on has to be constant
+	if (cg_enableRandomizer.integer)
 	{
-		if (CheckForceSpawn(self, "rebel_target", "Rebel")) return;
+		CheckIfMapChanged();
+		if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The rebel being shot on has to be constant
+		{
+			if (CheckForceSpawn(self, "rebel_target", "Rebel")) return;
+		}
+		SP_NPC_Spawn_Random(self);
 	}
-	SP_NPC_Spawn_Random(self);
+	else SP_NPC_Rebel(self);
 }
 void SP_NPC_Stormtrooper_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The stormtooper shooting the rebel has to be constant
+	if (cg_enableRandomizer.integer)
 	{
-		if (CheckForceSpawn(self, "shooter", "Stormtrooper")) return;
+		CheckIfMapChanged();
+		if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The stormtooper shooting the rebel has to be constant
+		{
+			if (CheckForceSpawn(self, "shooter", "Stormtrooper")) return;
+		}
+		if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
+		{
+			SP_NPC_Stormtrooper(self);
+			return;
+		}
+		SP_NPC_Spawn_Random(self);
 	}
-	if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
-	{
-		SP_NPC_Stormtrooper(self);
-		return;
-	}
-	SP_NPC_Spawn_Random(self);
+	else SP_NPC_Stormtrooper(self);
 }
 void SP_NPC_StormtrooperOfficer_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_StormtrooperOfficer(self);
 }
 void SP_NPC_Tie_Pilot_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Tie_Pilot(self);
 }
 void SP_NPC_Ugnaught_Random(gentity_t* self) // Ugnaught should spawn as Ugnaught
 {
-	CheckIfMapChanged();
-	SP_NPC_Ugnaught(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Ugnaught(self);
+	}
+	else SP_NPC_Ugnaught(self);
 }
 void SP_NPC_Gran_Random(gentity_t* self) // Who is that ? It's the TD guys
 {
-	CheckIfMapChanged();
-	if (strcmp(lastKnownMap, "bespin_undercity") == 0) // Undercity, the two TS thrower at the end of the mission
+	if (cg_enableRandomizer.integer)
 	{
-		CheckForceSpawn(self, "t198", "Gran");
-		return;
+		CheckIfMapChanged();
+		if (strcmp(lastKnownMap, "bespin_undercity") == 0) // Undercity, the two TS thrower at the end of the mission
+		{
+			CheckForceSpawn(self, "t198", "Gran");
+			return;
+		}
+		SP_NPC_Spawn_Random(self);
 	}
-	SP_NPC_Spawn_Random(self);
+	else SP_NPC_Gran(self);
 }
 void SP_NPC_Rodian_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	if (strcmp(lastKnownMap, "ns_streets") == 0)
+	if (cg_enableRandomizer.integer)
 	{
-		if (CheckForceSpawn(self, "bouncer_main1", "Rodian")) return; // The two Rodians that will get our weapons
-		if (CheckForceSpawn(self, "bouncer_main2", "Rodian")) return; // The two Rodians that will get our weapons
+		CheckIfMapChanged();
+		if (strcmp(lastKnownMap, "ns_streets") == 0)
+		{
+			if (CheckForceSpawn(self, "bouncer_main1", "Rodian")) return; // The two Rodians that will get our weapons
+			if (CheckForceSpawn(self, "bouncer_main2", "Rodian")) return; // The two Rodians that will get our weapons
+		}
+		if (strcmp(lastKnownMap, "ns_starpad") == 0)
+		{
+			if (CheckForceSpawn(self, "reelo_thug", "Rodian")) return; // The guys with Reelo at the end of the mission
+			if (CheckForceSpawn(self, "end_thug", "Rodian")) return; // The guys with Reelo at the end of the mission
+			if (CheckForceSpawn(self, "bea", "Weequay")) return; // The guys with Reelo at the end of the mission
+		}
+		SP_NPC_Spawn_Random(self);
 	}
-	if (strcmp(lastKnownMap, "ns_starpad") == 0)
-	{
-		if (CheckForceSpawn(self, "reelo_thug", "Rodian")) return; // The guys with Reelo at the end of the mission
-		if (CheckForceSpawn(self, "end_thug", "Rodian")) return; // The guys with Reelo at the end of the mission
-		if (CheckForceSpawn(self, "bea", "Weequay")) return; // The guys with Reelo at the end of the mission
-	}
-	SP_NPC_Spawn_Random(self);
+	else SP_NPC_Rodian(self);
 }
 void SP_NPC_Weequay_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	if (strcmp(lastKnownMap, "ns_starpad") == 0)
+	if (cg_enableRandomizer.integer)
 	{
-		if (CheckForceSpawn(self, "reelo_thug", "Weequay")) return; // The guys with Reelo at the end of the mission
-		if (CheckForceSpawn(self, "end_thug", "Weequay")) return; // The guys with Reelo at the end of the mission
-		if (CheckForceSpawn(self, "bea", "Weequay")) return; // The guys with Reelo at the end of the mission
+		CheckIfMapChanged();
+		if (strcmp(lastKnownMap, "ns_starpad") == 0)
+		{
+			if (CheckForceSpawn(self, "reelo_thug", "Weequay")) return; // The guys with Reelo at the end of the mission
+			if (CheckForceSpawn(self, "end_thug", "Weequay")) return; // The guys with Reelo at the end of the mission
+			if (CheckForceSpawn(self, "bea", "Weequay")) return; // The guys with Reelo at the end of the mission
+		}
+		SP_NPC_Spawn_Random(self);
 	}
-	SP_NPC_Spawn_Random(self);
+	else SP_NPC_Weequay(self);
 }
 void SP_NPC_Trandoshan_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Trandoshan(self);
 }
 void SP_NPC_SwampTrooper_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_SwampTrooper(self);
 }
 void SP_NPC_Imperial_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	// Won't make a special function, he is an unique case
-	if (strcmp(lastKnownMap, "cairn_assembly") == 0) // The officer we have to mindtrick has to be constant
+	if (cg_enableRandomizer.integer)
 	{
-		if (self->behaviorSet[0]) // Check for NULL
+		CheckIfMapChanged();
+		// Won't make a special function, he is an unique case
+		if (strcmp(lastKnownMap, "cairn_assembly") == 0) // The officer we have to mindtrick has to be constant
 		{
-			if (strcmp(self->behaviorSet[0], "cairn_assembly/silent_stand") == 0)
+			if (self->behaviorSet[0]) // Check for NULL
 			{
+				if (strcmp(self->behaviorSet[0], "cairn_assembly/silent_stand") == 0)
+				{
+					SP_NPC_Imperial(self);
+					return;
+				}
+			}
+		}
+		if (strcmp(lastKnownMap, "kejim_base") == 0)
+		{
+			if (CheckForceSpawn(self, "explosion_victims", "Imperial")) return; // The dead Imperial holding a security key
+			if (CheckForceSpawn(self, "ambush_io", "Imperial")) return; // The first Imperial
+			if (self->behaviorSet[0] && (strcmp(self->behaviorSet[0], "common/crouchshoot") == 0))
+			{
+				// ONLY the Imperial hiding in the corner, not the one standing (they both have the same target name)
+				CheckForceSpawn(self, "corridor_enemies", "Imperial");
+				return;
+			}
+		}
+		if (strcmp(lastKnownMap, "artus_detention") == 0)
+		{
+			if (CheckForceSpawn(self, "warden", "Imperial")) return; // The warden that we have hostage
+		}
+		if (strcmp(lastKnownMap, "doom_detention") == 0)
+		{
+			if (CheckForceSpawn(self, "jailer", "Imperial")) return; // The jailer of Jan
+			if (self->message && strcmp(self->message, "ele_key2") == 0) // The Imperial holding a key in the big room
+			{
+				CheckForceSpawn(self, "squad7", "Imperial");
+				return;
+			}
+		}
+		if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
+		{
+			SP_NPC_Imperial(self);
+			return;
+		}
+		if (strcmp(lastKnownMap, "artus_topside") == 0)
+		{
+			if (self->message && strcmp(self->message, "shield_key") == 0) // The Imperial holding a key in the ATST room
+			{
+				// This guy doesn't have a target, so we just spawn him
 				SP_NPC_Imperial(self);
 				return;
 			}
 		}
-	}
-	if (strcmp(lastKnownMap, "kejim_base") == 0) 
-	{
-		if (CheckForceSpawn(self, "explosion_victims", "Imperial")) return; // The dead Imperial holding a security key
-		if (CheckForceSpawn(self, "ambush_io", "Imperial")) return; // The first Imperial
-		if (self->behaviorSet[0] && (strcmp(self->behaviorSet[0], "common/crouchshoot") == 0))
+		if (strcmp(lastKnownMap, "bespin_streets") == 0)
 		{
-			// ONLY the Imperial hiding in the corner, not the one standing (they both have the same target name)
-			CheckForceSpawn(self, "corridor_enemies", "Imperial");
-			return; 
+			if (self->message && strcmp(self->message, "exit_key") == 0) // The Imperial holding a key at the end of the level
+			{
+				// This guy doesn't have a target, so we just spawn him
+				SP_NPC_Imperial(self);
+				return;
+			}
 		}
-	}
-	if (strcmp(lastKnownMap, "artus_detention") == 0)
-	{
-		if (CheckForceSpawn(self, "warden", "Imperial")) return; // The warden that we have hostage
-	}
-	if (strcmp(lastKnownMap, "doom_detention") == 0)
-	{
-		if (CheckForceSpawn(self, "jailer", "Imperial")) return; // The jailer of Jan
-		if (self->message && strcmp(self->message, "ele_key2") == 0) // The Imperial holding a key in the big room
+		if (strcmp(lastKnownMap, "bespin_platform") == 0)
 		{
-			CheckForceSpawn(self, "squad7", "Imperial");
-			return;
+			if (self->message && strcmp(self->message, "control_room") == 0) // The Imperial holding a key at the end of the level
+			{
+				// This guy doesn't have a target, so we just spawn him
+				SP_NPC_Imperial(self);
+				return;
+			}
 		}
-	}
-	if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
-	{
-		SP_NPC_Imperial(self);
-		return;
-	}
-	if (strcmp(lastKnownMap, "artus_topside") == 0)
-	{
-		if (self->message && strcmp(self->message, "shield_key") == 0) // The Imperial holding a key in the ATST room
+		if (strcmp(lastKnownMap, "doom_comm") == 0)
 		{
-			// This guy doesn't have a target, so we just spawn him
-			SP_NPC_Imperial(self);
-			return;
+			if (self->message && strcmp(self->message, "hey_presto") == 0) // The Imperial holding a key to access the 'call room'
+			{
+				// This guy doesn't have a target, so we just spawn him
+				SP_NPC_Imperial(self);
+				return;
+			}
 		}
+		SP_NPC_Spawn_Random(self);
 	}
-	if (strcmp(lastKnownMap, "bespin_streets") == 0)
-	{
-		if (self->message && strcmp(self->message, "exit_key") == 0) // The Imperial holding a key at the end of the level
-		{
-			// This guy doesn't have a target, so we just spawn him
-			SP_NPC_Imperial(self);
-			return;
-		}
-	}
-	if (strcmp(lastKnownMap, "bespin_platform") == 0)
-	{
-		if (self->message && strcmp(self->message, "control_room") == 0) // The Imperial holding a key at the end of the level
-		{
-			// This guy doesn't have a target, so we just spawn him
-			SP_NPC_Imperial(self);
-			return;
-		}
-	}
-	if (strcmp(lastKnownMap, "doom_comm") == 0)
-	{
-		if (self->message && strcmp(self->message, "hey_presto") == 0) // The Imperial holding a key to access the 'call room'
-		{
-			// This guy doesn't have a target, so we just spawn him
-			SP_NPC_Imperial(self);
-			return;
-		}
-	}
-	SP_NPC_Spawn_Random(self);
+	else SP_NPC_Imperial(self);
 }
 void SP_NPC_ImpWorker_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
+	if (cg_enableRandomizer.integer)
 	{
-		SP_NPC_ImpWorker(self);
-		return;
+		CheckIfMapChanged();
+		if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
+		{
+			SP_NPC_ImpWorker(self);
+			return;
+		}
+		SP_NPC_Spawn_Random(self);
 	}
-	SP_NPC_Spawn_Random(self);
+	else SP_NPC_ImpWorker(self);
 }
 void SP_NPC_BespinCop_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_BespinCop(self);
 }
 void SP_NPC_Reborn_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	if (strcmp(lastKnownMap, "bespin_undercity") == 0) // Undercity, the two reborn at the end of the mission
+	if (cg_enableRandomizer.integer)
 	{
-		CheckForceSpawn(self, "t179", "Reborn");
-		CheckForceSpawn(self, "t199", "Reborn");
-		return;
+		CheckIfMapChanged();
+		if (strcmp(lastKnownMap, "bespin_undercity") == 0) // Undercity, the two reborn at the end of the mission
+		{
+			CheckForceSpawn(self, "t179", "Reborn");
+			CheckForceSpawn(self, "t199", "Reborn");
+			return;
+		}
+		if (strcmp(lastKnownMap, "cairn_assembly") == 0) // The two reborn we have to kill in oprder to spawn the ATST at the end
+		{
+			CheckForceSpawn(self, "squad18", "Reborn");
+			return;
+		}
+		SP_NPC_Spawn_Random(self);
 	}
-	if (strcmp(lastKnownMap, "cairn_assembly") == 0) // The two reborn we have to kill in oprder to spawn the ATST at the end
-	{
-		CheckForceSpawn(self, "squad18", "Reborn");
-		return;
-	}
-	SP_NPC_Spawn_Random(self);
+	else SP_NPC_Reborn(self);
 }
 void SP_NPC_ShadowTrooper_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, too many undefined behaviours
+	if (cg_enableRandomizer.integer)
 	{
-		SP_NPC_ShadowTrooper(self);
-		return;
+		CheckIfMapChanged();
+		if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, too many undefined behaviours
+		{
+			SP_NPC_ShadowTrooper(self);
+			return;
+		}
+		SP_NPC_Spawn_Random(self);
 	}
-	SP_NPC_Spawn_Random(self);
+	else SP_NPC_ShadowTrooper(self);
 }
 void SP_NPC_Monster_Murjj_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Monster_Murjj(self);
 }
 void SP_NPC_Monster_Swamp_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Monster_Swamp(self);
 }
 void SP_NPC_Monster_Howler_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Monster_Howler(self);
 }
 void SP_NPC_Monster_Claw_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Monster_Claw(self);
 }
 void SP_NPC_Monster_Glider_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Monster_Glider(self);
 }
 void SP_NPC_Monster_Flier2_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Monster_Flier2(self);
 }
 void SP_NPC_Monster_Lizard_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Monster_Lizard(self);
 }
 void SP_NPC_Monster_Fish_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Monster_Fish(self);
 }
 void SP_NPC_MineMonster_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_MineMonster(self);
 }
 void SP_NPC_Droid_Interrogator_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Droid_Interrogator(self);
 }
 void SP_NPC_Droid_Probe_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Droid_Probe(self);
 }
 void SP_NPC_Droid_Mark1_Random(gentity_t* self) // Chicken robot, make then static and not in the random pool (they are big). Wait, two chicken robot entities ?
 {
-	CheckIfMapChanged();
-	//SP_NPC_Spawn_Random(self);
-	SP_NPC_Droid_Mark1(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Droid_Mark1(self);
+	}
+	else SP_NPC_Droid_Mark1(self);
 }
 void SP_NPC_Droid_Mark2_Random(gentity_t* self) // Chicken robot, make then static and not in the random pool (they are big). Wait, two chicken robot entities ?
 {
-	CheckIfMapChanged();
-	//SP_NPC_Spawn_Random(self);
-	SP_NPC_Droid_Mark2(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Droid_Mark2(self);
+	}
+	else SP_NPC_Droid_Mark2(self);
 }
 void SP_NPC_Droid_ATST_Random(gentity_t* self) // Since they are buggy, let's keep the one existing intact.
 {
-	CheckIfMapChanged();
-	//SP_NPC_Spawn_Random(self);
-	SP_NPC_Droid_ATST(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Droid_ATST(self);
+	}
+	else SP_NPC_Droid_ATST(self);
 }
 void SP_NPC_Droid_Seeker_Random(gentity_t* self) // Seekers should always be seekers, at least in speedruns
 {
-	CheckIfMapChanged();
-	SP_NPC_Droid_Seeker(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Droid_Seeker(self);
+	}
+	else SP_NPC_Droid_Seeker(self);
 }
 void SP_NPC_Droid_Remote_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Droid_Remote(self);
 }
 void SP_NPC_Droid_Sentry_Random(gentity_t* self) // Who is that ?
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Droid_Sentry(self);
 }
 void SP_NPC_Droid_Gonk_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	SP_NPC_Spawn_Random(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Droid_Gonk(self);
 }
 void SP_NPC_Droid_Mouse_Random(gentity_t* self) // Mouse should spawn as Mouse
 {
-	CheckIfMapChanged();
-	SP_NPC_Droid_Mouse(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Spawn_Random(self);
+	}
+	else SP_NPC_Droid_Mouse(self);
 }
 void SP_NPC_Droid_R2D2_Random(gentity_t* self) // R2D2 should spawn as self
 {
-	CheckIfMapChanged();
-	SP_NPC_Droid_R2D2(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Droid_R2D2(self);
+	}
+	else SP_NPC_Droid_R2D2(self);
 }
 void SP_NPC_Droid_R5D2_Random(gentity_t* self) // R5D2 should spawn as self
 {
-	CheckIfMapChanged();
-	SP_NPC_Droid_R5D2(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Droid_R5D2(self);
+	}
+	else SP_NPC_Droid_R5D2(self);
 }
 void SP_NPC_Droid_Protocol_Random(gentity_t* self)
 {
-	CheckIfMapChanged();
-	SP_NPC_Droid_Protocol(self);
+	if (cg_enableRandomizer.integer)
+	{
+		CheckIfMapChanged();
+		SP_NPC_Droid_Protocol(self);
+	}
+	else SP_NPC_Droid_Protocol(self);
 }
 
 

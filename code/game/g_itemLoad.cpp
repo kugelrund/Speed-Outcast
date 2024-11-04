@@ -103,7 +103,7 @@ static void IT_Name(const char **holdBuf)
 		return;
 	}
 
-	// Posto : hello, why not randomizing weapons and item drops ?
+	// Posto : hello, why not randomizing weapons and item drops ? Posto again : that's true brother, need to work on that
 	if (!Q_stricmp(tokenStr,"ITM_NONE"))	
 		itemNum = ITM_NONE;
 	else if (!Q_stricmp(tokenStr,"ITM_STUN_BATON_PICKUP"))	

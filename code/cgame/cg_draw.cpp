@@ -2342,10 +2342,20 @@ CG_DrawSeed
 ===============
 */
 static float CG_DrawSeed(float y) {
-	const char* seed_string = va("Seed: %s", cg_setSeed.string);
-	const int width = cgi_R_Font_StrLenPixels(seed_string, cgs.media.qhFontMedium, 1.0f);
-	cgi_R_Font_DrawString(635 - width, y + 2, seed_string, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f);
-	return y + BIGCHAR_HEIGHT + 10;
+	if (cg_enableRandomizer.integer)
+	{
+		const char* seed_string = va("Seed: %s", cg_setSeed.string);
+		const int width = cgi_R_Font_StrLenPixels(seed_string, cgs.media.qhFontMedium, 1.0f);
+		cgi_R_Font_DrawString(635 - width, y + 2, seed_string, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f);
+		return y + BIGCHAR_HEIGHT + 10;
+	}
+	else
+	{
+		const char* seed_string = va("Randomizer Disabled");
+		const int width = cgi_R_Font_StrLenPixels(seed_string, cgs.media.qhFontMedium, 1.0f);
+		cgi_R_Font_DrawString(635 - width, y + 2, seed_string, colorTable[CT_DKORANGE], cgs.media.qhFontMedium, -1, 1.0f);
+		return y + BIGCHAR_HEIGHT + 10;
+	}
 }
 
 static float jumpHelperGetRangeExtendingLength(const int force_jump_level) {
@@ -2704,7 +2714,16 @@ static void CG_Draw2D( void )
 	{
 		CG_DrawOverbounceInfo();
 	}
-	if ( cg_drawSeed.integer ) 
+	
+	// Encapsulate every code related to the Randomizer behind this kind of condition.
+	/*if (cg_enableRandomizer.integer) 
+	{
+		if (cg_drawSeed.integer)
+		{
+			CG_DrawSeed(y);
+		}
+	}*/
+	if (cg_drawSeed.integer)
 	{
 		CG_DrawSeed(y);
 	}

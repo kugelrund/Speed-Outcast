@@ -391,6 +391,7 @@ vmCvar_t	cg_strafeHelperColorSpeedB;
 vmCvar_t	cg_strafeHelperColorSpeedA;
 
 // Additions for Randomizer
+vmCvar_t	cg_enableRandomizer;
 vmCvar_t	cg_drawSeed;
 vmCvar_t	cg_useSetSeed;
 vmCvar_t	cg_setSeed;
@@ -580,8 +581,9 @@ Ghoul2 Insert End
 	{ &cg_strafeHelperColorSpeedA, "cg_strafeHelperColorSpeedA", "0.9", CVAR_ARCHIVE },
 
 	// Additions for Randomizer
+	{ &cg_enableRandomizer, "cg_enableRandomizer", "0", CVAR_ARCHIVE }, // By default, it's disabled
 	{ &cg_drawSeed, "cg_drawSeed", "0", CVAR_ARCHIVE },
-	{ &cg_useSetSeed, "cg_useSetSeed", "", CVAR_ARCHIVE },
+	{ &cg_useSetSeed, "cg_useSetSeed", "0", CVAR_ARCHIVE },
 	{ &cg_setSeed, "cg_setSeed", "", CVAR_ARCHIVE }
 };
 
