@@ -2351,7 +2351,7 @@ static float CG_DrawSeed(float y) {
 	}
 	else
 	{
-		const char* seed_string = va("Randomizer Disabled");
+		const char* seed_string = va("No Rand");
 		const int width = cgi_R_Font_StrLenPixels(seed_string, cgs.media.qhFontMedium, 1.0f);
 		cgi_R_Font_DrawString(635 - width, y + 2, seed_string, colorTable[CT_DKORANGE], cgs.media.qhFontMedium, -1, 1.0f);
 		return y + BIGCHAR_HEIGHT + 10;

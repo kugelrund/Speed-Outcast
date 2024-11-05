@@ -422,7 +422,7 @@ void SP_misc_model_gun_rack( gentity_t *ent )
 			// Posto : I might be hated for this, but randomizing weapons here should be the best
 			if (cg_enableRandomizer.integer)
 			{
-				itemList[i] = FindItemForWeapon((weapon_t)GetRandomizedWeapon());
+				//itemList[i] = FindItemForWeapon((weapon_t)GetRandomizedWeapon());
 			}
 			GunRackAddItem( itemList[i], ent->s.origin, ent->s.angles, crandom() * 2, ( i - 1 ) * 9 + crandom() * 2, ofz[i] );
 		}
@@ -603,7 +603,7 @@ void spawn_rack_goods( gentity_t *ent )
 			// Posto : I might be hated for this, but randomizing ammos here should be the best
 			if (cg_enableRandomizer.integer)
 			{
-				itemList[i] = FindItemForAmmo((ammo_t)GetRandomizedAmmo());
+				//itemList[i] = FindItemForAmmo((ammo_t)GetRandomizedAmmo());
 			}
 			GunRackAddItem( itemList[i], ent->s.origin, ent->s.angles, crandom() * 0.5f, (i-1)* 8, 7.0f );
 		}
@@ -646,7 +646,7 @@ void spawn_rack_goods( gentity_t *ent )
 			// Posto : Randomize the weapon here
 			if (cg_enableRandomizer.integer)
 			{
-				it = FindItemForWeapon((weapon_t)GetRandomizedWeapon());
+				//it = FindItemForWeapon((weapon_t)GetRandomizedWeapon());
 			}
 			GunRackAddItem( it, ent->s.origin, ent->s.angles, crandom() * 2, ( random() * 6 + 4 ) * pos, v_off );
 		}

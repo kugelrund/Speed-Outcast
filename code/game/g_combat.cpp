@@ -3433,6 +3433,14 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 		{
 			if ( self->client->NPC_class == CLASS_DESANN && !strcmp(level.mapname, "yavin_final") )
 			{
+				// Randomizer
+				if (cg_enableRandomizer.integer)
+				{
+					gi.Printf(S_COLOR_RED "=========================\n");
+					Com_Printf(S_COLOR_GREEN "Seed used: " S_COLOR_WHITE "%s\n",cg_setSeed.string);
+					gi.Printf(S_COLOR_RED "=========================\n");
+				}
+
 				// final boss (desann) on final map is dead, speedrun is over
 				cgi_SpeedrunRunFinished();
 			}

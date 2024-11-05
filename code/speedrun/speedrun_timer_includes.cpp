@@ -1,6 +1,13 @@
 #include "speedrun_timer_includes.h"
 #include "../../server/exe_headers.h"
 
+/*
+// Randomizer
+//#include "../cgame/cg_main.cpp"
+extern	vmCvar_t		cg_enableRandomizer;
+extern	vmCvar_t		cg_useSetSeed;
+extern	vmCvar_t		cg_setSeed;
+*/
 
 namespace {
 
@@ -15,6 +22,16 @@ void SpeedrunTimerPrint(const char* levelTimeString,
 		           totalTimeString);
 	}
 	Com_Printf(S_COLOR_RED "=========================\n");
+	// Randomizer
+	/*
+	if (cg_enableRandomizer.integer)
+	{
+		Com_Printf(S_COLOR_RED "=========================\n");
+		Com_Printf(S_COLOR_GREEN "Randomizer Seed: " S_COLOR_WHITE "%s\n", cg_setSeed);
+		Com_Printf(S_COLOR_RED "=========================\n");
+	}
+	*/
+
 }
 
 void SpeedrunTimerPrintNoNotify(const char* levelTimeString,

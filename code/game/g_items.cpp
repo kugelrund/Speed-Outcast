@@ -21,6 +21,9 @@ extern	cvar_t	*g_spskill;
 
 #define MAX_BACTA_HEAL_AMOUNT		25
 
+// Randomizer
+extern	vmCvar_t		cg_enableRandomizer;
+
 /*
 
   Items are any object that a player can touch to gain some effect.
@@ -791,6 +794,103 @@ void FinishSpawningItem( gentity_t *ent ) {
 		{
 			break;
 		}
+	}
+
+	// Randomizer : after getting the item from bg_itemlist, we can finally randomize it here, because every items goes into this function and not only "gun rack"
+	gitem_t* itemNew;
+	if (cg_enableRandomizer.integer)
+	{
+		// For tests prupose only
+		int rng = rand() % 54;
+		itemNew = bg_itemlist + rng;
+		while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag <= 1)) // No saber, no baton, no strange items
+		{
+			rng = rand() % 53 + 1;
+			itemNew = bg_itemlist + rng;
+		}
+		// 
+		if (itemNew->giType == IT_HOLDABLE || item->giType == IT_HOLDABLE || item->classname == "ammo_thermal")
+		{
+
+		}
+		else
+		{
+			item = itemNew;
+			ent->classname == item->classname;
+			ent->item = item;
+		}
+		/*
+		IT_BAD,
+		IT_WEAPON,
+		IT_AMMO,
+		IT_ARMOR,
+		IT_HEALTH,
+		IT_HOLDABLE,
+		IT_BATTERY,
+		IT_HOLOCRON,
+		*/
+		/*ITM_NONE, // 0
+		ITM_SABER_PICKUP,
+		ITM_BRYAR_PISTOL_PICKUP,
+		ITM_BLASTER_PICKUP,
+		ITM_DISRUPTOR_PICKUP,
+		ITM_BOWCASTER_PICKUP,
+		ITM_REPEATER_PICKUP,
+		ITM_DEMP2_PICKUP,
+		ITM_FLECHETTE_PICKUP,
+		ITM_ROCKET_LAUNCHER_PICKUP,
+		ITM_THERMAL_DET_PICKUP,
+		ITM_TRIP_MINE_PICKUP,
+		ITM_DET_PACK_PICKUP,
+		ITM_STUN_BATON_PICKUP, // 13
+		
+		ITM_BOT_LASER_PICKUP,
+		ITM_EMPLACED_GUN_PICKUP,
+		ITM_TURRET_PICKUP,
+		ITM_MELEE,
+		ITM_ATST_MAIN_PICKUP,
+		ITM_ATST_SIDE_PICKUP,
+		ITM_TIE_FIGHTER_PICKUP,
+		ITM_RAPID_FIRE_CONC_PICKUP,
+		ITM_BLASTER_PISTOL_PICKUP, // 22
+		
+		ITM_AMMO_FORCE_PICKUP,
+		ITM_AMMO_BLASTER_PICKUP,
+		ITM_AMMO_POWERCELL_PICKUP,
+		ITM_AMMO_METAL_BOLTS_PICKUP,
+		ITM_AMMO_ROCKETS_PICKUP,
+		ITM_AMMO_EMPLACED_PICKUP,
+		ITM_AMMO_THERMAL_PICKUP,
+		ITM_AMMO_TRIPMINE_PICKUP,
+		ITM_AMMO_DETPACK_PICKUP, // 31
+		
+		ITM_FORCE_HEAL_PICKUP,
+		ITM_FORCE_LEVITATION_PICKUP,
+		ITM_FORCE_SPEED_PICKUP,
+		ITM_FORCE_PUSH_PICKUP,
+		ITM_FORCE_PULL_PICKUP,
+		ITM_FORCE_TELEPATHY_PICKUP,
+		ITM_FORCE_GRIP_PICKUP,
+		ITM_FORCE_LIGHTNING_PICKUP,
+		ITM_FORCE_SABERTHROW_PICKUP, // 40
+		
+		ITM_BATTERY_PICKUP,
+		ITM_SEEKER_PICKUP,
+		ITM_SHIELD_PICKUP,
+		ITM_BACTA_PICKUP,
+		ITM_DATAPAD_PICKUP,
+		ITM_BINOCULARS_PICKUP,
+		ITM_SENTRY_GUN_PICKUP,
+		ITM_LA_GOGGLES_PICKUP, // 48
+		
+		ITM_MEDPAK_PICKUP,
+		ITM_SHIELD_SM_PICKUP,
+		ITM_SHIELD_LRG_PICKUP,
+		ITM_GOODIE_KEY_PICKUP,
+		ITM_SECURITY_KEY_PICKUP, // 53
+		
+		ITM_NUM_ITEMS // 54
+		*/
 	}
 
 	// Set bounding box for item
