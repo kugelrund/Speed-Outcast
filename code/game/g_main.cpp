@@ -17,6 +17,7 @@
 
 #include <string>
 #include <chrono>
+#include "../randomizer/RandomizerUtils.h"
 
 using namespace std::chrono;
 
@@ -623,6 +624,9 @@ void InitGame(  const char *mapname, const char *spawntarget, int checkSum, cons
 	if (!Q_stricmp(mapname, "kejim_post") && eSavedGameJustLoaded == eNO) {
 		RegenerateSeed();
 	}
+	char	seed[MAX_STRING_CHARS];
+	gi.Cvar_VariableStringBuffer("cg_setSeed", seed, sizeof(seed));
+	RandomizerUtils::seedRandomizer(seed, mapname);
 	giMapChecksum = checkSum;
 	g_eSavedGameJustLoaded = eSavedGameJustLoaded;
 	g_qbLoadTransition = qbLoadTransition;
@@ -631,7 +635,7 @@ void InitGame(  const char *mapname, const char *spawntarget, int checkSum, cons
 	gi.Printf ("gamename: %s\n", GAMEVERSION);
 	gi.Printf ("gamedate: %s\n", __DATE__);
 
-	srand( randomSeed );
+	//srand( randomSeed ); Randomizer should control seeding
 
 	G_InitCvars();
 
@@ -706,13 +710,14 @@ void InitGame(  const char *mapname, const char *spawntarget, int checkSum, cons
 
 	gi.Printf ("-----------------------------------\n");
 
+	//Removed below so as not to interfere with consistent randomizer results
 	//randomize the rand functions
-	byte num_calls = (byte)timeGetTime();
+	//byte num_calls = (byte)timeGetTime();
 
-	for(i = 0; i < (int)num_calls; i++)
-	{
-		rand();
-	}
+	//for(i = 0; i < (int)num_calls; i++)
+	//{
+	//	rand();
+	//}
 
 	if ( navCalculatePaths )
 	{//not loaded - need to calc paths

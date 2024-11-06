@@ -13,6 +13,7 @@
 #include "g_functions.h"
 #include "g_icarus.h"
 #include "wp_saber.h"
+#include "..\randomizer\RandomizerUtils.h"
 
 extern cvar_t *g_sex;
 
@@ -2799,14 +2800,6 @@ short tabLockedInNPC[tabSize] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 short currentTabPosition = 0;
 char lastKnownMap[32] = "first_iteration";
 
-//I hate working in c++ so much
-void AddCharArrayToInt(char chars[], int* value)
-{
-	for (int i = 0; i < sizeof(chars); i++) {
-		*value += chars[i];
-	}
-}
-
 void MapChanged()
 {
 	//strcpy(lastKnownMap, level.mapname);
@@ -2819,18 +2812,6 @@ void MapChanged()
 	// We might have to lock Kyle, we will see what happen.
 	// tabLockedInNPC[0] = 0;
 	// currentTabPosition = 1;
-
-	// We want to ensure seed consistenty per level
-	// i.e. for a given seed a player will always get the same enemy spawn for that level
-	// regardless of any other uses of rand() in the game. Thus we should set the seed
-	// on level change, and use the level string as a part of the seed to get
-	// unique enemy sets per level
-	if (cg_setSeed.string != "") { //If we have no set seed just use random seed -- should we warn user?
-		int seed = 0;
-		AddCharArrayToInt(cg_setSeed.string, &seed);
-		AddCharArrayToInt(level.mapname, &seed);
-		srand(seed);
-	}
 }
 
 void CheckIfMapChanged()

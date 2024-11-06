@@ -41,6 +41,9 @@
     <Filter Include="speedrun\speedrun_timer_q3">
       <UniqueIdentifier>{52e1452b-6841-4ef6-8053-b87ef213c431}</UniqueIdentifier>
     </Filter>
+    <Filter Include="randomizer">
+      <UniqueIdentifier>{ab905c46-58e7-4180-adf0-c696239b47ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Icarus\BlockStream.cpp">
@@ -442,6 +445,9 @@
     <ClCompile Include="..\speedrun\speedrun_timer_q3\timer_helper.cpp">
       <Filter>speedrun\speedrun_timer_q3</Filter>
     </ClCompile>
+    <ClCompile Include="..\randomizer\RandomizerUtils.cpp">
+      <Filter>randomizer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Icarus\BlockStream.h">
@@ -677,6 +683,9 @@
     </ClInclude>
     <ClInclude Include="..\speedrun\speedrun_timer_q3\timer_helper.h">
       <Filter>speedrun\speedrun_timer_q3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\randomizer\RandomizerUtils.h">
+      <Filter>randomizer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
