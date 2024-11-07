@@ -769,6 +769,15 @@ void Use_Item( gentity_t *ent, gentity_t *other, gentity_t *activator )
 
 //======================================================================
 
+void updateItemMinsMaxs(gitem_t *item) {
+	item->mins[0] = item->mins[0] * 1.5;
+	item->mins[1] = item->mins[1] * 1.5;
+	item->mins[2] = item->mins[2] * 1.5;
+	item->maxs[0] = item->maxs[0] * 1.5;
+	item->maxs[1] = item->maxs[1] * 1.5;
+	item->maxs[2] = item->maxs[2] * 1.5;
+}
+
 /*
 ================
 FinishSpawningItem
@@ -819,6 +828,7 @@ void FinishSpawningItem( gentity_t *ent ) {
 			else
 			{
 				item = itemNew;
+				updateItemMinsMaxs(item); //Expand 'hitbox' of randomly spawned items a little so they can be picked up while partially clipped into geometry
 				ent->classname == item->classname;
 				ent->item = item;
 			}
