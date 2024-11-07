@@ -2046,8 +2046,8 @@ void CG_Init( int serverCommandSequence ) {
 	cgi_AddCommand ("kill");
 	cgi_AddCommand ("give");
 	cgi_AddCommand ("god");
-	// Posto : This is added when a map is loaded.
-	cgi_AddCommand("randomizer_debug");
+	// Posto : This is added when a map is loaded, not accessible before starting a game.
+	if (cg_enableRandomizer.integer) cgi_AddCommand ("randomizer_info");
 	cgi_AddCommand ("notarget");
 	cgi_AddCommand ("noclip");
 	cgi_AddCommand ("undying");

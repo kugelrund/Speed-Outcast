@@ -1,8 +1,13 @@
 #pragma once
+#include <stdlib.h>
 #include <string>
 
 class RandomizerUtils
 {
-	public: static void seedRandomizer(string seedString, string levelName);
+	private:
+
+	public: 
+		static void seedRandomizer(std::string seedString, std::string levelName);
+		static void RegenerateSeed();
 };
 

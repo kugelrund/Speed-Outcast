@@ -803,22 +803,31 @@ void FinishSpawningItem( gentity_t *ent ) {
 		// For tests prupose only
 		int rng = rand() % 54;
 		itemNew = bg_itemlist + rng;
-		while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag <= 1)) // No saber, no baton, no strange items
+		// No saber, no baton, no strange items. And no force (for now)
+		if ((strcmp(level.mapname, "yavin_trial")))
 		{
-			rng = rand() % 53 + 1;
-			itemNew = bg_itemlist + rng;
+			while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag <= 1) || (itemNew->giTag >= 32 && itemNew->giTag <= 40) || (itemNew->giTag == 43) || (itemNew->giTag == 45))
+			{
+				rng = rand() % 53 + 1;
+				itemNew = bg_itemlist + rng;
+			}
+			// 
+			if (itemNew->giType == IT_HOLOCRON)
+			{
+
+			}
+			else
+			{
+				item = itemNew;
+				ent->classname == item->classname;
+				ent->item = item;
+			}
 		}
-		// 
-		if (itemNew->giType == IT_HOLDABLE || item->giType == IT_HOLDABLE || item->classname == "ammo_thermal")
+		else // Don't do anything if we are in trial, we CAN'T not get force power
 		{
 
 		}
-		else
-		{
-			item = itemNew;
-			ent->classname == item->classname;
-			ent->item = item;
-		}
+		
 		/*
 		IT_BAD,
 		IT_WEAPON,
@@ -954,25 +963,28 @@ void FinishSpawningItem( gentity_t *ent ) {
 		// drop to floor
 		VectorSet( dest, ent->s.origin[0], ent->s.origin[1], MIN_WORLD_COORD );
 		gi.trace( &tr, ent->s.origin, ent->mins, ent->maxs, dest, ent->s.number, MASK_SOLID|CONTENTS_PLAYERCLIP, (EG2_Collision)0, 0 );
-//		if ( tr.startsolid ) 
-//		{
-//			if ( &g_entities[tr.entityNum] != NULL )
-//			{
-//				gi.Printf (S_COLOR_RED"FinishSpawningItem: removing %s startsolid at %s (in a %s)\n", ent->classname, vtos(ent->s.origin), g_entities[tr.entityNum].classname );
-//			}
-//			else
-//			{
-//				gi.Printf (S_COLOR_RED"FinishSpawningItem: removing %s startsolid at %s (in a %s)\n", ent->classname, vtos(ent->s.origin) );
-//			}
-//			//assert( 0 && "item starting in solid");
-//#ifndef FINAL_BUILD
-//			//if (!g_entities[ENTITYNUM_WORLD].s.radius){	//not a region
-//			//	delayedShutDown = level.time + 100;
-//			//}
-//#endif
-//			G_FreeEntity( ent );
-//			return;
-//		}
+		if (!cg_enableRandomizer.integer) // During normal gameplay, we have to keep this code to be as faithful to the base game
+		{
+			if (tr.startsolid)
+			{
+				if (&g_entities[tr.entityNum] != NULL)
+				{
+					gi.Printf(S_COLOR_RED"FinishSpawningItem: removing %s startsolid at %s (in a %s)\n", ent->classname, vtos(ent->s.origin), g_entities[tr.entityNum].classname);
+				}
+				else
+				{
+					gi.Printf(S_COLOR_RED"FinishSpawningItem: removing %s startsolid at %s (in a %s)\n", ent->classname, vtos(ent->s.origin));
+				}
+				assert( 0 && "item starting in solid");
+#ifndef FINAL_BUILD
+			if (!g_entities[ENTITYNUM_WORLD].s.radius){	//not a region
+				delayedShutDown = level.time + 100;
+			}
+#endif
+				G_FreeEntity(ent);
+				return;
+			}
+		}
 
 		// allow to ride movers
 		ent->s.groundEntityNum = tr.entityNum;

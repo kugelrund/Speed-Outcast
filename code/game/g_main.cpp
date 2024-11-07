@@ -16,10 +16,7 @@
 #include "../cgame/cg_local.h"	// yeah I know this is naughty, but we're shipping soon...
 
 #include <string>
-#include <chrono>
 #include "../randomizer/RandomizerUtils.h"
-
-using namespace std::chrono;
 
 extern CNavigator		navigator;
 static int				navCalcPathTime = 0;
@@ -573,32 +570,6 @@ void G_InitCvars( void ) {
 	g_iscensored = gi.cvar( "ui_iscensored", "0", CVAR_ARCHIVE|CVAR_ROM|CVAR_INIT|CVAR_CHEAT|CVAR_NORESTART );
 }
 
-void RegenerateSeed(void) {
-	//Reinitialise randomizer seed value if we're not using setSeed
-	if (gi.Cvar_VariableIntegerValue("cg_useSetSeed") != 1)
-	{
-		//Get System Epoch Time
-		auto duration = system_clock::now().time_since_epoch();
-
-		//Convert duration to milliseconds
-		long milliseconds
-			= chrono::duration_cast<chrono::milliseconds>(
-				duration)
-			.count();
-
-		//Hash the time to get a consistent length seed
-		hash<string> hasher;
-		string s = to_string(milliseconds);
-		size_t hash = hasher(s);
-
-		//Convert to string
-		string hashString = to_string(hash);
-
-		//Update seed value
-		gi.cvar_set("cg_setSeed", hashString.c_str());
-		//Cvar_Set("cg_setSeed", hashString.c_str());
-	}
-}
 
 /*
 ============
@@ -621,12 +592,17 @@ void InitGame(  const char *mapname, const char *spawntarget, int checkSum, cons
 	int		i;
 
 	//Reset randomiser seed on new load of kejim_post
-	if (!Q_stricmp(mapname, "kejim_post") && eSavedGameJustLoaded == eNO) {
-		RegenerateSeed();
+
+	if (cg_enableRandomizer.integer)
+	{
+		if (!Q_stricmp(mapname, "kejim_post") && eSavedGameJustLoaded == eNO) {
+			RandomizerUtils::RegenerateSeed();
+		}
+		char	seed[MAX_STRING_CHARS];
+		gi.Cvar_VariableStringBuffer("cg_setSeed", seed, sizeof(seed));
+		RandomizerUtils::seedRandomizer(seed, mapname);
 	}
-	char	seed[MAX_STRING_CHARS];
-	gi.Cvar_VariableStringBuffer("cg_setSeed", seed, sizeof(seed));
-	RandomizerUtils::seedRandomizer(seed, mapname);
+	
 	giMapChecksum = checkSum;
 	g_eSavedGameJustLoaded = eSavedGameJustLoaded;
 	g_qbLoadTransition = qbLoadTransition;
@@ -635,7 +611,8 @@ void InitGame(  const char *mapname, const char *spawntarget, int checkSum, cons
 	gi.Printf ("gamename: %s\n", GAMEVERSION);
 	gi.Printf ("gamedate: %s\n", __DATE__);
 
-	//srand( randomSeed ); Randomizer should control seeding
+	// Randomizer should control seeding, in normal game it's the same code
+	if(!cg_enableRandomizer.integer) srand( randomSeed ); 
 
 	G_InitCvars();
 
@@ -712,12 +689,15 @@ void InitGame(  const char *mapname, const char *spawntarget, int checkSum, cons
 
 	//Removed below so as not to interfere with consistent randomizer results
 	//randomize the rand functions
-	//byte num_calls = (byte)timeGetTime();
+	if (!cg_enableRandomizer.integer)
+	{
+		byte num_calls = (byte)timeGetTime();
 
-	//for(i = 0; i < (int)num_calls; i++)
-	//{
-	//	rand();
-	//}
+		for (i = 0; i < (int)num_calls; i++)
+		{
+			rand();
+		}
+	}
 
 	if ( navCalculatePaths )
 	{//not loaded - need to calc paths
