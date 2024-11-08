@@ -807,33 +807,34 @@ void FinishSpawningItem( gentity_t *ent ) {
 
 	// Randomizer : after getting the item from bg_itemlist, we can finally randomize it here, because every items goes into this function and not only "gun rack"
 	gitem_t* itemNew;
+	gitem_t* itemOld; // So that we have a copy of this, for debugging purpose
 	if (cg_enableRandomizer.integer)
 	{
-		// For tests prupose only
+		itemOld = item;
+		// For tests purpose only
 		int rng = rand() % 54;
 		itemNew = bg_itemlist + rng;
-		// No saber, no baton, no strange items. And no force (for now)
+		// No saber, no baton, no strange items.
 		if ((strcmp(level.mapname, "yavin_trial")))
 		{
-			while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag <= 1) || (itemNew->giTag >= 32 && itemNew->giTag <= 40) || (itemNew->giTag == 43) || (itemNew->giTag == 45))
+			while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag <= 0) || (itemNew->giTag == 43) || (itemNew->giTag == 45))
 			{
 				rng = rand() % 53 + 1;
 				itemNew = bg_itemlist + rng;
 			}
-			// 
+			updateItemMinsMaxs(itemNew); //Expand 'hitbox' of randomly spawned items a little so they can be picked up while partially clipped into geometry
+			item = itemNew;
+			ent->classname == item->classname;
+			ent->item = item;
 			if (itemNew->giType == IT_HOLOCRON)
 			{
-
+				rng = rand() % 3 + 1;
+				ent->item->quantity = rng;
+				ent->count = rng;
 			}
-			else
-			{
-				item = itemNew;
-				updateItemMinsMaxs(item); //Expand 'hitbox' of randomly spawned items a little so they can be picked up while partially clipped into geometry
-				ent->classname == item->classname;
-				ent->item = item;
-			}
+			
 		}
-		else // Don't do anything if we are in trial, we CAN'T not get force power
+		else // Don't do anything if we are in trial (or other exceptions), we CAN'T not get force power
 		{
 
 		}

@@ -3452,6 +3452,17 @@ void SP_NPC_Gran_Random(gentity_t* self) // Who is that ? It's the TD guys
 			CheckForceSpawn(self, "t198", "Gran");
 			return;
 		}
+		if (strcmp(lastKnownMap, "ns_starpad") == 0)
+		{
+			if (CheckForceSpawn(self, "back_squad1", "Gran")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "back_squad2", "Gran")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "back_squad3", "Gran")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "back_squad4", "Gran")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad1", "Gran")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad2", "Gran")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad3", "Gran")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad4", "Gran")) return; // For Lando in the hangar
+		}
 		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Gran(self);
@@ -3470,7 +3481,15 @@ void SP_NPC_Rodian_Random(gentity_t* self)
 		{
 			if (CheckForceSpawn(self, "reelo_thug", "Rodian")) return; // The guys with Reelo at the end of the mission
 			if (CheckForceSpawn(self, "end_thug", "Rodian")) return; // The guys with Reelo at the end of the mission
-			if (CheckForceSpawn(self, "bea", "Weequay")) return; // The guys with Reelo at the end of the mission
+			if (CheckForceSpawn(self, "bea", "Rodian")) return; // The guys with Reelo at the end of the mission
+			if (CheckForceSpawn(self, "back_squad1", "Rodian")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "back_squad2", "Rodian")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "back_squad3", "Rodian")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "back_squad4", "Rodian")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad1", "Rodian")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad2", "Rodian")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad3", "Rodian")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad4", "Rodian")) return; // For Lando in the hangar
 		}
 		SP_NPC_Spawn_Random(self);
 	}
@@ -3486,6 +3505,18 @@ void SP_NPC_Weequay_Random(gentity_t* self)
 			if (CheckForceSpawn(self, "reelo_thug", "Weequay")) return; // The guys with Reelo at the end of the mission
 			if (CheckForceSpawn(self, "end_thug", "Weequay")) return; // The guys with Reelo at the end of the mission
 			if (CheckForceSpawn(self, "bea", "Weequay")) return; // The guys with Reelo at the end of the mission
+			if (CheckForceSpawn(self, "back_squad1", "Weequay")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "back_squad2", "Weequay")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "back_squad3", "Weequay")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "back_squad4", "Weequay")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad1", "Weequay")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad2", "Weequay")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad3", "Weequay")) return; // For Lando in the hangar
+			if (CheckForceSpawn(self, "front_squad4", "Weequay")) return; // For Lando in the hangar
+		}
+		if (strcmp(lastKnownMap, "ns_hideout") == 0)
+		{
+			if (CheckForceSpawn(self, "trap", "Weequay")) return; // The guys after the 5 turrets
 		}
 		SP_NPC_Spawn_Random(self);
 	}
@@ -3819,7 +3850,7 @@ void SP_NPC_Droid_Mouse_Random(gentity_t* self) // Mouse should spawn as Mouse
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Spawn_Random(self);
+		SP_NPC_Droid_Mouse(self);
 	}
 	else SP_NPC_Droid_Mouse(self);
 }

@@ -119,7 +119,7 @@ void RandomizerInfoCommandCatcher(int page)
 		gi.Printf(S_COLOR_MAGENTA"Here is the list of maps that have specific NPC locked :\n");
 		gi.Printf(S_COLOR_CYAN"Todo.\n");
 		break;
-	case 5: //
+	case 5: // This ISN'T true anymore, everykind of item can because any kind of items ! (Except keys and stuff on yavin_trial)
 		gi.Printf(S_COLOR_MAGENTA"Here are the general rules for how weapons will work :\n");
 		gi.Printf(S_COLOR_CYAN"Weapons are replaced by other weapons (a E-11 blaster can become a bowcaster).\n");
 		gi.Printf(S_COLOR_CYAN"Ammo are replaced with another king of ammo. Explosives are considered ammo, so you can find them here and not in weapons slots.\n");
