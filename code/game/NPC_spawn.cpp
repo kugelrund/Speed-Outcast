@@ -3243,6 +3243,7 @@ bool CheckForceSpawn(gentity_t* self, char whatWeCompare[], char whoToSpawn[]) /
 			if (strcmp(whoToSpawn, "Weequay") == 0) SP_NPC_Weequay(self);
 			if (strcmp(whoToSpawn, "Gran") == 0) SP_NPC_Gran(self);
 			if (strcmp(whoToSpawn, "Reborn") == 0) SP_NPC_Reborn(self);
+			if (strcmp(whoToSpawn, "Shadowtrooper") == 0) SP_NPC_ShadowTrooper(self);
 
 			return true; // True, we forcefully spawned something
 		}
@@ -3259,6 +3260,7 @@ bool CheckForceSpawn(gentity_t* self, char whatWeCompare[], char whoToSpawn[]) /
 			if (strcmp(whoToSpawn, "Weequay") == 0) SP_NPC_Weequay(self);
 			if (strcmp(whoToSpawn, "Gran") == 0) SP_NPC_Gran(self);
 			if (strcmp(whoToSpawn, "Reborn") == 0) SP_NPC_Reborn(self);
+			if (strcmp(whoToSpawn, "Shadowtrooper") == 0) SP_NPC_ShadowTrooper(self);
 
 			return true; // True, we forcefully spawned something
 		}
@@ -3665,6 +3667,17 @@ void SP_NPC_Reborn_Random(gentity_t* self)
 			CheckForceSpawn(self, "squad18", "Reborn");
 			return;
 		}
+		if (strcmp(lastKnownMap, "doom_detention") == 0) // The two reborn at the end to access the jailer
+		{
+			CheckForceSpawn(self, "squad22", "Reborn");
+			return;
+		}
+		if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The two reborn out of the 3 kills we have to do
+		{
+			CheckForceSpawn(self, "bridge_count", "Reborn");
+			CheckForceSpawn(self, "squad5", "Reborn");
+			return;
+		}
 		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Reborn(self);
@@ -3677,6 +3690,12 @@ void SP_NPC_ShadowTrooper_Random(gentity_t* self)
 		if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, too many undefined behaviours
 		{
 			SP_NPC_ShadowTrooper(self);
+			return;
+		}
+		if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The two reborn out of the 3 kills we have to do
+		{
+			CheckForceSpawn(self, "bridge_count", "Shadowtrooper");
+			CheckForceSpawn(self, "squad5", "Shadowtrooper");
 			return;
 		}
 		SP_NPC_Spawn_Random(self);
