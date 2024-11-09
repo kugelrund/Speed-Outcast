@@ -5,5 +5,5 @@
 **/SHDebug
 *vcxproj.user
 *.tlog
-code/base/maps/*
-code/base/saves/*
+code/base/*
+code/demo/*

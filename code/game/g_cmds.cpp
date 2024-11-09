@@ -6,9 +6,6 @@
 #include "objectives.h"
 #include "wp_saber.h"
 
-//#include <..\game\NPC_spawn.cpp>
-//extern void RandomizerDebugCommandCatcher(int page); // It's declared in NPC_spawn.cpp
-
 extern	bool		in_camera;
 
 extern void ForceThrow( gentity_t *self, qboolean pull );
@@ -1036,10 +1033,7 @@ void ClientCommand( int clientNum ) {
 	// Posto : maybe adding a command is here ? No, this is called later
 	if (Q_stricmp(cmd, "give") == 0)
 		Cmd_Give_f(ent);
-	/*
-	else if (Q_stricmp(cmd, "randomizer_debug") == 0)
-		RandomizerDebugCommandCatcher();
-	*/
+	
 	else if (Q_stricmp (cmd, "god") == 0)
 		Cmd_God_f (ent);
 	else if (Q_stricmp (cmd, "undying") == 0)

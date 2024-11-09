@@ -618,8 +618,7 @@ extern	void FS_Restart( void );
 		}
 		else if (Q_stricmp(name, "startgame") == 0) 
 		{
-			Menus_CloseAll();
-			
+			Menus_CloseAll();			
 			if ( Cvar_VariableIntegerValue("com_demo") )
 			{
 #ifdef FINAL_BUILD

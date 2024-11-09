@@ -2715,15 +2715,7 @@ static void CG_Draw2D( void )
 		CG_DrawOverbounceInfo();
 	}
 	
-	// Encapsulate every code related to the Randomizer behind this kind of condition.
-	/*if (cg_enableRandomizer.integer) 
-	{
-		if (cg_drawSeed.integer)
-		{
-			CG_DrawSeed(y);
-		}
-	}*/
-	if (cg_drawSeed.integer)
+	if (cg_enableRandomizer.integer && cg_drawSeed.integer)
 	{
 		CG_DrawSeed(y);
 	}

@@ -1523,10 +1523,8 @@ qboolean ClientSpawn(gentity_t *ent, SavedGameJustLoaded_e eSavedGameJustLoaded 
 		else
 		{
 			G_LoadAnimFileSet( ent, "kyle" );
-			//G_LoadAnimFileSet(ent, "jan");
 			// Posto : maybe it's here that we can 'randomize' how we look like ? Not being Kyle could be funny
 			G_SetSkin( ent, "kyle", NULL );
-			//G_SetSkin(ent, "jan", NULL);
 		}
 	}
 	else
@@ -1696,7 +1694,6 @@ qboolean ClientSpawn(gentity_t *ent, SavedGameJustLoaded_e eSavedGameJustLoaded 
 			ent->weaponModel = -1;
 			// Posto : maybe it's here that we can 'randomize' how we look like ? Not being Kyle could be funny
 			G_SetG2PlayerModel( ent, "kyle", NULL, NULL, NULL );
-			//G_SetG2PlayerModel(ent, "jan", NULL, NULL, NULL);
 		}
 		else
 		{
