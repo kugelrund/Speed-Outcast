@@ -1611,6 +1611,16 @@ static void CG_RegisterGraphics( void ) {
 	// only register the items that the server says we need
 	strcpy( items, CG_ConfigString( CS_ITEMS) );
 
+	//if in randomizer, register all the holocrons
+	if (cg_enableRandomizer.integer) {
+		for (i = 1; i < bg_numItems; i++) {
+			if (bg_itemlist[i].giType == IT_HOLOCRON) {
+				CG_LoadingString(bg_itemlist[i].classname);
+				CG_RegisterItemVisuals(i);
+			}
+		}
+	}
+
 	for ( i = 1 ; i < bg_numItems ; i++ ) {
 		if ( items[ i ] == '1' ) 
 		{

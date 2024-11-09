@@ -98,6 +98,7 @@ void WP_ForcePowerDrain( gentity_t *self, forcePowers_t forcePower, int override
 
 extern cvar_t	*g_saberAutoBlocking;
 extern cvar_t	*g_saberRealisticCombat;
+extern vmCvar_t cg_enableRandomizer;
 extern int g_crosshairEntNum;
 
 int		g_saberFlashTime = 0;
@@ -8598,24 +8599,35 @@ void WP_InitForcePowers( gentity_t *ent )
 	}
 	else
 	{//player
-		ent->client->ps.forcePowersKnown = ( 1 << FP_HEAL )|( 1 << FP_LEVITATION )|( 1 << FP_SPEED )|( 1 << FP_PUSH )|( 1 << FP_PULL )|( 1 << FP_TELEPATHY )|( 1 << FP_GRIP )|( 1 << FP_LIGHTNING)|( 1 << FP_SABERTHROW)|( 1 << FP_SABER_DEFENSE )|( 1 << FP_SABER_OFFENSE );
-		ent->client->ps.forcePower = ent->client->ps.forcePowerMax = FORCE_POWER_MAX;
-		ent->client->ps.forcePowerRegenDebounceTime = 0;
-		ent->client->ps.forcePowerLevel[FP_HEAL] = FORCE_LEVEL_2;
-		ent->client->ps.forcePowerLevel[FP_LEVITATION] = FORCE_LEVEL_2;
-		ent->client->ps.forcePowerLevel[FP_PUSH] = FORCE_LEVEL_1;
-		ent->client->ps.forcePowerLevel[FP_PULL] = FORCE_LEVEL_1;
-		ent->client->ps.forcePowerLevel[FP_SABERTHROW] = FORCE_LEVEL_2;
-		ent->client->ps.forcePowerLevel[FP_SPEED] = FORCE_LEVEL_2;
-		ent->client->ps.forcePowerLevel[FP_LIGHTNING] = FORCE_LEVEL_1;
-		ent->client->ps.forcePowerLevel[FP_TELEPATHY] = FORCE_LEVEL_2;
-		ent->client->ps.forcePowerLevel[FP_SABER_DEFENSE] = FORCE_LEVEL_3;
-		ent->client->ps.forcePowerLevel[FP_SABER_OFFENSE] = FORCE_LEVEL_3;
+		//Don't initialise us with a random set of force powers please
+		if (cg_enableRandomizer.integer) {
+			ent->client->ps.forcePowersKnown = (0 << FP_HEAL) | (0 << FP_LEVITATION) | (0 << FP_SPEED) | (0 << FP_PUSH) | (0 << FP_PULL) | (0 << FP_TELEPATHY) | (0 << FP_GRIP) | (0 << FP_LIGHTNING) | (0 << FP_SABERTHROW) | (0 << FP_SABER_DEFENSE) | (0 << FP_SABER_OFFENSE);
+			for (int i = 0; i < NUM_FORCE_POWERS; i++) {
+				ent->client->ps.forcePowerLevel[i] = 0;
+			}
+			ent->client->ps.forcePowerMax = FORCE_POWER_MAX;
+			ent->client->ps.forcePowerRegenDebounceTime = 0;
+		}
+		else {
+			ent->client->ps.forcePowersKnown = (1 << FP_HEAL) | (1 << FP_LEVITATION) | (1 << FP_SPEED) | (1 << FP_PUSH) | (1 << FP_PULL) | (1 << FP_TELEPATHY) | (1 << FP_GRIP) | (1 << FP_LIGHTNING) | (1 << FP_SABERTHROW) | (1 << FP_SABER_DEFENSE) | (1 << FP_SABER_OFFENSE);
+			ent->client->ps.forcePower = ent->client->ps.forcePowerMax = FORCE_POWER_MAX;
+			ent->client->ps.forcePowerRegenDebounceTime = 0;
+			ent->client->ps.forcePowerLevel[FP_HEAL] = FORCE_LEVEL_2;
+			ent->client->ps.forcePowerLevel[FP_LEVITATION] = FORCE_LEVEL_2;
+			ent->client->ps.forcePowerLevel[FP_PUSH] = FORCE_LEVEL_1;
+			ent->client->ps.forcePowerLevel[FP_PULL] = FORCE_LEVEL_1;
+			ent->client->ps.forcePowerLevel[FP_SABERTHROW] = FORCE_LEVEL_2;
+			ent->client->ps.forcePowerLevel[FP_SPEED] = FORCE_LEVEL_2;
+			ent->client->ps.forcePowerLevel[FP_LIGHTNING] = FORCE_LEVEL_1;
+			ent->client->ps.forcePowerLevel[FP_TELEPATHY] = FORCE_LEVEL_2;
+			ent->client->ps.forcePowerLevel[FP_SABER_DEFENSE] = FORCE_LEVEL_3;
+			ent->client->ps.forcePowerLevel[FP_SABER_OFFENSE] = FORCE_LEVEL_3;
+		}
 		if ( ent->NPC )
 		{//???
 			ent->client->ps.forcePowerLevel[FP_GRIP] = FORCE_LEVEL_3;
 		}
-		else
+		else if (!cg_enableRandomizer.integer)
 		{
 			ent->client->ps.forcePowerLevel[FP_GRIP] = FORCE_LEVEL_2;
 		}

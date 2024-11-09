@@ -379,6 +379,10 @@ int Pickup_Holocron( gentity_t *ent, gentity_t *other )
 {
 	int forcePower = ent->item->giTag;
 	int forceLevel = ent->count;
+	//Always increment
+	if (cg_enableRandomizer.integer) {
+		forceLevel = other->client->ps.forcePowerLevel[forcePower] + 1;
+	}
 	// check if out of range
 	if( forceLevel < 0 || forceLevel >= NUM_FORCE_POWER_LEVELS )
 	{
@@ -822,17 +826,19 @@ void FinishSpawningItem( gentity_t *ent ) {
 				rng = rand() % 53 + 1;
 				itemNew = bg_itemlist + rng;
 			}
-			updateItemMinsMaxs(itemNew); //Expand 'hitbox' of randomly spawned items a little so they can be picked up while partially clipped into geometry
-			item = itemNew;
-			ent->classname == item->classname;
-			ent->item = item;
 			if (itemNew->giType == IT_HOLOCRON)
 			{
-				rng = rand() % 3 + 1;
-				ent->item->quantity = rng;
-				ent->count = rng;
+				ent->count = 0;
 			}
-			
+			else
+			{
+				//Expand 'hitbox' of randomly spawned items a little so they can be picked up while partially clipped into geometry
+				//not for holocrons as their pickup range is pretty large already
+				updateItemMinsMaxs(itemNew);
+			}
+			item = itemNew;
+			ent->classname == item->classname;
+			ent->item = item;		
 		}
 		else // Don't do anything if we are in trial (or other exceptions), we CAN'T not get force power
 		{

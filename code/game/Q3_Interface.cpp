@@ -4057,6 +4057,11 @@ static void Q3_SetForcePowerLevel ( int entID, int forcePower, int forceLevel )
 		return;
 	}
 
+	//Early exit unless we're increasing a power
+	if (gi.Cvar_VariableIntegerValue("cg_enableRandomizer") && forceLevel <= self->client->ps.forcePowerLevel[forcePower]) {
+		return;
+	}
+
 	if ((forceLevel > self->client->ps.forcePowerLevel[forcePower]) && (entID==0) && (forceLevel > 0))
 	{
 		if (!cg_updatedDataPadForcePower1.integer)
