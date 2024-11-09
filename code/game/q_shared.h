@@ -1166,6 +1166,8 @@ typedef struct {
 #define	ENTITYNUM_MAX_NORMAL	(MAX_GENTITIES-2)
 
 
+//#define	MAX_MODELS			256		// Old values
+//#define	MAX_SOUNDS			256		// Old values
 #define	MAX_MODELS			512		// Posto : For the Randomizer, we might need to increase it.
 #define	MAX_SOUNDS			512		// Same for that
 
@@ -1185,6 +1187,7 @@ Ghoul2 Insert Start
 Ghoul2 Insert End
 */
 
+// #define	MAX_CONFIGSTRINGS	1024 // Old values
 #define	MAX_CONFIGSTRINGS	2048 // Posto : we might need to double this, I understand if we have performance issue
 
 // these are the only configstrings that the system reserves, all the
@@ -1229,6 +1232,7 @@ Ghoul2 Insert End
 #error overflow: (CS_MAX) > MAX_CONFIGSTRINGS
 #endif
 
+// #define	MAX_GAMESTATE_CHARS	16000 // Old value
 #define	MAX_GAMESTATE_CHARS	32000 // Posto : might need to increase that
 typedef struct {
 	int			stringOffsets[MAX_CONFIGSTRINGS];

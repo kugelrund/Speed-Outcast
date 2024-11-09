@@ -381,6 +381,7 @@ int Pickup_Holocron( gentity_t *ent, gentity_t *other )
 	int forceLevel = ent->count;
 	//Always increment
 	if (cg_enableRandomizer.integer) {
+		if (other->client->ps.forcePowerLevel[forcePower] < 3)
 		forceLevel = other->client->ps.forcePowerLevel[forcePower] + 1;
 	}
 	// check if out of range
@@ -818,7 +819,7 @@ void FinishSpawningItem( gentity_t *ent ) {
 		// For tests purpose only
 		int rng = rand() % 54;
 		itemNew = bg_itemlist + rng;
-		// No saber, no baton, no strange items.
+		// No baton, no strange items.
 		if ((strcmp(level.mapname, "yavin_trial")))
 		{
 			while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag <= 0) || (itemNew->giTag == 43) || (itemNew->giTag == 45))
@@ -840,7 +841,7 @@ void FinishSpawningItem( gentity_t *ent ) {
 			ent->classname == item->classname;
 			ent->item = item;		
 		}
-		else // Don't do anything if we are in trial (or other exceptions), we CAN'T not get force power
+		else // Don't do anything if we are in trial (or other exceptions), we CAN'T not get these force powers
 		{
 
 		}
