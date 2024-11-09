@@ -419,11 +419,6 @@ void SP_misc_model_gun_rack( gentity_t *ent )
 	{
 		for ( int i = 0; i < ct; i++ )
 		{
-			// Posto : I might be hated for this, but randomizing weapons here should be the best
-			if (cg_enableRandomizer.integer)
-			{
-				//itemList[i] = FindItemForWeapon((weapon_t)GetRandomizedWeapon());
-			}
 			GunRackAddItem( itemList[i], ent->s.origin, ent->s.angles, crandom() * 2, ( i - 1 ) * 9 + crandom() * 2, ofz[i] );
 		}
 	}
@@ -514,7 +509,6 @@ void SP_misc_model_ammo_rack( gentity_t *ent )
 	gi.linkentity( ent );
 }
 
-// Posto : let me edit a bit, just to test
 // AMMO RACK!!
 void spawn_rack_goods( gentity_t *ent )
 {
@@ -600,11 +594,6 @@ void spawn_rack_goods( gentity_t *ent )
 	{
 		for ( int i = 0; i < ct; i++ )
 		{
-			// Posto : I might be hated for this, but randomizing ammos here should be the best
-			if (cg_enableRandomizer.integer)
-			{
-				//itemList[i] = FindItemForAmmo((ammo_t)GetRandomizedAmmo());
-			}
 			GunRackAddItem( itemList[i], ent->s.origin, ent->s.angles, crandom() * 0.5f, (i-1)* 8, 7.0f );
 		}
 	}

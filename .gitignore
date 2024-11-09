@@ -4,3 +4,6 @@
 **/Release
 **/SHDebug
 *vcxproj.user
+*.tlog
+code/base/*
+code/demo/*

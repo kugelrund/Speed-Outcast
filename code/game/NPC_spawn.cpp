@@ -2802,16 +2802,12 @@ char lastKnownMap[32] = "first_iteration";
 
 void MapChanged()
 {
-	//strcpy(lastKnownMap, level.mapname);
-	//lastKnownMap = level.mapname;
+	//Reset NPCs when changing maps
 	for (int i = 0; i < tabSize; i++)
 	{
 		tabLockedInNPC[i] = -1;
 	}
 	currentTabPosition = 0;
-	// We might have to lock Kyle, we will see what happen.
-	// tabLockedInNPC[0] = 0;
-	// currentTabPosition = 1;
 }
 
 void CheckIfMapChanged()
