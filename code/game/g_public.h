@@ -51,6 +51,7 @@ typedef enum
 	eNO = 0,
 	eFULL,
 	eAUTO,
+	eRESET //Used when loading auto_kejim_post to reset
 } SavedGameJustLoaded_e;
 
 

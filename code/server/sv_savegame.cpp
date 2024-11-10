@@ -1034,7 +1034,16 @@ qboolean SG_ReadSavegame(const char *psPathlessBaseName)
 
 	// read game state
 	qbAutosave = ReadGame();
-	eSavedGameJustLoaded = (qbAutosave)?eAUTO:eFULL;
+
+	//When resetting using the auto_kejim_post save
+	if (Cvar_VariableIntegerValue("cg_enableRandomizer") && !strcmp("auto_kejim_post", psPathlessBaseName) )
+	{
+		eSavedGameJustLoaded = eRESET;
+	}
+	else {
+		eSavedGameJustLoaded = (qbAutosave) ? eAUTO : eFULL;
+	}
+	
 
 	SV_SpawnServer(sMapCmd, eForceReload_NOTHING, (eSavedGameJustLoaded != eFULL) );	// note that this also trashes the whole G_Alloc pool as well (of course)		
 

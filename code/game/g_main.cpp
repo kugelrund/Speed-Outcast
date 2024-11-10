@@ -595,7 +595,7 @@ void InitGame(  const char *mapname, const char *spawntarget, int checkSum, cons
 
 	if (cg_enableRandomizer.integer)
 	{
-		if (!Q_stricmp(mapname, "kejim_post") && eSavedGameJustLoaded == eNO) {
+		if ( (!Q_stricmp(mapname, "kejim_post") && eSavedGameJustLoaded == eNO) || eSavedGameJustLoaded == eRESET) {
 			RandomizerUtils::RegenerateSeed();
 		}
 		char	seed[MAX_STRING_CHARS];
