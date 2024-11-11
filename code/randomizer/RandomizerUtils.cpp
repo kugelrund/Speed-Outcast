@@ -43,7 +43,7 @@ void RandomizerUtils::seedRandomizer(std::string seedString, std::string levelNa
 void RandomizerUtils::RegenerateSeed()
 {
 	//Reinitialise randomizer seed value if we're not using setSeed
-	if (cg_enableRandomizer.integer)
+	if (cg_enableRandomizer.integer && !cg_useSetSeed.integer)
 	{
 		//Get System Epoch Time
 		auto duration = system_clock::now().time_since_epoch();
