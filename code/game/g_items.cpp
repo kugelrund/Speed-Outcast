@@ -829,12 +829,15 @@ void FinishSpawningItem( gentity_t *ent ) {
 			}
 			if (itemNew->giType == IT_HOLOCRON)
 			{
+				// Maybe do one last roll because the game is giving us many force. Maybe 50/50 ?
 				ent->count = 0;
+				updateItemMinsMaxs(itemNew);
 			}
 			else
 			{
 				//Expand 'hitbox' of randomly spawned items a little so they can be picked up while partially clipped into geometry
 				//not for holocrons as their pickup range is pretty large already
+				// Posto Edit : I encountered holocron that were inside walls, so might as well update their hitbox too
 				updateItemMinsMaxs(itemNew);
 			}
 			item = itemNew;

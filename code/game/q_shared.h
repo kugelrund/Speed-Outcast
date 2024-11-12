@@ -1155,6 +1155,7 @@ typedef struct {
 #define	MAX_CLIENTS			1 // 128		// absolute limit
 #define MAX_LOCATIONS		64
 
+//#define #define	GENTITYNUM_BITS		10 // Old value
 #define	GENTITYNUM_BITS		12		// don't need to send any more
 #define	MAX_GENTITIES		(1<<GENTITYNUM_BITS)
 
@@ -1176,6 +1177,7 @@ typedef struct {
 #endif // _IMMERSION
 #define	MAX_SUBMODELS		512		// nine bits
 
+//#define MAX_FX				128 // Old value
 #define MAX_FX				256		//More FX Space
 #define MAX_WORLD_FX		4
 
