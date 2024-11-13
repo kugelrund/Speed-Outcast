@@ -438,7 +438,14 @@ void WP_SaberInitBladeData( gentity_t *ent )
 		{
 			if ( !ent->client->ps.saberAnimLevel )
 			{//initialize, but don't reset
-				ent->client->ps.saberAnimLevel = FORCE_LEVEL_2;
+				if (cg_enableRandomizer.integer) // Random saber style at pickup.
+				{
+					ent->client->ps.saberAnimLevel = rand() % 3 + 1;
+				}
+				else
+				{
+					ent->client->ps.saberAnimLevel = FORCE_LEVEL_2;
+				}
 			}
 			cg.saberAnimLevelPending = ent->client->ps.saberAnimLevel;
 			if ( ent->client->sess.missionStats.weaponUsed[WP_SABER] <= 0 )

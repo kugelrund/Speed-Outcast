@@ -267,6 +267,38 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other)
 	if ( ent->item->giTag == WP_SABER && !hadWeapon )
 	{
 		WP_SaberInitBladeData( other );
+		if (cg_enableRandomizer.integer) // In case we get a saber before trial, get defense 1 and offense 1 so that the saber won't have bugged behavior.
+		{
+			if ((strcmp(level.mapname,"yavin_trial") != 0 )) 
+			{
+				// We are getting a saber before trial, but by doing that we lock on medium style
+				// The only way to bypass this is to act like get_saber script : actually getting the saber THEN giving the force power
+				other->client->ps.forcePowerLevel[FP_SABER_OFFENSE] = 1;
+				other->client->ps.forcePowerLevel[FP_SABER_DEFENSE] = 1;
+
+				other->client->ps.forcePowersKnown |= (1 << FP_SABER_OFFENSE);
+				other->client->ps.forcePowersKnown |= (1 << FP_SABER_DEFENSE);
+
+				missionInfo_Updated = qtrue;	// Activate flashing text
+
+				gi.cvar_set("cg_updatedDataPadForcePower1", va("%d", FP_SABER_OFFENSE + 1)); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower1.integer = FP_SABER_OFFENSE + 1;
+				gi.cvar_set("cg_updatedDataPadForcePower2", "0"); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower2.integer = 0;
+				gi.cvar_set("cg_updatedDataPadForcePower3", "0"); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower3.integer = 0;
+
+				gi.cvar_set("cg_updatedDataPadForcePower1", va("%d", FP_SABER_DEFENSE + 1)); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower1.integer = FP_SABER_DEFENSE + 1;
+				gi.cvar_set("cg_updatedDataPadForcePower2", "0"); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower2.integer = 0;
+				gi.cvar_set("cg_updatedDataPadForcePower3", "0"); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower3.integer = 0;
+
+
+
+			}
+		}
 	}
 
 	if ( other->s.number )
