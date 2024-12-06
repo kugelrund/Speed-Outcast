@@ -697,6 +697,8 @@ extern	vmCvar_t		cg_strafeHelperColorSpeedA;
 extern vmCvar_t			cg_enableRandomizer;
 extern vmCvar_t			cg_drawSeed;
 extern vmCvar_t			cg_setSeed;
+//Additions for Base Game fixes (ex : artus_mine crates to get all pickups)
+extern vmCvar_t			cg_baseGameFixes;
 
 void CG_NewClientinfo( int clientNum );
 //

@@ -23,6 +23,8 @@ extern	cvar_t	*g_spskill;
 
 // Randomizer
 extern	vmCvar_t		cg_enableRandomizer;
+// Base game fixes
+extern	vmCvar_t		cg_baseGameFixes;
 
 /*
 
@@ -841,6 +843,22 @@ void FinishSpawningItem( gentity_t *ent ) {
 			break;
 		}
 	}
+
+	// Base game fixe : in order to get all pickups in ns_starpad, we have to change the two metallic ammo to something else
+	if (cg_baseGameFixes.integer)
+	{
+		if ((strcmp(level.mapname, "ns_starpad")) == 0)
+		{
+			if (item->giTag == 4 && item->giType == 2) // Metal ammo
+			{
+				item = bg_itemlist + ITM_AMMO_POWERCELL_PICKUP;
+				//item = bg_itemlist + ITM_BRYAR_PISTOL_PICKUP;
+				ent->classname == item->classname;
+				ent->item = item;
+			}
+		}
+	}
+	
 
 	// Randomizer : after getting the item from bg_itemlist, we can finally randomize it here, because every items goes into this function and not only "gun rack"
 	gitem_t* itemNew;

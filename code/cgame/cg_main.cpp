@@ -395,6 +395,8 @@ vmCvar_t	cg_enableRandomizer;
 vmCvar_t	cg_drawSeed;
 vmCvar_t	cg_useSetSeed;
 vmCvar_t	cg_setSeed;
+// Additions for Base Game fixes (ex : artus_mine crates to get all pickups)
+vmCvar_t	cg_baseGameFixes;
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -584,7 +586,9 @@ Ghoul2 Insert End
 	{ &cg_enableRandomizer, "cg_enableRandomizer", "0", CVAR_ARCHIVE }, // By default, it's disabled
 	{ &cg_drawSeed, "cg_drawSeed", "0", CVAR_ARCHIVE },
 	{ &cg_useSetSeed, "cg_useSetSeed", "0", CVAR_ARCHIVE },
-	{ &cg_setSeed, "cg_setSeed", "", CVAR_ARCHIVE }
+	{ &cg_setSeed, "cg_setSeed", "", CVAR_ARCHIVE },
+	// Additions for BaseGame fixes
+	{ &cg_baseGameFixes, "cg_baseGameFixes", "0", CVAR_ARCHIVE }
 };
 
 int		cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
