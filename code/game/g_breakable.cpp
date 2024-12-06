@@ -885,7 +885,7 @@ void SP_misc_model_breakable( gentity_t *ent )
 	strncpy( useModel, damageModel, sizeof(useModel));
 
 	// Posto : Small 'fix' to make these breakable , models/map_objects/imp_mine/crate.md3
-	if (true) // Set to false if we don't want it.
+	if (true) // Set to false if we don't want it. // Edit : maybe if there are more little patches like this, we can make a variable to control all of them ?
 	{
 		if (strcmp(ent->model, "models/map_objects/imp_mine/crate.md3") == 0)
 		{
