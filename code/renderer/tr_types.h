@@ -4,7 +4,8 @@
 #include "..\game\ghoul2_shared.h"
 
 #define	MAX_DLIGHTS		32			// can't be increased, because bit flags are used on surfaces
-#define	MAX_ENTITIES	1023		// can't be increased without changing drawsurf bit packing
+//#define	MAX_ENTITIES	1023 // Old value
+#define	MAX_ENTITIES	(MAX_GENTITIES - 1)		// can't be increased without changing drawsurf bit packing //Raise ent limit
 
 // renderfx flags
 #define	RF_MORELIGHT		0x00001	// allways have some light (viewmodel, some items)
