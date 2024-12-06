@@ -267,6 +267,38 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other)
 	if ( ent->item->giTag == WP_SABER && !hadWeapon )
 	{
 		WP_SaberInitBladeData( other );
+		if (cg_enableRandomizer.integer) // In case we get a saber before trial, get defense 1 and offense 1 so that the saber won't have bugged behavior.
+		{
+			if ((strcmp(level.mapname,"yavin_trial") != 0 )) 
+			{
+				// We are getting a saber before trial, but by doing that we lock on medium style
+				// The only way to bypass this is to act like get_saber script : actually getting the saber THEN giving the force power
+				other->client->ps.forcePowerLevel[FP_SABER_OFFENSE] = 1;
+				other->client->ps.forcePowerLevel[FP_SABER_DEFENSE] = 1;
+
+				other->client->ps.forcePowersKnown |= (1 << FP_SABER_OFFENSE);
+				other->client->ps.forcePowersKnown |= (1 << FP_SABER_DEFENSE);
+
+				missionInfo_Updated = qtrue;	// Activate flashing text
+
+				gi.cvar_set("cg_updatedDataPadForcePower1", va("%d", FP_SABER_OFFENSE + 1)); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower1.integer = FP_SABER_OFFENSE + 1;
+				gi.cvar_set("cg_updatedDataPadForcePower2", "0"); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower2.integer = 0;
+				gi.cvar_set("cg_updatedDataPadForcePower3", "0"); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower3.integer = 0;
+
+				gi.cvar_set("cg_updatedDataPadForcePower1", va("%d", FP_SABER_DEFENSE + 1)); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower1.integer = FP_SABER_DEFENSE + 1;
+				gi.cvar_set("cg_updatedDataPadForcePower2", "0"); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower2.integer = 0;
+				gi.cvar_set("cg_updatedDataPadForcePower3", "0"); // The +1 is offset in the print routine. 
+				cg_updatedDataPadForcePower3.integer = 0;
+
+
+
+			}
+		}
 	}
 
 	if ( other->s.number )
@@ -816,21 +848,33 @@ void FinishSpawningItem( gentity_t *ent ) {
 	if (cg_enableRandomizer.integer)
 	{
 		itemOld = item;
-		// For tests purpose only
-		int rng = rand() % 54;
+		int rng = rand() % 53 + 1;
 		itemNew = bg_itemlist + rng;
 		// No baton, no strange items.
 		if ((strcmp(level.mapname, "yavin_trial")))
 		{
-			while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag <= 0) || (itemNew->giTag == 43) || (itemNew->giTag == 45))
+			// No strange weapon, 'shield' and 'datapad'
+			while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag == 43) || (itemNew->giTag == 45))
 			{
 				rng = rand() % 53 + 1;
 				itemNew = bg_itemlist + rng;
 			}
-			if (itemNew->giType == IT_HOLOCRON)
+			if (itemNew->giType == IT_HOLOCRON || (itemNew->giTag == WP_SABER && itemNew->giType == IT_WEAPON)) // In case we roll a saber or an holocron, we shall roll a 33/66 to keep the item or not
 			{
-				// Maybe do one last roll because the game is giving us many force. Maybe 50/50 ?
-				ent->count = 0;
+				rng = rand() % 3;
+				if (!rng) // We rolled a 0, reroll once
+				{
+					rng = rand() % 53 + 1;
+					// No strange weapon, 'shield' and 'datapad'
+					while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag == 43) || (itemNew->giTag == 45))
+					{
+						rng = rand() % 53 + 1;
+						itemNew = bg_itemlist + rng;
+					}
+				}
+				// else, we rolled a >=1, we keep the saber/holocron
+
+				if (itemNew->giType == IT_HOLOCRON) ent->count = 0;
 				updateItemMinsMaxs(itemNew);
 			}
 			else
