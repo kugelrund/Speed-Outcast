@@ -883,6 +883,44 @@ void SP_misc_model_breakable( gentity_t *ent )
 	damageModel[len] = 0;	//chop extension
 	strncpy( chunkModel, damageModel, sizeof(chunkModel));
 	strncpy( useModel, damageModel, sizeof(useModel));
+
+	// Posto : Small 'fix' to make these breakable , models/map_objects/imp_mine/crate.md3
+	if (true) // Set to false if we don't want it.
+	{
+		if (strcmp(ent->model, "models/map_objects/imp_mine/crate.md3") == 0)
+		{
+			G_SpawnInt("health", "80", &ent->health);
+			G_SpawnInt("splashRadius", "80", &ent->splashRadius);
+			G_SpawnInt("splashDamage", "40", &ent->splashDamage);
+			//ent->s.modelindex = G_ModelIndex("models/map_objects/imp_mine/crate_open.md3");
+			ent->fxID = G_EffectIndex("thermal/explosion"); // FIXME: temp
+			G_EffectIndex("env/crystal_crate");
+			G_SoundIndex("sound/weapons/explosions/cargoexplode.wav");
+			VectorSet(ent->mins, -34, -34, 0);
+			VectorSet(ent->maxs, 34, 34, 44);
+			//Blocks movement
+			ent->contents = CONTENTS_SOLID | CONTENTS_OPAQUE | CONTENTS_BODY | CONTENTS_MONSTERCLIP | CONTENTS_BOTCLIP;//Was CONTENTS_SOLID, but only architecture should be this
+			/*
+			if (ent->spawnflags & 1)  // non-solid
+			{	// Override earlier contents flag...
+				//Can only be shot
+				ent->contents = CONTENTS_SHOTCLIP;
+			}
+			*/
+			ent->takedamage = qtrue;
+			G_SetOrigin(ent, ent->s.origin);
+			VectorCopy(ent->s.angles, ent->s.apos.trBase);
+			gi.linkentity(ent);
+			ent->e_PainFunc = painF_CrystalCratePain;
+			if (ent->targetname)
+			{
+				ent->e_UseFunc = useF_misc_use;
+			}
+			ent->material = MAT_CRATE2;
+			ent->e_DieFunc = dieF_misc_model_breakable_die;
+			return; // We don't want to do anything else
+		}
+
 	
 	if (ent->takedamage) {
 		//Dead/damaged model
