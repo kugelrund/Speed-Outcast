@@ -438,11 +438,12 @@ void WP_SaberInitBladeData( gentity_t *ent )
 		{
 			if ( !ent->client->ps.saberAnimLevel )
 			{//initialize, but don't reset
-				if (cg_enableRandomizer.integer) // Random saber style at pickup.
+				if (cg_enableRandomizer.integer) // Random saber style at pickup, but I need to NOT call rand() to keep NPC spawn consistent.
 				{
-					ent->client->ps.saberAnimLevel = rand() % 3 + 1;
+					ent->client->ps.saberAnimLevel = (level.framenum + level.time) % 3 + 1;
+					int i = 0;
 				}
-				else
+				else // Normal gameplay (and yes, there is a glitch to get fast style in trial)
 				{
 					ent->client->ps.saberAnimLevel = FORCE_LEVEL_2;
 				}

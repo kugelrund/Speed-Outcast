@@ -854,18 +854,23 @@ void FinishSpawningItem( gentity_t *ent ) {
 		if ((strcmp(level.mapname, "yavin_trial")))
 		{
 			// No strange weapon, 'shield' and 'datapad'
-			while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag <= 0) || (itemNew->giTag == 43) || (itemNew->giTag == 45))
+			while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag == 43) || (itemNew->giTag == 45))
 			{
 				rng = rand() % 53 + 1;
 				itemNew = bg_itemlist + rng;
 			}
-			if (itemNew->giType == IT_HOLOCRON || itemNew->giTag == WP_SABER) // In case we roll a saber or an holocron, we shall roll a 33/66 to keep the item or not
+			if (itemNew->giType == IT_HOLOCRON || (itemNew->giTag == WP_SABER && itemNew->giType == IT_WEAPON)) // In case we roll a saber or an holocron, we shall roll a 33/66 to keep the item or not
 			{
 				rng = rand() % 3;
 				if (!rng) // We rolled a 0, reroll once
 				{
 					rng = rand() % 53 + 1;
-					itemNew = bg_itemlist + rng;
+					// No strange weapon, 'shield' and 'datapad'
+					while ((itemNew->giTag >= 13 && itemNew->giTag <= 22) || (itemNew->giTag == 43) || (itemNew->giTag == 45))
+					{
+						rng = rand() % 53 + 1;
+						itemNew = bg_itemlist + rng;
+					}
 				}
 				// else, we rolled a >=1, we keep the saber/holocron
 
