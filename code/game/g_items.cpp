@@ -860,7 +860,7 @@ void FinishSpawningItem( gentity_t *ent ) {
 				itemNew = bg_itemlist + rng;
 			}
 			if (itemNew->giType == IT_HOLOCRON || itemNew->giTag == WP_SABER) // In case we roll a saber or an holocron, we shall roll a 33/66 to keep the item or not
-			{
+      {
 				rng = rand() % 3;
 				if (!rng) // We rolled a 0, reroll once
 				{
@@ -876,6 +876,7 @@ void FinishSpawningItem( gentity_t *ent ) {
 			{
 				//Expand 'hitbox' of randomly spawned items a little so they can be picked up while partially clipped into geometry
 				//not for holocrons as their pickup range is pretty large already
+				// Posto Edit : I encountered holocron that were inside walls, so might as well update their hitbox too
 				updateItemMinsMaxs(itemNew);
 			}
 			item = itemNew;

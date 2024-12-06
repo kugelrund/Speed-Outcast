@@ -849,13 +849,14 @@ compared quickly during the qsorting process
 the bits are allocated as follows:
 
 22 - 31	: sorted shader index
-12 - 21	: entity index
+10 - 21	: entity index
 3 - 7	: fog index
 2		: used to be clipped flag
 0 - 1	: dlightmap index
 */
 #define	QSORT_SHADERNUM_SHIFT	22
-#define	QSORT_ENTITYNUM_SHIFT	12
+//#define	QSORT_ENTITYNUM_SHIFT	12 // Old value
+#define	QSORT_ENTITYNUM_SHIFT	10 //More room for entities
 #define	QSORT_FOGNUM_SHIFT		3
 
 #ifdef _NPATCH

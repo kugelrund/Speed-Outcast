@@ -3005,10 +3005,10 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		SP_NPC_MonMothma(self);
 		PopulateNPCTab(rng);
 		break;
-	case 5: // Desann and Tavion are too hard to handle, I will keep them out for now
-		//SP_NPC_Tavion(self);
-		//PopulateNPCTab(rng);
-		SP_NPC_Spawn_Random(self);
+	case 5: // Desann and Tavion are too hard to handle, buuuut we have force in earlt levels now
+		SP_NPC_Tavion(self);
+		PopulateNPCTab(rng);
+		//SP_NPC_Spawn_Random(self);
 		break;
 	case 6: // Il a une IA au moins ?
 		SP_NPC_Reelo(self);
@@ -3018,10 +3018,10 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		SP_NPC_Galak(self);
 		PopulateNPCTab(rng);
 		break;
-	case 8: // Desann and Tavion are too hard to handle, I will keep them out for now
-		//SP_NPC_Desann(self);
-		//PopulateNPCTab(rng);
-		SP_NPC_Spawn_Random(self);
+	case 8: // Desann and Tavion are too hard to handle, buuuut we have force in earlt levels now
+		SP_NPC_Desann(self);
+		PopulateNPCTab(rng);
+		//SP_NPC_Spawn_Random(self);
 		break;
 	case 9: // Il a une IA au moins ?
 		SP_NPC_Bartender(self);
@@ -3408,6 +3408,23 @@ void SP_NPC_Stormtrooper_Random(gentity_t* self)
 		{
 			SP_NPC_Stormtrooper(self);
 			return;
+		}
+		if (strcmp(lastKnownMap, "artus_topside") == 0)
+		{
+			if (self->behaviorSet[0]) // Check for NULL
+			{
+				if (strcmp(self->behaviorSet[0], "artus_topside/shoot_prisoners") == 0)
+				{
+					SP_NPC_Stormtrooper(self);
+					return;
+				}
+				if (strcmp(self->behaviorSet[0], "artus_topside/shoot_prisoners_crouch") == 0)
+				{
+					SP_NPC_Stormtrooper(self);
+					return;
+				}
+			}
+			
 		}
 		SP_NPC_Spawn_Random(self);
 	}
