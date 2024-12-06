@@ -864,6 +864,9 @@ set size better?
 multiple damage models?
 custom explosion effect/sound?
 */
+//Additions for Base Game fixes (ex : artus_mine crates to get all pickups)
+extern vmCvar_t			cg_baseGameFixes;
+
 void SP_misc_model_breakable( gentity_t *ent ) 
 {
 	char	damageModel[MAX_QPATH];
@@ -885,7 +888,7 @@ void SP_misc_model_breakable( gentity_t *ent )
 	strncpy( useModel, damageModel, sizeof(useModel));
 
 	// Posto : Small 'fix' to make these breakable , models/map_objects/imp_mine/crate.md3
-	if (true) // Set to false if we don't want it. // Edit : maybe if there are more little patches like this, we can make a variable to control all of them ?
+	if (cg_baseGameFixes.integer)
 	{
 		if (strcmp(ent->model, "models/map_objects/imp_mine/crate.md3") == 0)
 		{
@@ -920,7 +923,7 @@ void SP_misc_model_breakable( gentity_t *ent )
 			ent->e_DieFunc = dieF_misc_model_breakable_die;
 			return; // We don't want to do anything else
 		}
-
+	}
 	
 	if (ent->takedamage) {
 		//Dead/damaged model
