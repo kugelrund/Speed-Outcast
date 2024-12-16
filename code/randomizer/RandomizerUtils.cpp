@@ -18,6 +18,9 @@ extern	vmCvar_t		cg_setSeed;
 // To access the game
 extern game_import_t	gi;
 
+static std::map<string, team_t> teamsByName;
+static std::map<class_t, team_t> teamsByClass;
+
 static void AddCharArrayToInt(string seedString, int* value)
 {
 	for (int i = 0; i < seedString.size(); i++) {
@@ -67,6 +70,107 @@ void RandomizerUtils::RegenerateSeed()
 		//Cvar_Set("cg_setSeed", hashString.c_str());
 		
 	}
+}
+
+void initialiseNameMap() {
+	teamsByName["NPC_Kyle"] = TEAM_PLAYER;
+	teamsByName["NPC_Lando"] = TEAM_PLAYER;
+	teamsByName["NPC_Jan"] = TEAM_PLAYER;
+	teamsByName["NPC_MonMothma"] = TEAM_PLAYER;
+	teamsByName["NPC_Tavion"] = TEAM_ENEMY;
+	teamsByName["NPC_Reelo"] = TEAM_ENEMY;
+	teamsByName["NPC_Galak"] = TEAM_ENEMY;
+	teamsByName["NPC_Desann"] = TEAM_ENEMY;
+	teamsByName["NPC_Bartender"] = TEAM_ENEMY;
+	teamsByName["NPC_MorganKatarn"] = TEAM_PLAYER;
+	teamsByName["NPC_Jedi"] = TEAM_PLAYER;
+	teamsByName["NPC_Prisoner"] = TEAM_PLAYER;
+	teamsByName["NPC_Rebel"] = TEAM_PLAYER;
+	teamsByName["NPC_Stormtrooper"] = TEAM_ENEMY;
+	teamsByName["NPC_StormtrooperOfficer"] = TEAM_ENEMY;
+	teamsByName["NPC_Tie_Pilot"] = TEAM_ENEMY;
+	teamsByName["NPC_Ugnaught"] = TEAM_ENEMY;
+	teamsByName["NPC_Gran"] = TEAM_ENEMY;
+	teamsByName["NPC_Rodian"] = TEAM_ENEMY;
+	teamsByName["NPC_Weequay"] = TEAM_ENEMY;
+	teamsByName["NPC_Trandoshan"] = TEAM_ENEMY;
+	teamsByName["NPC_Imperial"] = TEAM_ENEMY;
+	teamsByName["NPC_ImpWorker"] = TEAM_ENEMY;
+	teamsByName["NPC_BespinCop"] = TEAM_PLAYER;
+	teamsByName["NPC_Reborn"] = TEAM_ENEMY;
+	teamsByName["NPC_ShadowTrooper"] = TEAM_ENEMY;
+	teamsByName["NPC_MineMonster"] = TEAM_NEUTRAL;
+	teamsByName["NPC_Droid_Interrogator"] = TEAM_ENEMY;
+	teamsByName["NPC_Droid_Probe"] = TEAM_ENEMY;
+	teamsByName["NPC_Droid_Seeker"] = TEAM_PLAYER;
+	teamsByName["NPC_Droid_Remote"] = TEAM_ENEMY;
+	teamsByName["NPC_Droid_Sentry"] = TEAM_ENEMY;
+	teamsByName["NPC_Droid_Gonk"] = TEAM_NEUTRAL;
+	teamsByName["NPC_Droid_Mouse"] = TEAM_ENEMY;
+	teamsByName["NPC_Droid_R2D2"] = TEAM_PLAYER;
+	teamsByName["NPC_Droid_R5D2"] = TEAM_PLAYER;
+	teamsByName["NPC_Droid_Protocol"] = TEAM_PLAYER;
+	teamsByName["NPC_Galak_Mech"] = TEAM_ENEMY;
+	teamsByName["NPC_SwampTrooper"] = TEAM_ENEMY;
+}
+
+void initialiseMapByClass() {
+	teamsByClass[CLASS_KYLE] = TEAM_PLAYER;
+	teamsByClass[CLASS_LANDO] = TEAM_PLAYER;
+	teamsByClass[CLASS_JAN] = TEAM_PLAYER;
+	teamsByClass[CLASS_MONMOTHA] = TEAM_PLAYER;
+	teamsByClass[CLASS_TAVION] = TEAM_ENEMY;
+	teamsByClass[CLASS_REELO] = TEAM_ENEMY;
+	teamsByClass[CLASS_GALAK] = TEAM_ENEMY;
+	teamsByClass[CLASS_DESANN] = TEAM_ENEMY;
+	teamsByClass[CLASS_BARTENDER] = TEAM_ENEMY;
+	teamsByClass[CLASS_MORGANKATARN] = TEAM_PLAYER;
+	teamsByClass[CLASS_JEDI] = TEAM_PLAYER;
+	teamsByClass[CLASS_PRISONER] = TEAM_PLAYER;
+	teamsByClass[CLASS_REBEL] = TEAM_PLAYER;
+	teamsByClass[CLASS_STORMTROOPER] = TEAM_ENEMY;
+	teamsByClass[CLASS_UGNAUGHT] = TEAM_ENEMY;
+	teamsByClass[CLASS_GRAN] = TEAM_ENEMY;
+	teamsByClass[CLASS_RODIAN] = TEAM_ENEMY;
+	teamsByClass[CLASS_WEEQUAY] = TEAM_ENEMY;
+	teamsByClass[CLASS_TRANDOSHAN] = TEAM_ENEMY;
+	teamsByClass[CLASS_IMPERIAL] = TEAM_ENEMY;
+	teamsByClass[CLASS_IMPWORKER] = TEAM_ENEMY;
+	teamsByClass[CLASS_BESPIN_COP] = TEAM_PLAYER;
+	teamsByClass[CLASS_REBORN] = TEAM_ENEMY;
+	teamsByClass[CLASS_SHADOWTROOPER] = TEAM_ENEMY;
+	teamsByClass[CLASS_MINEMONSTER] = TEAM_NEUTRAL;
+	teamsByClass[CLASS_INTERROGATOR] = TEAM_ENEMY;
+	teamsByClass[CLASS_PROBE] = TEAM_ENEMY;
+	teamsByClass[CLASS_SEEKER] = TEAM_PLAYER;
+	teamsByClass[CLASS_REMOTE] = TEAM_ENEMY;
+	teamsByClass[CLASS_SENTRY] = TEAM_ENEMY;
+	teamsByClass[CLASS_GONK] = TEAM_NEUTRAL;
+	teamsByClass[CLASS_MOUSE] = TEAM_ENEMY;
+	teamsByClass[CLASS_R2D2] = TEAM_PLAYER;
+	teamsByClass[CLASS_R5D2] = TEAM_PLAYER;
+	teamsByClass[CLASS_PROTOCOL] = TEAM_PLAYER;
+	teamsByClass[CLASS_SWAMPTROOPER] = TEAM_ENEMY;
+	teamsByClass[CLASS_GALAKMECH] = TEAM_ENEMY;
+	teamsByClass[CLASS_NONE] = TEAM_PLAYER;
+}
+
+team_t RandomizerUtils::GetClassTeamByClassname(char *npcClassname)
+{
+	if (!teamsByName["NPC_Kyle"]) {
+		initialiseNameMap();
+	}
+	team_t valFromMap = teamsByName[npcClassname];
+	return !valFromMap ? TEAM_FREE : valFromMap;
+}
+
+team_t RandomizerUtils::GetClassTeamByClass(class_t npcClass)
+{
+	if (!teamsByClass[CLASS_KYLE]) {
+		initialiseMapByClass();
+	}
+	team_t valFromMap = teamsByClass[npcClass];
+	return !valFromMap ? TEAM_FREE : valFromMap;
 }
 
 void RandomizerInfoCommandCatcher(int page)
@@ -129,5 +233,4 @@ void RandomizerInfoCommandCatcher(int page)
 	default:
 		return;
 	}
-
 }

@@ -39,6 +39,7 @@ extern void InitMoverTrData( gentity_t *ent );
 extern qboolean SpotWouldTelefrag2( gentity_t *mover, vec3_t dest );
 extern cvar_t *g_sex;
 extern cvar_t *g_timescale;
+extern vmCvar_t cg_enableRandomizer;
 extern void G_SetEnemy( gentity_t *self, gentity_t *enemy );
 //extern void FX_BorgTeleport( vec3_t org );
 static void Q3_SetWeapon (int entID, const char *wp_name);
@@ -3341,7 +3342,8 @@ static void Q3_SetWeapon (int entID, const char *wp_name)
 	if(wp == WP_NONE)
 	{//no weapon
 		self->client->ps.weapon = WP_NONE;
-		if ( self->weaponModel >= 0 )
+		//For some reason we're trying to remove weapons that don't exist
+		if ( self->weaponModel >= 0 && self->ghoul2.size()>0 && self->weaponModel)
 		{
 			gi.G2API_RemoveGhoul2Model( self->ghoul2, self->weaponModel );
 			self->weaponModel = -1;
@@ -6630,7 +6632,7 @@ static void Q3_Set( int taskID, int entID, const char *type_name, const char *da
 			}
 			else
 			{
-				Q3_DebugPrint( WL_ERROR, "Q3_SetAnimUpper: %s does not have anim %s!\n", ent->targetname, (char *)data );
+				Q3_DebugPrint(WL_ERROR, "Q3_SetAnimUpper: %s does not have anim %s!\n", ent->targetname, (char*)data);
 			}
 			if ( Q3_SetAnimLower( entID, (char *) data ) )
 			{
@@ -6640,6 +6642,15 @@ static void Q3_Set( int taskID, int entID, const char *type_name, const char *da
 			else
 			{
 				Q3_DebugPrint( WL_ERROR, "Q3_SetAnimLower: %s does not have anim %s!\n", ent->targetname, (char *)data );
+			}
+			if (both == 0 && cg_enableRandomizer.integer) {
+				int instantTimer = 1;
+				Q3_TaskIDSet(ent, TID_ANIM_UPPER, taskID);
+				Q3_TaskIDSet(ent, TID_ANIM_LOWER, taskID);
+				Q3_TaskIDSet(ent, TID_ANIM_BOTH, taskID);
+				PM_SetTorsoAnimTimer(ent, &instantTimer, 0);
+				PM_SetLegsAnimTimer(ent, &instantTimer, 0);
+				return;
 			}
 			if ( both >= 2 )
 			{

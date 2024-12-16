@@ -16,6 +16,7 @@ extern qboolean PM_SaberInIdle( int move );
 extern qboolean PM_SaberInAttack( int move );
 extern qboolean PM_SaberInTransitionAny( int move );
 extern qboolean PM_SaberInSpecialAttack( int anim );
+extern vmCvar_t			cg_enableRandomizer;
 
 //-------------------------------------------------------------------------
 #ifdef _IMMERSION
@@ -577,6 +578,10 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace, int hitLoc=HL_NONE )
 	other = &g_entities[trace->entityNum];
 	if ( other == ent )
 	{
+		//Debug convenience, this doesn't change anything in FinalBuild but prevents popups when debugging
+		if (cg_enableRandomizer.integer) {
+			return;
+		}
 		assert(0&&"missile hit itself!!!");
 		return;
 	}

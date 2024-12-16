@@ -13,6 +13,7 @@ extern qboolean InFront( vec3_t spot, vec3_t from, vec3_t fromAngles, float thre
 extern void G_StartMatrixEffect( gentity_t *ent, qboolean falling = qfalse, int length = 1000 );
 extern cvar_t	*g_saberRealisticCombat;
 extern cvar_t		*d_slowmodeath;
+extern vmCvar_t			cg_enableRandomizer;
 
 #define	MAX_VIEW_DIST		2048
 #define MAX_VIEW_SPEED		100
@@ -3290,6 +3291,10 @@ static void Jedi_CombatTimersUpdate( int enemy_dist )
 				NPC->client->ps.forcePowerDebounce[FP_SABER_DEFENSE] = level.time + 500;
 			}
 			*/
+			// targeting an invalid enemy
+			if (cg_enableRandomizer.integer && (!NPC->enemy || !NPC->enemy->client)) {
+				return;
+			}
 			if ( NPC->enemy && PM_SaberInKnockaway( NPC->enemy->client->ps.saberMove ) )
 			{//advance!
 				Jedi_Aggression( NPC, 1 );//get closer

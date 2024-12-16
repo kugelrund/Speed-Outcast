@@ -479,6 +479,8 @@ void G_FindTeams( void ) {
 			continue;
 		if (e->flags & FL_TEAMSLAVE)
 			continue;
+		if (e->spawnflags & SFB_CINEMATIC) //Ignore cinematic NPCs
+			continue;
 		e->teammaster = e;
 		c++;
 		c2++;
@@ -983,7 +985,7 @@ void G_RunThink (gentity_t *ent)
 	{
 		goto runicarus;
 	}
-	
+
 	ent->nextthink = 0;
 	if ( ent->e_ThinkFunc == thinkF_NULL )	// actually you don't need this if I check for it in the next function -slc
 	{
@@ -1293,7 +1295,7 @@ void G_RunFrame( int levelTime ) {
 			continue;
 		
 		ent = &g_entities[i];
-	
+
 		if ( ent->waypoint != WAYPOINT_NONE 
 			&& ent->noWaypointTime < level.time )
 		{

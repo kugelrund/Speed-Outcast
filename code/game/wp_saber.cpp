@@ -273,12 +273,30 @@ void G_CreateG2AttachedWeaponModel( gentity_t *ent, const char *psWeaponModel )
 		return;
 	}
 	// give us a sabre model
-	ent->weaponModel = gi.G2API_InitGhoul2Model(ent->ghoul2, weaponModel, G_ModelIndex( weaponModel ), NULL, NULL, 0, 0);
+	// As long as it exists that is
+	if (!cg_enableRandomizer.integer || weaponModel) {
+		ent->weaponModel = gi.G2API_InitGhoul2Model(ent->ghoul2, weaponModel, G_ModelIndex(weaponModel), NULL, NULL, 0, 0);
+	}
 	if ( ent->weaponModel != -1 )
 	{
-		// attach it to the hand
-		gi.G2API_AttachG2Model(&ent->ghoul2[ent->weaponModel], &ent->ghoul2[ent->playerModel], 
-					ent->handRBolt, ent->playerModel);
+		if (cg_enableRandomizer.integer && ent->handRBolt < 0) {
+			// Only try to add the weapon if we have a slot to attach it to, otherwise return
+			if ( ent->playerModel
+				&& &ent->ghoul2[ent->playerModel].mBltlist
+				&& &ent->ghoul2[ent->playerModel].mBltlist[1]
+				&& &ent->ghoul2[ent->playerModel].mBltlist[1].boneNumber) {
+				gi.G2API_AttachG2Model(&ent->ghoul2[ent->weaponModel], &ent->ghoul2[ent->playerModel],
+					1, ent->playerModel);
+			}
+			else {
+				return;
+			}
+		}
+		else {
+			// attach it to the hand
+			gi.G2API_AttachG2Model(&ent->ghoul2[ent->weaponModel], &ent->ghoul2[ent->playerModel],
+				ent->handRBolt, ent->playerModel);
+		}
 		// set up a bolt on the end so we can get where the sabre muzzle is - we can assume this is always bolt 0
 		gi.G2API_AddBolt(&ent->ghoul2[ent->weaponModel], "*flash");
 	  	//gi.G2API_SetLodBias( &ent->ghoul2[ent->weaponModel], 0 );
@@ -4875,6 +4893,11 @@ void WP_SaberStartMissileBlockCheck( gentity_t *self, usercmd_t *ucmd  )
 	trace_t		trace;
 	vec3_t		traceTo, entDir;
 
+	//I am one of the end guys on ns_starpad and have to be killed with a turret, so if I block the game is softlocked
+	if (cg_enableRandomizer.integer && !Q_stricmp(level.mapname, "ns_starpad")
+		&& self->targetname && !Q_strncmp(self->targetname, "end_thug", 8)) {
+		return;
+	}
 
 	if ( self->client->ps.weapon != WP_SABER )
 	{

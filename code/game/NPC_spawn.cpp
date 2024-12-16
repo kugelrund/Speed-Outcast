@@ -170,15 +170,215 @@ touchFunc_t NPC_TouchFunc( gentity_t *ent )
 	return touchF_NPC_Touch;
 }
 
+extern void G_CreateG2AttachedWeaponModel(gentity_t* ent, const char* weaponModel);
+//Easier to break this into another function as I refactored a bit to make it cleaner
+void NPC_SetMiscDefaultDataRandomizer(gentity_t* ent)
+{
+	if (ent->spawnflags & SFB_CINEMATIC)
+	{//if a cinematic guy, default us to wait bState
+		ent->NPC->behaviorState = BS_CINEMATIC;
+	}
+	switch (ent->client->playerTeam) {
+	case TEAM_PLAYER:
+		ent->client->enemyTeam = TEAM_ENEMY;
+		break;
+	case TEAM_ENEMY:
+		ent->client->enemyTeam = TEAM_PLAYER;
+		break;
+	default: //TODO: AMBER Figure out how to handle this properly
+		ent->client->enemyTeam = TEAM_FREE;
+	}
+	//***I'm not sure whether I should leave this as a TEAM_ switch, I think NPC_class may be more appropriate - dmv
+	//Amber - whoever dmv is they're right, this should be based on class
+	switch (ent->client->NPC_class) {
+	case CLASS_SEEKER:
+		ent->NPC->defaultBehavior = BS_DEFAULT;
+		ent->client->ps.gravity = 0;
+		ent->svFlags |= SVF_CUSTOM_GRAVITY;
+		ent->NPC->stats.moveType = MT_FLYSWIM;
+		ent->count = 30; // SEEKER shot ammo count
+		return;
+	case CLASS_PROBE:
+	case CLASS_REMOTE:
+	case CLASS_INTERROGATOR:
+	case CLASS_SENTRY:
+		ent->NPC->defaultBehavior = BS_DEFAULT;
+		ent->client->ps.gravity = 0;
+		ent->svFlags |= SVF_CUSTOM_GRAVITY;
+		ent->NPC->stats.moveType = MT_FLYSWIM;
+		break;
+	case CLASS_JEDI:
+	case CLASS_LUKE:
+	case CLASS_TAVION:
+	case CLASS_REBORN:
+	case CLASS_DESANN:
+	case CLASS_SHADOWTROOPER:
+		//All saber wielders
+		ent->client->ps.saberActive = qfalse;
+		ent->client->ps.saberLength = 0;
+		WP_SaberInitBladeData(ent);
+		G_CreateG2AttachedWeaponModel(ent, ent->client->ps.saberModel);
+		//ent->client->enemyTeam = TEAM_ENEMY;
+		WP_InitForcePowers(ent);
+		Jedi_ClearTimers(ent);
+		if (ent->spawnflags & JSF_AMBUSH)
+		{//ambusher
+			ent->NPC->scriptFlags |= SCF_IGNORE_ALERTS;
+			ent->client->noclip = qtrue;//hang
+		}
+		break;
+	case CLASS_GONK:
+		// I guess we generically make them player usable
+		ent->svFlags |= SVF_PLAYER_USABLE;
+
+		// Not even sure if we want to give different levels of batteries?  ...Or even that these are the values we'd want to use.
+		switch (g_spskill->integer)
+		{
+		case 0:	//	EASY
+			ent->client->ps.batteryCharge = MAX_BATTERIES * 0.8f;
+			break;
+		case 1:	//	MEDIUM
+			ent->client->ps.batteryCharge = MAX_BATTERIES * 0.75f;
+			break;
+		default:
+		case 2:	//	HARD
+			ent->client->ps.batteryCharge = MAX_BATTERIES * 0.5f;
+			break;
+		}
+		break;
+	case CLASS_R2D2: // No weapons for astromech droids please
+	case CLASS_R5D2:
+		break;
+	default:
+		if (ent->client->ps.weapon != WP_NONE)
+		{
+			G_CreateG2AttachedWeaponModel(ent, weaponData[ent->client->ps.weapon].weaponMdl);
+		}
+		if (RandomizerUtils::GetClassTeamByClass(ent->client->NPC_class) == TEAM_PLAYER) //Any other NPCs which would normally be friendsly
+		{
+			switch (ent->client->ps.weapon)
+			{
+			case WP_BRYAR_PISTOL://FIXME: new weapon: imp blaster pistol
+			case WP_BLASTER_PISTOL:
+			case WP_DISRUPTOR:
+			case WP_BOWCASTER:
+			case WP_REPEATER:
+			case WP_DEMP2:
+			case WP_FLECHETTE:
+			case WP_ROCKET_LAUNCHER:
+			default:
+				break;
+			case WP_THERMAL:
+			case WP_BLASTER:
+				//FIXME: health in NPCs.cfg, and not all blaster users are stormtroopers
+				//ent->health = 25;
+				//FIXME: not necc. a ST
+				ST_ClearTimers(ent);
+				if (ent->NPC->rank >= RANK_LT || ent->client->ps.weapon == WP_THERMAL)
+				{//officers, grenade-throwers use alt-fire
+					//ent->health = 50;
+					ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+				}
+				break;
+			}
+		}
+		else if (RandomizerUtils::GetClassTeamByClass(ent->client->NPC_class) == TEAM_ENEMY) { //Any other NPCs which would normally be enemies
+			{
+				ent->NPC->defaultBehavior = BS_DEFAULT;
+				if (ent->client->NPC_class == CLASS_SHADOWTROOPER)
+				{//FIXME: a spawnflag?
+					Jedi_Cloak(ent);
+				}
+
+				G_CreateG2AttachedWeaponModel(ent, weaponData[ent->client->ps.weapon].weaponMdl);
+				switch (ent->client->ps.weapon)
+				{
+				case WP_BRYAR_PISTOL:
+					break;
+				case WP_BLASTER_PISTOL:
+					break;
+				case WP_DISRUPTOR:
+					//Sniper
+					ent->NPC->scriptFlags |= SCF_ALT_FIRE;//FIXME: use primary fire sometimes?  Up close?  Different class of NPC?
+					break;
+				case WP_BOWCASTER:
+					break;
+				case WP_REPEATER:
+					//machine-gunner
+					break;
+				case WP_DEMP2:
+					break;
+				case WP_FLECHETTE:
+					//shotgunner
+					if (!Q_stricmp("stofficeralt", ent->NPC_type))
+					{
+						ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+					}
+					break;
+				case WP_ROCKET_LAUNCHER:
+					break;
+				case WP_THERMAL:
+					//Gran, use main, bouncy fire
+//					ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+					break;
+				case WP_MELEE:
+					break;
+				default:
+				case WP_BLASTER:
+					//FIXME: health in NPCs.cfg, and not all blaster users are stormtroopers
+					//FIXME: not necc. a ST
+					ST_ClearTimers(ent);
+					if (ent->NPC->rank >= RANK_COMMANDER)
+					{//commanders use alt-fire
+						ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+					}
+					if (!Q_stricmp("rodian2", ent->NPC_type))
+					{
+						ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+					}
+					break;
+				}
+				if (!Q_stricmp("galak_mech", ent->NPC_type))
+				{//starts with armor
+					NPC_GalakMech_Init(ent);
+				}
+			}
+
+		}
+
+		//Extra stuff for cinematic chars and behaviour set for friendly NPCS
+		if (ent->client->NPC_class == CLASS_KYLE || (ent->spawnflags & SFB_CINEMATIC))
+		{
+			ent->NPC->defaultBehavior = BS_CINEMATIC;
+		}
+		else if (ent->client->playerTeam == TEAM_PLAYER)
+		{
+			ent->NPC->defaultBehavior = BS_FOLLOW_LEADER;
+			ent->client->leader = &g_entities[0];
+		}
+
+		//Shields for ATSTs/Mark1s
+		if (ent->client->NPC_class == CLASS_ATST || ent->client->NPC_class == CLASS_MARK1) // chris/steve/kevin requested that the mark1 be shielded also
+		{
+			ent->flags |= (FL_SHIELDED | FL_NO_KNOCKBACK);
+		}
+	}
+}
+
 /*
 -------------------------
 NPC_SetMiscDefaultData
 -------------------------
 */
 
-extern void G_CreateG2AttachedWeaponModel( gentity_t *ent, const char *weaponModel );
-void NPC_SetMiscDefaultData( gentity_t *ent )
+void NPC_SetMiscDefaultData(gentity_t* ent)
 {
+	if (cg_enableRandomizer.integer)
+	{
+		NPC_SetMiscDefaultDataRandomizer(ent);
+		return;
+	}
+
 	if ( ent->spawnflags & SFB_CINEMATIC )
 	{//if a cinematic guy, default us to wait bState
 		ent->NPC->behaviorState = BS_CINEMATIC;
@@ -280,104 +480,104 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 		break;
 
 	case TEAM_ENEMY:
+	{
+		ent->NPC->defaultBehavior = BS_DEFAULT;
+		if (ent->client->NPC_class == CLASS_SHADOWTROOPER)
+		{//FIXME: a spawnflag?
+			Jedi_Cloak(ent);
+		}
+		if (ent->client->NPC_class == CLASS_TAVION ||
+			ent->client->NPC_class == CLASS_REBORN ||
+			ent->client->NPC_class == CLASS_DESANN ||
+			ent->client->NPC_class == CLASS_SHADOWTROOPER)
 		{
-			ent->NPC->defaultBehavior = BS_DEFAULT;
-			if ( ent->client->NPC_class == CLASS_SHADOWTROOPER )
-			{//FIXME: a spawnflag?
-				Jedi_Cloak( ent );
-			}
-		 	if( ent->client->NPC_class == CLASS_TAVION ||
-				ent->client->NPC_class == CLASS_REBORN ||
-				ent->client->NPC_class == CLASS_DESANN ||
-				ent->client->NPC_class == CLASS_SHADOWTROOPER )
-			{
-				ent->client->ps.saberActive = qfalse;
-				ent->client->ps.saberLength = 0;
-				WP_SaberInitBladeData( ent );
-				G_CreateG2AttachedWeaponModel( ent, ent->client->ps.saberModel );
-				WP_InitForcePowers( ent );
-				ent->client->enemyTeam = TEAM_PLAYER;
-				Jedi_ClearTimers( ent );
-				if ( ent->spawnflags & JSF_AMBUSH )
-				{//ambusher
-					ent->NPC->scriptFlags |= SCF_IGNORE_ALERTS;
-					ent->client->noclip = qtrue;//hang
-				}
-			}
-			else if( ent->client->NPC_class == CLASS_PROBE || ent->client->NPC_class == CLASS_REMOTE ||
-						ent->client->NPC_class == CLASS_INTERROGATOR || ent->client->NPC_class == CLASS_SENTRY)
-			{		
-				ent->NPC->defaultBehavior = BS_DEFAULT;
-				ent->client->ps.gravity = 0;
-				ent->svFlags |= SVF_CUSTOM_GRAVITY;
-				ent->NPC->stats.moveType = MT_FLYSWIM;
-			}
-			else 
-			{
-				G_CreateG2AttachedWeaponModel( ent, weaponData[ent->client->ps.weapon].weaponMdl );
-				switch ( ent->client->ps.weapon )
-				{
-				case WP_BRYAR_PISTOL:
-					break;
-				case WP_BLASTER_PISTOL:
-					break;
-				case WP_DISRUPTOR:
-					//Sniper
-					ent->NPC->scriptFlags |= SCF_ALT_FIRE;//FIXME: use primary fire sometimes?  Up close?  Different class of NPC?
-					break;
-				case WP_BOWCASTER:
-					break;
-				case WP_REPEATER:
-					//machine-gunner
-					break;
-				case WP_DEMP2:
-					break;
-				case WP_FLECHETTE:
-					//shotgunner
-					if ( !Q_stricmp( "stofficeralt", ent->NPC_type ) )
-					{
-						ent->NPC->scriptFlags |= SCF_ALT_FIRE;
-					}
-					break;
-				case WP_ROCKET_LAUNCHER:
-					break;
-				case WP_THERMAL:
-					//Gran, use main, bouncy fire
-//					ent->NPC->scriptFlags |= SCF_ALT_FIRE;
-					break;
-				case WP_MELEE:
-					break;
-				default:
-				case WP_BLASTER:
-					//FIXME: health in NPCs.cfg, and not all blaster users are stormtroopers
-					//FIXME: not necc. a ST
-					ST_ClearTimers( ent );
-					if ( ent->NPC->rank >= RANK_COMMANDER )
-					{//commanders use alt-fire
-						ent->NPC->scriptFlags |= SCF_ALT_FIRE;
-					}
-					if ( !Q_stricmp( "rodian2", ent->NPC_type ) )
-					{
-						ent->NPC->scriptFlags |= SCF_ALT_FIRE;
-					}
-					break;
-				}
-				if ( !Q_stricmp( "galak_mech", ent->NPC_type ) )
-				{//starts with armor
-					NPC_GalakMech_Init( ent );
-				}
+			ent->client->ps.saberActive = qfalse;
+			ent->client->ps.saberLength = 0;
+			WP_SaberInitBladeData(ent);
+			G_CreateG2AttachedWeaponModel(ent, ent->client->ps.saberModel);
+			WP_InitForcePowers(ent);
+			ent->client->enemyTeam = TEAM_PLAYER;
+			Jedi_ClearTimers(ent);
+			if (ent->spawnflags & JSF_AMBUSH)
+			{//ambusher
+				ent->NPC->scriptFlags |= SCF_IGNORE_ALERTS;
+				ent->client->noclip = qtrue;//hang
 			}
 		}
-		break;
+		else if (ent->client->NPC_class == CLASS_PROBE || ent->client->NPC_class == CLASS_REMOTE ||
+			ent->client->NPC_class == CLASS_INTERROGATOR || ent->client->NPC_class == CLASS_SENTRY)
+		{
+			ent->NPC->defaultBehavior = BS_DEFAULT;
+			ent->client->ps.gravity = 0;
+			ent->svFlags |= SVF_CUSTOM_GRAVITY;
+			ent->NPC->stats.moveType = MT_FLYSWIM;
+		}
+		else
+		{
+			G_CreateG2AttachedWeaponModel(ent, weaponData[ent->client->ps.weapon].weaponMdl);
+			switch (ent->client->ps.weapon)
+			{
+			case WP_BRYAR_PISTOL:
+				break;
+			case WP_BLASTER_PISTOL:
+				break;
+			case WP_DISRUPTOR:
+				//Sniper
+				ent->NPC->scriptFlags |= SCF_ALT_FIRE;//FIXME: use primary fire sometimes?  Up close?  Different class of NPC?
+				break;
+			case WP_BOWCASTER:
+				break;
+			case WP_REPEATER:
+				//machine-gunner
+				break;
+			case WP_DEMP2:
+				break;
+			case WP_FLECHETTE:
+				//shotgunner
+				if (!Q_stricmp("stofficeralt", ent->NPC_type))
+				{
+					ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+				}
+				break;
+			case WP_ROCKET_LAUNCHER:
+				break;
+			case WP_THERMAL:
+				//Gran, use main, bouncy fire
+//					ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+				break;
+			case WP_MELEE:
+				break;
+			default:
+			case WP_BLASTER:
+				//FIXME: health in NPCs.cfg, and not all blaster users are stormtroopers
+				//FIXME: not necc. a ST
+				ST_ClearTimers(ent);
+				if (ent->NPC->rank >= RANK_COMMANDER)
+				{//commanders use alt-fire
+					ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+				}
+				if (!Q_stricmp("rodian2", ent->NPC_type))
+				{
+					ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+				}
+				break;
+			}
+			if (!Q_stricmp("galak_mech", ent->NPC_type))
+			{//starts with armor
+				NPC_GalakMech_Init(ent);
+			}
+		}
+	}
+	break;
 
 	default:
 		break;
 	}
 
 
-	if ( ent->client->NPC_class == CLASS_ATST || ent->client->NPC_class == CLASS_MARK1 ) // chris/steve/kevin requested that the mark1 be shielded also
+	if (ent->client->NPC_class == CLASS_ATST || ent->client->NPC_class == CLASS_MARK1) // chris/steve/kevin requested that the mark1 be shielded also
 	{
-		ent->flags |= (FL_SHIELDED|FL_NO_KNOCKBACK);
+		ent->flags |= (FL_SHIELDED | FL_NO_KNOCKBACK);
 	}
 }
 
@@ -386,9 +586,198 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 NPC_WeaponsForTeam
 -------------------------
 */
+int NPC_WeaponsForTeamRandomizer(team_t team, int spawnflags, const char* NPC_type)
+{
+	//*** not sure how to handle this, should I pass in class instead of team and go from there? - dmv
+	//Amber - damn this dmv person was onto things
+
+	//TODO: Game has these exceptions built in for when certain NPCs are neutral - how to handle? Preserved for now
+	if (team == TEAM_NEUTRAL)
+	{
+		if (Q_stricmp("mark1", NPC_type) == 0)
+		{
+			return WP_NONE;
+		}
+		if (Q_stricmp("mark2", NPC_type) == 0)
+		{
+			return WP_NONE;
+		}
+		if (Q_strncmp("ugnaught", NPC_type, 8) == 0)
+		{
+			return WP_NONE;
+		}
+		if (Q_stricmp("bartender", NPC_type) == 0)
+		{
+			return WP_NONE;
+		}
+		if (Q_stricmp("morgankatarn", NPC_type) == 0)
+		{
+			return WP_NONE;
+		}
+	}
+
+	//All Saber Wielders
+	if (Q_stricmp("tavion", NPC_type) == 0 ||
+		Q_strncmp("reborn", NPC_type, 6) == 0 ||
+		Q_stricmp("desann", NPC_type) == 0 ||
+		Q_strncmp("shadowtrooper", NPC_type, 13) == 0 ||
+		Q_strncmp("jedi", NPC_type, 4) == 0 ||
+		Q_stricmp("luke", NPC_type) == 0)
+		return (1 << WP_SABER);
+
+	/*
+	* Okay decision time here. If we ever spawn a non-neutral NPC with no weapon, it will try to set up a saber for them and the game will crash.
+	* For now, commented out all blocks here with WP_NONE so they fall into the default blaster block. We can have it just not try to set up
+	* a weapon for NPCs with weapon none if we want to give up being shot at by ugnaughts, droids etc. We could also assign random weapons
+	* (personally I wanna see someone get shotgunned down by C3PO)
+	*/
+	if (Q_strncmp("stofficer", NPC_type, 9) == 0)
+	{
+		return (1 << WP_FLECHETTE);
+	}
+	if (Q_stricmp("stcommander", NPC_type) == 0)
+	{
+		return (1 << WP_REPEATER);
+	}
+	if (Q_stricmp("swamptrooper", NPC_type) == 0)
+	{
+		return (1 << WP_FLECHETTE);
+	}
+	if (Q_stricmp("swamptrooper2", NPC_type) == 0)
+	{
+		return (1 << WP_REPEATER);
+	}
+	if (Q_stricmp("rockettrooper", NPC_type) == 0)
+	{
+		return (1 << WP_ROCKET_LAUNCHER);
+	}
+	if (Q_strncmp("shadowtrooper", NPC_type, 13) == 0)
+	{
+		return (1 << WP_SABER);//|( 1 << WP_RAPID_CONCUSSION)?
+	}
+	if (Q_stricmp("imperial", NPC_type) == 0)
+	{
+		return (1 << WP_BLASTER_PISTOL);
+	}
+	if (Q_strncmp("impworker", NPC_type, 9) == 0)
+	{
+		return (1 << WP_BLASTER_PISTOL);
+	}
+	if (Q_stricmp("stormpilot", NPC_type) == 0)
+	{
+		return (1 << WP_BLASTER_PISTOL);
+	}
+	if (Q_stricmp("galak", NPC_type) == 0)
+	{
+		return (1 << WP_BLASTER);
+	}
+	if (Q_stricmp("galak_mech", NPC_type) == 0)
+	{
+		return (1 << WP_REPEATER);
+	}
+	//if (Q_strncmp("ugnaught", NPC_type, 8) == 0)
+	//{
+	//	return WP_NONE;
+	//}
+	if (Q_stricmp("granshooter", NPC_type) == 0)
+	{
+		return (1 << WP_BLASTER);
+	}
+	if (Q_stricmp("granboxer", NPC_type) == 0)
+	{
+		return (1 << WP_MELEE);
+	}
+	if (Q_strncmp("gran", NPC_type, 4) == 0)
+	{
+		return ((1 << WP_THERMAL) | (1 << WP_MELEE));
+	}
+	if (Q_stricmp("rodian", NPC_type) == 0)
+	{
+		return (1 << WP_DISRUPTOR);
+	}
+	if (Q_stricmp("rodian2", NPC_type) == 0)
+	{
+		return (1 << WP_BLASTER);
+	}
+	if ((Q_stricmp("interrogator", NPC_type) == 0) || (Q_stricmp("sentry", NPC_type) == 0))
+	{
+		return WP_NONE;
+	}
+	if (Q_strncmp("weequay", NPC_type, 7) == 0)
+	{
+		return (1 << WP_BOWCASTER);//|( 1 << WP_STAFF )(FIXME: new weap?)
+	}
+	if (Q_stricmp("impofficer", NPC_type) == 0)
+	{
+		return (1 << WP_BLASTER);
+	}
+	if (Q_stricmp("impcommander", NPC_type) == 0)
+	{
+		return (1 << WP_BLASTER);
+	}
+	if ((Q_stricmp("probe", NPC_type) == 0) || (Q_stricmp("seeker", NPC_type) == 0))
+	{
+		return (1 << WP_BOT_LASER);
+	}
+	if (Q_stricmp("remote", NPC_type) == 0)
+	{
+		return (1 << WP_BOT_LASER);
+	}
+	if (Q_stricmp("trandoshan", NPC_type) == 0)
+	{
+		return (1 << WP_REPEATER);
+	}
+	if (Q_stricmp("atst", NPC_type) == 0)
+	{
+		return ((1 << WP_ATST_MAIN) | (1 << WP_ATST_SIDE));
+	}
+	if (Q_stricmp("mark1", NPC_type) == 0)
+	{
+		return (1 << WP_BOT_LASER);
+	}
+	if (Q_stricmp("mark2", NPC_type) == 0)
+	{
+		return (1 << WP_BOT_LASER);
+	}
+	if (Q_stricmp("minemonster", NPC_type) == 0)
+	{
+		return ((1 << WP_MELEE));
+	}
+	if (Q_stricmp("howler", NPC_type) == 0)
+	{
+		return ((1 << WP_MELEE));
+	}
+	//if (Q_strncmp("prisoner", NPC_type, 8) == 0)
+	//{
+	//	return WP_NONE;
+	//}
+	if (Q_strncmp("bespincop", NPC_type, 9) == 0)
+	{
+		return (1 << WP_BLASTER_PISTOL);
+	}
+	//if (Q_stricmp("MonMothma", NPC_type) == 0)
+	//{
+	//	return WP_NONE;
+	//}
+	if (!Q_stricmp("protocol", NPC_type)) {
+		return 1 << WP_STUN_BATON;
+	}
+	if (spawnflags & SFB_RIFLEMAN)
+		return (1 << WP_REPEATER);
+
+	if (spawnflags & SFB_PHASER)
+		return (1 << WP_BLASTER_PISTOL);
+
+	//Still default to blaster if we're not explicitly set (Stormtroopers, rebels)
+	return (1 << WP_BLASTER); //We might be giving droids (R2, R4, Protocol) blasters here, should we keep?
+}
 
 int NPC_WeaponsForTeam( team_t team, int spawnflags, const char *NPC_type )
 {
+	if (cg_enableRandomizer.integer)
+	{
+		return NPC_WeaponsForTeamRandomizer(team, spawnflags, NPC_type);
+	}
 	//*** not sure how to handle this, should I pass in class instead of team and go from there? - dmv
 	switch(team)
 	{
@@ -1298,6 +1687,14 @@ void NPC_Spawn_Go( gentity_t *ent )
 			newent->NPC->defaultBehavior = newent->NPC->behaviorState = BS_WAIT;
 			newent->classname = "NPC";
 	//		newent->svFlags |= SVF_NOPUSH;
+		}
+		else if (cg_enableRandomizer.integer) {
+			if (!Q_stricmp("protocol_imp", ent->NPC_type)) {
+				//Imperial protocol droids share a class with C3PO but should be enemy team
+				newent->client->playerTeam = TEAM_ENEMY;
+			} else {
+				newent->client->playerTeam = RandomizerUtils::GetClassTeamByClassname(ent->classname);
+			}
 		}
 	}
 //=====================================================================
@@ -2642,9 +3039,15 @@ Seeker Droid - floating round droids that shadow troopers spawn
 */
 void SP_NPC_Droid_Seeker( gentity_t *self)
 {
+	//Just spawn the other kind if it should be an enemy
+	if (cg_enableRandomizer.integer && RandomizerUtils::GetClassTeamByClassname(self->classname) == TEAM_ENEMY) {
+		SP_NPC_Droid_Remote(self);
+		return;
+	}
+
 	self->NPC_type = "seeker";
 
-	SP_NPC_spawner( self );
+	SP_NPC_spawner(self);
 
 	NPC_Seeker_Precache();
 }
@@ -2983,7 +3386,7 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		rng = rand() % 50;
 	}
 
-	switch (rng)
+ 	switch (rng)
 	{
 	case 0:
 		SP_NPC_Kyle(self);
@@ -3005,7 +3408,7 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		SP_NPC_MonMothma(self);
 		PopulateNPCTab(rng);
 		break;
-	case 5: // Desann and Tavion are too hard to handle, buuuut we have force in earlt levels now
+	case 5: // Desann and Tavion are too hard to handle, but they should behave now
 		SP_NPC_Tavion(self);
 		PopulateNPCTab(rng);
 		//SP_NPC_Spawn_Random(self);
@@ -3018,7 +3421,7 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		SP_NPC_Galak(self);
 		PopulateNPCTab(rng);
 		break;
-	case 8: // Desann and Tavion are too hard to handle, buuuut we have force in earlt levels now
+	case 8: // Desann and Tavion are too hard to handle, but they should behave now
 		SP_NPC_Desann(self);
 		PopulateNPCTab(rng);
 		//SP_NPC_Spawn_Random(self);
@@ -3192,9 +3595,8 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		PopulateNPCTab(rng);
 		break;
 	case 48: // Spawning this droid on kejim_base is making the game crash ????
-		//SP_NPC_Droid_R5D2(self);
-		//PopulateNPCTab(rng);
-		SP_NPC_Spawn_Random(self);
+		SP_NPC_Droid_R5D2(self);
+		PopulateNPCTab(rng);
 		break;
 	case 49:
 		SP_NPC_Droid_Protocol(self);
@@ -3205,63 +3607,6 @@ void SP_NPC_Spawn_Random(gentity_t* self)
 		SP_NPC_Spawn_Random(self);
 		break;
 	}
-}
-
-void SpawnValidKeyholder(gentity_t* self) // Presumably an humanoid, since droids crashes the game.
-{
-	// X being the number of valid NPC that can hold a key
-	int rng = rand() % 5;
-
-	// In the meantime, here is Kyle
-	//SP_NPC_Kyle(self);
-
-	switch (rng)
-	{
-	case 0:
-		break;
-	default:
-		break;
-	}
-}
-
-bool CheckForceSpawn(gentity_t* self, char whatWeCompare[], char whoToSpawn[]) // Used in maps when we will spawn something
-{
-	// It's either NPC_targetname or targetname, check for both and return when done.
-	if (self->NPC_targetname) // Check if NULL
-	{
-		if (strncmp(self->NPC_targetname, whatWeCompare, strlen(self->NPC_targetname)) == 0) // Got it, we have to spawn this entity
-		{
-			// Temporary : just spawn the 'normal' NPC
-			if (strcmp(whoToSpawn, "Rebel") == 0) SP_NPC_Rebel(self);
-			if (strcmp(whoToSpawn, "Imperial") == 0) SP_NPC_Imperial(self);
-			if (strcmp(whoToSpawn, "Rodian") == 0) SP_NPC_Rodian(self);
-			if (strcmp(whoToSpawn, "Stormtrooper") == 0) SP_NPC_Stormtrooper(self);
-			if (strcmp(whoToSpawn, "Weequay") == 0) SP_NPC_Weequay(self);
-			if (strcmp(whoToSpawn, "Gran") == 0) SP_NPC_Gran(self);
-			if (strcmp(whoToSpawn, "Reborn") == 0) SP_NPC_Reborn(self);
-			if (strcmp(whoToSpawn, "Shadowtrooper") == 0) SP_NPC_ShadowTrooper(self);
-
-			return true; // True, we forcefully spawned something
-		}
-	}
-	if (self->targetname) // Check if NULL
-	{
-		if (strncmp(self->targetname, whatWeCompare, strlen(self->targetname)) == 0) // Got it, we have to spawn this entity
-		{
-			// Temporary : just spawn the 'normal' NPC
-			if (strcmp(whoToSpawn, "Rebel") == 0) SP_NPC_Rebel(self);
-			if (strcmp(whoToSpawn, "Imperial") == 0) SP_NPC_Imperial(self);
-			if (strcmp(whoToSpawn, "Rodian") == 0) SP_NPC_Rodian(self);
-			if (strcmp(whoToSpawn, "Stormtrooper") == 0) SP_NPC_Stormtrooper(self);
-			if (strcmp(whoToSpawn, "Weequay") == 0) SP_NPC_Weequay(self);
-			if (strcmp(whoToSpawn, "Gran") == 0) SP_NPC_Gran(self);
-			if (strcmp(whoToSpawn, "Reborn") == 0) SP_NPC_Reborn(self);
-			if (strcmp(whoToSpawn, "Shadowtrooper") == 0) SP_NPC_ShadowTrooper(self);
-
-			return true; // True, we forcefully spawned something
-		}
-	}
-	return false; // False, it's not a forced spawn
 }
 
 // If the Randomizer is disabled, just a bit of process time is added at every check, but at least it should be comptable with the standard SpeedOutcast
@@ -3279,7 +3624,7 @@ void SP_NPC_Lando_Random(gentity_t* self) // Lando should always spawn as Lando
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Lando(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Lando(self);
 }
@@ -3288,7 +3633,7 @@ void SP_NPC_Jan_Random(gentity_t* self) // Jan should always spawn as Jan
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Jan(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Jan(self);
 }
@@ -3297,7 +3642,7 @@ void SP_NPC_Luke_Random(gentity_t* self) // Luke should always spawn as Luke
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Luke(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Luke(self);
 }
@@ -3306,7 +3651,7 @@ void SP_NPC_MonMothma_Random(gentity_t* self) // MonMothma should always spawn a
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_MonMothma(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_MonMothma(self);
 }
@@ -3315,7 +3660,7 @@ void SP_NPC_Tavion_Random(gentity_t* self) // Tavion should always spawn as Tavi
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Tavion(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Tavion(self);
 }
@@ -3324,7 +3669,7 @@ void SP_NPC_Reelo_Random(gentity_t* self) // Reelo should always spawn as Reelo
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Reelo(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Reelo(self);
 }
@@ -3333,7 +3678,7 @@ void SP_NPC_Galak_Random(gentity_t* self) // Galak should always spawn as Galak
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Galak(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Galak(self);
 }
@@ -3342,7 +3687,7 @@ void SP_NPC_Desann_Random(gentity_t* self) // Desann should always spawn as Desa
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Desann(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Desann(self);
 }
@@ -3351,7 +3696,7 @@ void SP_NPC_Bartender_Random(gentity_t* self) // Bartender should always spawn a
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Bartender(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Bartender(self);
 }
@@ -3360,7 +3705,7 @@ void SP_NPC_MorganKatarn_Random(gentity_t* self) // Morgarn should always spawn 
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_MorganKatarn(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_MorganKatarn(self);
 }
@@ -3378,7 +3723,7 @@ void SP_NPC_Prisoner_Random(gentity_t* self) // Prisoners should spawn as themse
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Prisoner(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Prisoner(self);
 }
@@ -3387,10 +3732,6 @@ void SP_NPC_Rebel_Random(gentity_t* self)
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The rebel being shot on has to be constant
-		{
-			if (CheckForceSpawn(self, "rebel_target", "Rebel")) return;
-		}
 		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Rebel(self);
@@ -3400,32 +3741,6 @@ void SP_NPC_Stormtrooper_Random(gentity_t* self)
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The stormtooper shooting the rebel has to be constant
-		{
-			if (CheckForceSpawn(self, "shooter", "Stormtrooper")) return;
-		}
-		if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
-		{
-			SP_NPC_Stormtrooper(self);
-			return;
-		}
-		if (strcmp(lastKnownMap, "artus_topside") == 0)
-		{
-			if (self->behaviorSet[0]) // Check for NULL
-			{
-				if (strcmp(self->behaviorSet[0], "artus_topside/shoot_prisoners") == 0)
-				{
-					SP_NPC_Stormtrooper(self);
-					return;
-				}
-				if (strcmp(self->behaviorSet[0], "artus_topside/shoot_prisoners_crouch") == 0)
-				{
-					SP_NPC_Stormtrooper(self);
-					return;
-				}
-			}
-			
-		}
 		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Stormtrooper(self);
@@ -3453,7 +3768,7 @@ void SP_NPC_Ugnaught_Random(gentity_t* self) // Ugnaught should spawn as Ugnaugh
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Ugnaught(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Ugnaught(self);
 }
@@ -3462,22 +3777,6 @@ void SP_NPC_Gran_Random(gentity_t* self) // Who is that ? It's the TD guys
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		if (strcmp(lastKnownMap, "bespin_undercity") == 0) // Undercity, the two TS thrower at the end of the mission
-		{
-			CheckForceSpawn(self, "t198", "Gran");
-			return;
-		}
-		if (strcmp(lastKnownMap, "ns_starpad") == 0)
-		{
-			if (CheckForceSpawn(self, "back_squad1", "Gran")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "back_squad2", "Gran")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "back_squad3", "Gran")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "back_squad4", "Gran")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad1", "Gran")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad2", "Gran")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad3", "Gran")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad4", "Gran")) return; // For Lando in the hangar
-		}
 		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Gran(self);
@@ -3487,25 +3786,6 @@ void SP_NPC_Rodian_Random(gentity_t* self)
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		if (strcmp(lastKnownMap, "ns_streets") == 0)
-		{
-			if (CheckForceSpawn(self, "bouncer_main1", "Rodian")) return; // The two Rodians that will get our weapons
-			if (CheckForceSpawn(self, "bouncer_main2", "Rodian")) return; // The two Rodians that will get our weapons
-		}
-		if (strcmp(lastKnownMap, "ns_starpad") == 0)
-		{
-			if (CheckForceSpawn(self, "reelo_thug", "Rodian")) return; // The guys with Reelo at the end of the mission
-			if (CheckForceSpawn(self, "end_thug", "Rodian")) return; // The guys with Reelo at the end of the mission
-			if (CheckForceSpawn(self, "bea", "Rodian")) return; // The guys with Reelo at the end of the mission
-			if (CheckForceSpawn(self, "back_squad1", "Rodian")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "back_squad2", "Rodian")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "back_squad3", "Rodian")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "back_squad4", "Rodian")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad1", "Rodian")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad2", "Rodian")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad3", "Rodian")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad4", "Rodian")) return; // For Lando in the hangar
-		}
 		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Rodian(self);
@@ -3515,24 +3795,6 @@ void SP_NPC_Weequay_Random(gentity_t* self)
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		if (strcmp(lastKnownMap, "ns_starpad") == 0)
-		{
-			if (CheckForceSpawn(self, "reelo_thug", "Weequay")) return; // The guys with Reelo at the end of the mission
-			if (CheckForceSpawn(self, "end_thug", "Weequay")) return; // The guys with Reelo at the end of the mission
-			if (CheckForceSpawn(self, "bea", "Weequay")) return; // The guys with Reelo at the end of the mission
-			if (CheckForceSpawn(self, "back_squad1", "Weequay")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "back_squad2", "Weequay")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "back_squad3", "Weequay")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "back_squad4", "Weequay")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad1", "Weequay")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad2", "Weequay")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad3", "Weequay")) return; // For Lando in the hangar
-			if (CheckForceSpawn(self, "front_squad4", "Weequay")) return; // For Lando in the hangar
-		}
-		if (strcmp(lastKnownMap, "ns_hideout") == 0)
-		{
-			if (CheckForceSpawn(self, "trap", "Weequay")) return; // The guys after the 5 turrets
-		}
 		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Weequay(self);
@@ -3560,83 +3822,6 @@ void SP_NPC_Imperial_Random(gentity_t* self)
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		// Won't make a special function, he is an unique case
-		if (strcmp(lastKnownMap, "cairn_assembly") == 0) // The officer we have to mindtrick has to be constant
-		{
-			if (self->behaviorSet[0]) // Check for NULL
-			{
-				if (strcmp(self->behaviorSet[0], "cairn_assembly/silent_stand") == 0)
-				{
-					SP_NPC_Imperial(self);
-					return;
-				}
-			}
-		}
-		if (strcmp(lastKnownMap, "kejim_base") == 0)
-		{
-			if (CheckForceSpawn(self, "explosion_victims", "Imperial")) return; // The dead Imperial holding a security key
-			if (CheckForceSpawn(self, "ambush_io", "Imperial")) return; // The first Imperial
-			if (self->behaviorSet[0] && (strcmp(self->behaviorSet[0], "common/crouchshoot") == 0))
-			{
-				// ONLY the Imperial hiding in the corner, not the one standing (they both have the same target name)
-				CheckForceSpawn(self, "corridor_enemies", "Imperial");
-				return;
-			}
-		}
-		if (strcmp(lastKnownMap, "artus_detention") == 0)
-		{
-			if (CheckForceSpawn(self, "warden", "Imperial")) return; // The warden that we have hostage
-		}
-		if (strcmp(lastKnownMap, "doom_detention") == 0)
-		{
-			if (CheckForceSpawn(self, "jailer", "Imperial")) return; // The jailer of Jan
-			if (self->message && strcmp(self->message, "ele_key2") == 0) // The Imperial holding a key in the big room
-			{
-				CheckForceSpawn(self, "squad7", "Imperial");
-				return;
-			}
-		}
-		if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
-		{
-			SP_NPC_Imperial(self);
-			return;
-		}
-		if (strcmp(lastKnownMap, "artus_topside") == 0)
-		{
-			if (self->message && strcmp(self->message, "shield_key") == 0) // The Imperial holding a key in the ATST room
-			{
-				// This guy doesn't have a target, so we just spawn him
-				SP_NPC_Imperial(self);
-				return;
-			}
-		}
-		if (strcmp(lastKnownMap, "bespin_streets") == 0)
-		{
-			if (self->message && strcmp(self->message, "exit_key") == 0) // The Imperial holding a key at the end of the level
-			{
-				// This guy doesn't have a target, so we just spawn him
-				SP_NPC_Imperial(self);
-				return;
-			}
-		}
-		if (strcmp(lastKnownMap, "bespin_platform") == 0)
-		{
-			if (self->message && strcmp(self->message, "control_room") == 0) // The Imperial holding a key at the end of the level
-			{
-				// This guy doesn't have a target, so we just spawn him
-				SP_NPC_Imperial(self);
-				return;
-			}
-		}
-		if (strcmp(lastKnownMap, "doom_comm") == 0)
-		{
-			if (self->message && strcmp(self->message, "hey_presto") == 0) // The Imperial holding a key to access the 'call room'
-			{
-				// This guy doesn't have a target, so we just spawn him
-				SP_NPC_Imperial(self);
-				return;
-			}
-		}
 		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Imperial(self);
@@ -3646,11 +3831,6 @@ void SP_NPC_ImpWorker_Random(gentity_t* self)
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, if a friendly NPC and an ennemy NPC starts to fight, they WILL trigger the alarm
-		{
-			SP_NPC_ImpWorker(self);
-			return;
-		}
 		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_ImpWorker(self);
@@ -3669,28 +3849,6 @@ void SP_NPC_Reborn_Random(gentity_t* self)
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		if (strcmp(lastKnownMap, "bespin_undercity") == 0) // Undercity, the two reborn at the end of the mission
-		{
-			CheckForceSpawn(self, "t179", "Reborn");
-			CheckForceSpawn(self, "t199", "Reborn");
-			return;
-		}
-		if (strcmp(lastKnownMap, "cairn_assembly") == 0) // The two reborn we have to kill in oprder to spawn the ATST at the end
-		{
-			CheckForceSpawn(self, "squad18", "Reborn");
-			return;
-		}
-		if (strcmp(lastKnownMap, "doom_detention") == 0) // The two reborn at the end to access the jailer
-		{
-			CheckForceSpawn(self, "squad22", "Reborn");
-			return;
-		}
-		if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The two reborn out of the 3 kills we have to do
-		{
-			CheckForceSpawn(self, "bridge_count", "Reborn");
-			CheckForceSpawn(self, "squad5", "Reborn");
-			return;
-		}
 		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Reborn(self);
@@ -3700,17 +3858,6 @@ void SP_NPC_ShadowTrooper_Random(gentity_t* self)
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		if (strcmp(lastKnownMap, "cairn_dock1") == 0) // We want to keep this map clean, too many undefined behaviours
-		{
-			SP_NPC_ShadowTrooper(self);
-			return;
-		}
-		if (strcmp(lastKnownMap, "yavin_courtyard") == 0) // The two reborn out of the 3 kills we have to do
-		{
-			CheckForceSpawn(self, "bridge_count", "Shadowtrooper");
-			CheckForceSpawn(self, "squad5", "Shadowtrooper");
-			return;
-		}
 		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_ShadowTrooper(self);
@@ -3891,7 +4038,7 @@ void SP_NPC_Droid_R2D2_Random(gentity_t* self) // R2D2 should spawn as self
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Droid_R2D2(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Droid_R2D2(self);
 }
@@ -3900,7 +4047,7 @@ void SP_NPC_Droid_R5D2_Random(gentity_t* self) // R5D2 should spawn as self
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Droid_R5D2(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Droid_R5D2(self);
 }
@@ -3909,7 +4056,7 @@ void SP_NPC_Droid_Protocol_Random(gentity_t* self)
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Droid_Protocol(self);
+		SP_NPC_Spawn_Random(self);
 	}
 	else SP_NPC_Droid_Protocol(self);
 }

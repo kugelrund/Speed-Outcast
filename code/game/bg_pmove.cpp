@@ -7267,6 +7267,12 @@ void PM_WeaponLightsaber(void)
 	// Check for WEAPON ATTACK
 	// *********************************************************
 
+	//We don't have an enemy, don't try to attack
+	//How the fuck did that get into release? It's checked everywhere else
+	if (cg_enableRandomizer.integer && !pm->gent->enemy) {
+		return;
+	}
+
 	weapon = &cg_weapons[pm->ps->weapon];
 
 	if(!delayed_fire)

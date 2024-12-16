@@ -34,6 +34,7 @@ extern qboolean PM_RollingAnim( int anim );
 extern qboolean PM_InCartwheel( int anim );
 
 extern	cvar_t	*g_spskill;
+extern vmCvar_t	cg_enableRandomizer;
 extern int	teamLastEnemyTime[];
 extern qboolean	stop_icarus;
 extern int killPlayerTimer;
@@ -545,11 +546,18 @@ void NPC_Touch(gentity_t *self, gentity_t *other, trace_t *trace)
 			}
 			if ( keyTaken )
 			{//remove my key
-				gi.G2API_SetSurfaceOnOff( &self->ghoul2[self->playerModel], "l_arm_key", 0x00000002 );
-				self->message = NULL;
-				//FIXME: temp pickup sound
-				G_Sound( player, G_SoundIndex( "sound/weapons/key_pkup.wav" ) );
-				//FIXME: need some event to pass to cgame for sound/graphic/message?
+				if (cg_enableRandomizer.integer && self->playerModel == -1) {
+					//Some NPCs do not leave a model behind after death - so don't try to remove it
+					self->message = NULL;
+					G_Sound(player, G_SoundIndex("sound/weapons/key_pkup.wav"));
+				}
+				else {
+					gi.G2API_SetSurfaceOnOff(&self->ghoul2[self->playerModel], "l_arm_key", 0x00000002);
+					self->message = NULL;
+					//FIXME: temp pickup sound
+					G_Sound(player, G_SoundIndex("sound/weapons/key_pkup.wav"));
+					//FIXME: need some event to pass to cgame for sound/graphic/message?
+				}
 			}
 			//FIXME: temp message
 			gi.SendServerCommand( NULL, text );

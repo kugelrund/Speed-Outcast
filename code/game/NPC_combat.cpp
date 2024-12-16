@@ -18,6 +18,7 @@ extern int NAV_FindClosestWaypointForPoint( vec3_t point );
 extern int NAV_GetNearestNode( gentity_t *self, int lastNode );
 extern void G_CreateG2AttachedWeaponModel( gentity_t *ent, const char *weaponModel );
 extern qboolean PM_DroidMelee( int npc_class );
+extern vmCvar_t	cg_enableRandomizer;
 
 extern	CNavigator	navigator;
 
@@ -353,6 +354,10 @@ void G_SetEnemy( gentity_t *self, gentity_t *enemy )
 #ifdef _DEBUG
 	if ( self->s.number )
 	{
+		//Debug convenience, this doesn't change anything in FinalBuild but prevents popups when debugging
+		if (cg_enableRandomizer.integer && enemy == self) {
+			return;
+		}
 		assert( enemy != self );
 	}
 #endif// _DEBUG
@@ -1827,7 +1832,12 @@ gentity_t *NPC_CheckEnemy( qboolean findNew, qboolean tooFarOk, qboolean setEnem
 
 	if ( NPC->enemy )
 	{
-		if ( !NPC->enemy->inuse )//|| NPC->enemy == NPC )//wtf?  NPCs should never get mad at themselves!
+		//If we're targeting a neutral character (e.g. player during artus_detention officer escort) - don't
+		//Amber TODO: We still get aggro'd to here, annoying
+		if (cg_enableRandomizer.integer && NPC->enemy->client && NPC->enemy->client->playerTeam == TEAM_NEUTRAL)
+		{
+			G_ClearEnemy(NPC);
+		} else if ( !NPC->enemy->inuse )//|| NPC->enemy == NPC )//wtf?  NPCs should never get mad at themselves!
 		{
 			if ( setEnemy )
 			{
