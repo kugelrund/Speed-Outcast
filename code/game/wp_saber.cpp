@@ -272,39 +272,39 @@ void G_CreateG2AttachedWeaponModel( gentity_t *ent, const char *psWeaponModel )
 	{
 		return;
 	}
-	// give us a sabre model
-	// As long as it exists that is
-	if (!cg_enableRandomizer.integer || weaponModel) {
-		ent->weaponModel = gi.G2API_InitGhoul2Model(ent->ghoul2, weaponModel, G_ModelIndex(weaponModel), NULL, NULL, 0, 0);
-	}
-	if ( ent->weaponModel != -1 )
-	{
-		if (cg_enableRandomizer.integer && ent->handRBolt > 0) {
-			// Only try to add the weapon if we have a slot to attach it to, otherwise return
-			if (ent->playerModel
-				&& &ent->ghoul2[ent->playerModel].mBltlist
-				&& &ent->ghoul2[ent->playerModel].mBltlist[1]
-				&& &ent->ghoul2[ent->playerModel].mBltlist[1].boneNumber) {
-				gi.G2API_AttachG2Model(&ent->ghoul2[ent->weaponModel], &ent->ghoul2[ent->playerModel],
-					1, ent->playerModel);
-			}
-			else if (strcmp(ent->classname, "player") == 0) // Fix for Kyle as the player
+	// give us a sabre model	
+	ent->weaponModel = gi.G2API_InitGhoul2Model(ent->ghoul2, weaponModel, G_ModelIndex(weaponModel), NULL, NULL, 0, 0);
+	
+	if (cg_enableRandomizer.integer && Q_stricmp(ent->classname, "player"))
+	{//Randomizer safe version
+		//We have a weapon and a model to attach it to
+		if (weaponModel && ent->playerModel != -1)
+		{
+			//We have a hand to bolt it to
+			if (ent->handRBolt != -1)
 			{
-				gi.G2API_AttachG2Model(&ent->ghoul2[ent->weaponModel], &ent->ghoul2[ent->playerModel], ent->handRBolt, ent->playerModel);
+				// attach it to the hand
+				gi.G2API_AttachG2Model(&ent->ghoul2[ent->weaponModel], &ent->ghoul2[ent->playerModel],
+					ent->handRBolt, ent->playerModel);
 			}
 			else
 			{
-				return;
+				//If not just put it wherever lol
+				gi.G2API_AttachG2Model(&ent->ghoul2[ent->weaponModel], &ent->ghoul2[ent->playerModel],
+					1, ent->playerModel);
 			}
+			// set up a bolt on the end so we can get where the sabre muzzle is - we can assume this is always bolt 0
+			gi.G2API_AddBolt(&ent->ghoul2[ent->weaponModel], "*flash");
 		}
-		else {
-			// attach it to the hand
-			gi.G2API_AttachG2Model(&ent->ghoul2[ent->weaponModel], &ent->ghoul2[ent->playerModel],
-				ent->handRBolt, ent->playerModel);
-		}
+	}
+	else
+	{//Vanilla version & Kyle
+		// attach it to the hand
+		gi.G2API_AttachG2Model(&ent->ghoul2[ent->weaponModel], &ent->ghoul2[ent->playerModel],
+			ent->handRBolt, ent->playerModel);
 		// set up a bolt on the end so we can get where the sabre muzzle is - we can assume this is always bolt 0
 		gi.G2API_AddBolt(&ent->ghoul2[ent->weaponModel], "*flash");
-	  	//gi.G2API_SetLodBias( &ent->ghoul2[ent->weaponModel], 0 );
+		//gi.G2API_SetLodBias( &ent->ghoul2[ent->weaponModel], 0 );
 	}
 }
 
