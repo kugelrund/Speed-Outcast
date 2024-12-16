@@ -7269,8 +7269,13 @@ void PM_WeaponLightsaber(void)
 
 	//We don't have an enemy, don't try to attack
 	//How the fuck did that get into release? It's checked everywhere else
-	if (cg_enableRandomizer.integer && !pm->gent->enemy) {
-		return;
+	if (cg_enableRandomizer.integer)
+	{
+		if (strcmp(pm->gent->classname, "player") == 0) // Fix : Kyle couldn't attack
+		{
+			// Nothing
+		}
+		else if (!pm->gent->enemy) return;
 	}
 
 	weapon = &cg_weapons[pm->ps->weapon];
