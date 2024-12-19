@@ -36,6 +36,7 @@ extern void NPC_CheckCharmed( void );
 
 extern cvar_t	*g_dismemberment;
 extern cvar_t	*g_saberRealisticCombat;
+extern vmCvar_t			cg_enableRandomizer;
 
 //Local Variables
 // ai debug cvars
@@ -1789,6 +1790,40 @@ void NPC_RunBehavior( int team, int bState )
 			break;
 
 		default:
+			if (cg_enableRandomizer.integer)
+			{
+				//For some reason a lot of droid behaviours are triggered by team so just copy them here if they're missed
+				switch (NPC->client->NPC_class)
+				{
+					case CLASS_PROBE:
+						NPC_BehaviorSet_ImperialProbe(bState);
+						return;
+					case CLASS_REMOTE:
+						NPC_BehaviorSet_Remote(bState);
+						return;
+					case CLASS_SENTRY:
+						NPC_BehaviorSet_Sentry(bState);
+						return;
+					case CLASS_INTERROGATOR:
+						NPC_BehaviorSet_Interrogator(bState);
+						return;
+					case CLASS_MINEMONSTER:
+						NPC_BehaviorSet_MineMonster(bState);
+						return;
+					case CLASS_HOWLER:
+						NPC_BehaviorSet_Howler(bState);
+						return;
+					case CLASS_MARK1:
+						NPC_BehaviorSet_Mark1(bState);
+						return;
+					case CLASS_MARK2:
+						NPC_BehaviorSet_Mark2(bState);
+						return;
+					case CLASS_GALAKMECH:
+						NPC_BSGM_Default();
+						return;
+				}
+			}
 			if ( NPC->client->NPC_class == CLASS_SEEKER )
 			{
 				NPC_BehaviorSet_Seeker(bState);

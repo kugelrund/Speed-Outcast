@@ -277,8 +277,8 @@ void G_CreateG2AttachedWeaponModel( gentity_t *ent, const char *psWeaponModel )
 	
 	if (cg_enableRandomizer.integer && Q_stricmp(ent->classname, "player"))
 	{//Randomizer safe version
-		//We have a weapon and a model to attach it to
-		if (weaponModel && ent->playerModel != -1)
+		//We have a weapon and a model to attach it to and a bolt point on the model
+		if (weaponModel && ent->playerModel != -1 && ent->ghoul2[ent->playerModel].mBltlist.size() > 0)
 		{
 			//We have a hand to bolt it to
 			if (ent->handRBolt != -1)

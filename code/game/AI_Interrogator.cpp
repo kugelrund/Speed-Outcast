@@ -8,6 +8,7 @@
 void Interrogator_Idle( void );
 void DeathFX( gentity_t *ent );
 extern void G_SoundOnEnt( gentity_t *ent, soundChannel_t channel, const char *soundPath );
+extern vmCvar_t			cg_enableRandomizer;
 
 enum
 {
@@ -428,7 +429,10 @@ void Interrogator_Idle( void )
 	{
 		G_SoundOnEnt( NPC, CHAN_AUTO, "sound/chars/mark1/misc/anger.wav" );
 		NPC_UpdateAngles( qtrue, qtrue );
-		return;
+		if (!cg_enableRandomizer.integer)
+		{
+			return;
+		}
 	}
 
 	Interrogator_MaintainHeight();
