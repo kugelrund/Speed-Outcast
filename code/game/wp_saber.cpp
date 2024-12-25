@@ -464,7 +464,6 @@ void WP_SaberInitBladeData( gentity_t *ent )
 				if (cg_enableRandomizer.integer) // Random saber style at pickup, but I need to NOT call rand() to keep NPC spawn consistent.
 				{
 					ent->client->ps.saberAnimLevel = (level.framenum + level.time) % 3 + 1;
-					int i = 0;
 				}
 				else // Normal gameplay (and yes, there is a glitch to get fast style in trial)
 				{
@@ -481,14 +480,35 @@ void WP_SaberInitBladeData( gentity_t *ent )
 		if ( ent->client->NPC_class == CLASS_DESANN )
 		{//longer saber
 			ent->client->ps.saberLengthMax = 48;
+			if (cg_enableRandomizer.integer) // Would be the funniest thing ever, range of 25% to 400% of initial value
+			{
+					ent->client->ps.saberLengthMax = rand() % 181 + 12;
+			}
 		}
 		else if ( ent->client->NPC_class == CLASS_REBORN )
 		{//shorter saber
 			ent->client->ps.saberLengthMax = 32;
+			if (cg_enableRandomizer.integer) // Would be the funniest thing ever, range of 25% to 400% of initial value
+			{
+				ent->client->ps.saberLengthMax = rand() % 121 + 8;
+			}
 		}
 		else
 		{//standard saber length
-			ent->client->ps.saberLengthMax = 40;
+			ent->client->ps.saberLengthMax = 40; // Default
+			if (cg_enableRandomizer.integer) // Would be the funniest thing ever, range of 25% to 400% of initial value
+			{
+				if (ent->client->NPC_class != CLASS_KYLE) // Since it's at map load, and all npc are generated here, we may use rand()
+				{
+					ent->client->ps.saberLengthMax = rand() % 151 + 10;
+				}
+				else // That's Kyle, when he's getting the saber at trial or before, might as well use the current time like for the saber style (to be sonsistent with our seed)
+				{
+					// That's a range of 25% to 400%
+					ent->client->ps.saberLengthMax = (level.framenum + level.time) % 151 + 10;
+				}
+				
+			}
 		}
 
 		if ( ent->client->ps.saberEntityNum <= 0 || ent->client->ps.saberEntityNum >= ENTITYNUM_WORLD )
