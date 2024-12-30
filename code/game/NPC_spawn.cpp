@@ -3624,7 +3624,8 @@ void SP_NPC_Lando_Random(gentity_t* self) // Lando should always spawn as Lando
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Spawn_Random(self);
+		//SP_NPC_Spawn_Random(self);
+		SP_NPC_Lando(self);
 	}
 	else SP_NPC_Lando(self);
 }
@@ -4024,7 +4025,7 @@ void SP_NPC_Droid_Gonk_Random(gentity_t* self)
 	}
 	else SP_NPC_Droid_Gonk(self);
 }
-void SP_NPC_Droid_Mouse_Random(gentity_t* self) // Mouse should spawn as Mouse
+void SP_NPC_Droid_Mouse_Random(gentity_t* self) // Mouse should spawn as Mouse because of size in kejim
 {
 	if (cg_enableRandomizer.integer)
 	{
@@ -4042,12 +4043,13 @@ void SP_NPC_Droid_R2D2_Random(gentity_t* self) // R2D2 should spawn as self
 	}
 	else SP_NPC_Droid_R2D2(self);
 }
-void SP_NPC_Droid_R5D2_Random(gentity_t* self) // R5D2 should spawn as self
+void SP_NPC_Droid_R5D2_Random(gentity_t* self) // R5D2 should spawn as self, because of size in bespin
 {
 	if (cg_enableRandomizer.integer)
 	{
 		CheckIfMapChanged();
-		SP_NPC_Spawn_Random(self);
+		//SP_NPC_Spawn_Random(self);
+		SP_NPC_Droid_R5D2(self);
 	}
 	else SP_NPC_Droid_R5D2(self);
 }
