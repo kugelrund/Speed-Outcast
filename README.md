@@ -9,3 +9,5 @@ Based on the original source code released by Raven, see README.txt.
 ## Documentation
 
 * [Console Additions](docs/console_additions.md): Description of added console variables and commands
+* [Movement Physics](docs/movement_physics/): Technical explanations of how movement works in the Jedi Outcast singleplayer, especially going into the differences compared to vanilla Quake 3
+  * [Movement Key Effect on Air Acceleration](docs/movement_physics/movekey_air_accel_effect.md)
