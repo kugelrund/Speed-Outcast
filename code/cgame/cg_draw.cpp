@@ -7,7 +7,6 @@
 //#include "cg_local.h"
 #include "cg_media.h"
 #include "..\game\objectives.h"
-#include "..\speedrun\PlayerOverbouncePrediction.hpp"
 #include "..\speedrun\strafe_helper\strafe_helper.h"
 #include "..\speedrun\speedrun_timer_q3\timer_helper.h"
 #include <cmath>
@@ -2275,9 +2274,6 @@ CG_DrawOverbounceInfo
 static void CG_DrawOverbounceInfo( void ) {
 	gentity_t const *const player_gent = cg_entities[cg.snap->ps.clientNum].gent;
 	playerState_t const &player_state = player_gent->client->ps;
-	if ( player_state.groundEntityNum == ENTITYNUM_NONE ) {
-		return;
-	}
 
 	vec3_t start;
 	vec3_t end;
@@ -2290,7 +2286,7 @@ static void CG_DrawOverbounceInfo( void ) {
 		return;
 	}
 
-	double const height_difference = player_gent->currentOrigin[2] +
+	double const height_difference = cg.snap->ps.origin[2] +
 	                                 player_gent->mins[2] - trace.endpos[2];
 	if ( height_difference <= 0.0 ) {
 		return;
@@ -2302,23 +2298,21 @@ static void CG_DrawOverbounceInfo( void ) {
 		jump_velocity += forceJumpStrength[player_state.forcePowerLevel[FP_LEVITATION]] / 10.0f;
 	}
 
-	if ( !playerOverbouncePredictor ) {
-		playerOverbouncePredictor = std::make_unique<OverbouncePrediction>();
-		playerOverbouncePredictor->start();
-	}
-	playerOverbouncePredictor->setParameters( height_difference, player_state.gravity, jump_velocity );
-
-	double const go_overbounce_probability = playerOverbouncePredictor->getProbabilityForGo();
+	double const go_overbounce_probability = cgi_OverbounceProbability(
+		height_difference, cg.snap->ps.velocity[2], cg.snap->ps.gravity);
 	double const go_overbounce_percentage = std::round( go_overbounce_probability * 100.0 );
 	if ( go_overbounce_probability > 0.0 ) {
 		cgi_R_Font_DrawString( 10, 235, va( "G: %.0f%%", go_overbounce_percentage ),
 			colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
 	}
-	double const jump_overbounce_probability = playerOverbouncePredictor->getProbabilityForJump();
-	double const jump_overbounce_percentage = std::round( jump_overbounce_probability * 100.0 );
-	if ( jump_overbounce_probability > 0.0 ) {
-		cgi_R_Font_DrawString( 10, 255, va( "J: %.0f%%", jump_overbounce_percentage ),
-			colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
+	if ( cg.snap->ps.velocity[2] == 0.0 ) {
+		double const jump_overbounce_probability = cgi_OverbounceProbability(
+			height_difference, jump_velocity, cg.snap->ps.gravity);
+		double const jump_overbounce_percentage = std::round( jump_overbounce_probability * 100.0 );
+		if ( jump_overbounce_probability > 0.0 ) {
+			cgi_R_Font_DrawString( 10, 255, va( "J: %.0f%%", jump_overbounce_percentage ),
+				colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
+		}
 	}
 }
 

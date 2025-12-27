@@ -14,7 +14,6 @@
 #include "../ff/ff.h"
 #endif // _IMMERSION
 #include "../qcommon/sstring.h"
-#include "../speedrun/PlayerOverbouncePrediction.hpp"
 //NOTENOTE: Be sure to change the mirrored code in g_shared.h
 typedef	map< sstring_t, unsigned char, less<sstring_t>, allocator< unsigned char >  >	namePrecache_m;
 extern namePrecache_m	as_preCacheMap;
@@ -2060,7 +2059,6 @@ void CG_Shutdown( void )
 {
 	in_camera = false;
 	FX_Free();
-	playerOverbouncePredictor.reset();
 }
 
 //// DEBUG STUFF

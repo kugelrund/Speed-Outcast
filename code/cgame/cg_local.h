@@ -1254,6 +1254,8 @@ void	cgi_UI_String_Init(void);
 
 void	SetWeaponSelectTime(void);
 
+void cgi_ReportLastPmoveFrametime(int msec);
+float cgi_OverbounceProbability(float height_difference, float vertical_speed, float gravity);
 void cgi_SpeedrunPauseTimer(int priority = 0);
 void cgi_SpeedrunUnpauseTimer(int priority = 0);
 void cgi_SpeedrunLevelFinished(void);
