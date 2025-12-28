@@ -237,7 +237,8 @@ typedef enum {
 	TCGEN_TEXTURE,
 	TCGEN_ENVIRONMENT_MAPPED,
 	TCGEN_FOG,
-	TCGEN_VECTOR			// S and T from world coordinates
+	TCGEN_VECTOR,			// S and T from world coordinates
+	TCGEN_OVERBOUNCE
 } texCoordGen_t;
 
 typedef enum {
@@ -964,11 +965,17 @@ typedef struct {
 	image_t					*whiteImage;			// full of 0xff
 	image_t					*identityLightImage;	// full of tr.identityLightByte
 
+	// Addition for Speed-Outcast to color in overbounce levels
+	image_t					*overbounceImage;
+
 	shader_t				*defaultShader;
 	shader_t				*shadowShader;
 	shader_t				*projectionShadowShader;
 
 	shader_t				*sunShader;
+
+	// Addition for Speed-Outcast to color in overbounce levels
+	shader_t				*overbounceShader;
 
 	int						numLightmaps;
 	image_t					*lightmaps[MAX_LIGHTMAPS];
@@ -1177,6 +1184,12 @@ extern	cvar_t	*r_noGhoul2;
 /*
 Ghoul2 Insert End
 */
+
+// Additions for Speed-Outcast
+extern	cvar_t	*r_overbouncePrediction;
+extern	cvar_t	*r_overbouncePredictionColorR;
+extern	cvar_t	*r_overbouncePredictionColorG;
+extern	cvar_t	*r_overbouncePredictionColorB;
 //====================================================================
 
 float R_NoiseGet4f( float x, float y, float z, float t );
@@ -1611,6 +1624,9 @@ void	RB_CalcRotateTexCoords( float rotSpeed, float *dstTexCoords );
 void	RB_CalcScaleTexCoords( const float scale[2], float *dstTexCoords );
 void	RB_CalcTurbulentTexCoords( const waveForm_t *wf, float *dstTexCoords );
 void	RB_CalcTransformTexCoords( const texModInfo_t *tmi, float *dstTexCoords );
+// Addition for Speed-Outcast
+void	RB_CalcOverbounceTexCoords( float *dstTexCoords );
+
 void	RB_CalcModulateColorsByFog( unsigned char *dstColors );
 void	RB_CalcModulateAlphasByFog( unsigned char *dstColors );
 void	RB_CalcModulateRGBAsByFog( unsigned char *dstColors );

@@ -495,6 +495,76 @@ void RB_BeginDrawingView (void) {
 	}
 }
 
+/*
+==================
+RB_RenderDrawSurfListOverbounce
+
+Basically a copy of RB_RenderDrawSurfList stripped down to only whats needed for
+drawing the overbounce coloring.
+==================
+*/
+static void RB_RenderDrawSurfListOverbounce( drawSurf_t *drawSurfs, int numDrawSurfs )
+{
+	int i;
+	drawSurf_t *drawSurf;
+	int entityNum;
+	shader_t *shader;
+	int	fogNum;
+	int dlighted;
+	int oldEntityNum = -1;
+	int oldSort = -1;
+	qboolean	depthRange = qfalse;
+	int oldDepthRange = qfalse;
+
+	const float originalTime = backEnd.refdef.floatTime;
+
+	RB_BeginSurface( tr.overbounceShader, 0 );
+	for (i = 0, drawSurf = drawSurfs ; i < numDrawSurfs ; i++, drawSurf++) {
+		if ( drawSurf->sort == oldSort ) {
+			// fast path, same as previous sort
+			rb_surfaceTable[ *drawSurf->surface ]( drawSurf->surface );
+			continue;
+		}
+		oldSort = drawSurf->sort;
+		R_DecomposeSort( drawSurf->sort, &entityNum, &shader, &fogNum, &dlighted );
+
+		if ( entityNum != oldEntityNum ) {
+			if (oldEntityNum != -1) {
+				RB_EndSurface();
+			}
+			RB_BeginSurface( tr.overbounceShader, 0 );
+			depthRange = qfalse;
+			if ( entityNum != ENTITYNUM_WORLD ) {
+				backEnd.currentEntity = &backEnd.refdef.entities[entityNum];
+				backEnd.refdef.floatTime = originalTime - backEnd.currentEntity->e.shaderTime;
+				R_RotateForEntity( backEnd.currentEntity, &backEnd.viewParms, &backEnd.or );
+			} else {
+				backEnd.currentEntity = &tr.worldEntity;
+				backEnd.refdef.floatTime = originalTime;
+				backEnd.or = backEnd.viewParms.world;
+			}
+
+			qglLoadMatrixf( backEnd.or.modelMatrix );
+			if ( oldDepthRange != depthRange ) {
+				if ( depthRange ) {
+					qglDepthRange (0, 0.3);
+				} else {
+					qglDepthRange (0, 1);
+				}
+				oldDepthRange = depthRange;
+			}
+			oldEntityNum = entityNum;
+		}
+
+		// add the triangles for this surface
+		rb_surfaceTable[ *drawSurf->surface ]( drawSurf->surface );
+	}
+	if (oldEntityNum != -1) {
+		RB_EndSurface();
+	}
+}
+
+
 #define	MAC_EVENT_PUMP_MSEC		5
 
 /*
@@ -633,6 +703,11 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 	// draw the contents of the last shader batch
 	if (oldShader != NULL) {
 		RB_EndSurface();
+	}
+
+	if (r_overbouncePrediction->integer)
+	{
+		RB_RenderDrawSurfListOverbounce( drawSurfs, numDrawSurfs );
 	}
 
 	// go back to the world modelview matrix

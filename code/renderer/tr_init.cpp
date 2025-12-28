@@ -165,6 +165,12 @@ cvar_t	*r_Ghoul2UnSqashAfterSmooth;
 Ghoul2 Insert End
 */
 
+// Additions for Speed-Academy
+cvar_t	*r_overbouncePrediction;
+cvar_t	*r_overbouncePredictionColorR;
+cvar_t	*r_overbouncePredictionColorG;
+cvar_t	*r_overbouncePredictionColorB;
+
 
 void ( APIENTRY * qglMultiTexCoord2fARB )( GLenum texture, GLfloat s, GLfloat t );
 void ( APIENTRY * qglActiveTextureARB )( GLenum texture );
@@ -940,6 +946,21 @@ void R_FogColor_f(void)
 			                          atof(ri.Cmd_Argv(3)) * tr.identityLight, 1.0 );
 }
 
+void R_SetOverbouncePredictionColor_f ( void )
+{
+	if (Cmd_Argc() != 4) {
+		Com_Printf("Usage: overbouncePredictionColor <red 0-255> <green 0-255> <blue 0-255>\n" );
+		Com_Printf("Current color is: %d %d %d\n",
+		           r_overbouncePredictionColorR->integer,
+		           r_overbouncePredictionColorG->integer,
+		           r_overbouncePredictionColorB->integer);
+		return;
+	}
+	Cvar_Set("r_overbouncePredictionColorR", Cmd_Argv(1));
+	Cvar_Set("r_overbouncePredictionColorG", Cmd_Argv(2));
+	Cvar_Set("r_overbouncePredictionColorB", Cmd_Argv(3));
+}
+
 /*
 ===============
 R_Register
@@ -1111,6 +1132,12 @@ extern qboolean Sys_LowPhysicalMemory();
 		Cvar_Set("r_modelpoolmegs", "0");
 	}
 
+	// Additions for Speed-Outcast
+	r_overbouncePrediction = Cvar_Get( "r_overbouncePrediction", "0", CVAR_ARCHIVE );
+	r_overbouncePredictionColorR = Cvar_Get( "r_overbouncePredictionColorR", "0", CVAR_ARCHIVE );
+	r_overbouncePredictionColorG = Cvar_Get( "r_overbouncePredictionColorG", "0", CVAR_ARCHIVE );
+	r_overbouncePredictionColorB = Cvar_Get( "r_overbouncePredictionColorB", "255", CVAR_ARCHIVE );
+
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
 	ri.Cmd_AddCommand( "imagelist", R_ImageList_f );
@@ -1125,6 +1152,8 @@ extern qboolean Sys_LowPhysicalMemory();
 	ri.Cmd_AddCommand( "r_fogColor", R_FogColor_f);
 	ri.Cmd_AddCommand( "modelcacheinfo", RE_RegisterModels_Info_f);
 	ri.Cmd_AddCommand( "imagecacheinfo", RE_RegisterImages_Info_f);
+	// Additions for Speed-Outcast
+	ri.Cmd_AddCommand( "overbouncePredictionColor", R_SetOverbouncePredictionColor_f );
 	// make sure all the commands added above are also
 	// removed in R_Shutdown
 }
@@ -1249,6 +1278,8 @@ void RE_Shutdown( qboolean destroyWindow ) {
 	ri.Cmd_RemoveCommand ("r_fogColor");
 	ri.Cmd_RemoveCommand ("modelcacheinfo");
 	ri.Cmd_RemoveCommand ("imagecacheinfo");
+
+	ri.Cmd_RemoveCommand ("overbouncePredictionColor");
 
 	R_ShutdownWorldEffects();
 	R_ShutdownFonts();
