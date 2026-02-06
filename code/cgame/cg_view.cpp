@@ -10,6 +10,9 @@
 #include "cg_lights.h"
 #include "..\game\wp_saber.h"
 
+// Speed Outcast
+#include "cg_drawBox.h"
+
 #define MASK_CAMERACLIP (MASK_SOLID)
 #define CAMERA_SIZE	4
 
@@ -1903,6 +1906,8 @@ wasForceSpeed=isForceSpeed;
 		CG_AddPacketEntities();			// adter calcViewValues, so predicted player state is correct
 		CG_AddMarks();
 		CG_AddLocalEntities();
+		// Speed Outcast addition : draw boxes around triggers and other interesting entities
+		CG_DrawBoxes();
 	}
 
 	//check for opaque water
