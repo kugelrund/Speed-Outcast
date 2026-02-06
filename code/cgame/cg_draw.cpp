@@ -2615,7 +2615,7 @@ static void CG_DrawPlayerInfo(int precision) {
 		y = y + 16;
 		if (player_gent->client->ps.forceJumpZStart == 0.0)
 		{
-			std::string jumpPositions = FloatToString(forceJumpHeight[player_gent->client->ps.forcePowerLevel[FP_LEVITATION]], precision) + " | N/A";
+			std::string jumpPositions = FloatToString(forceJumpHeight[player_gent->client->ps.forcePowerLevel[FP_LEVITATION]], 0) + " | N/A";
 			cgi_R_Font_DrawString(pos_x_string, y + 2, jumpPositions.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
 
 			y = y + 16;
