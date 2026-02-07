@@ -237,7 +237,8 @@ typedef enum {
 	TCGEN_TEXTURE,
 	TCGEN_ENVIRONMENT_MAPPED,
 	TCGEN_FOG,
-	TCGEN_VECTOR			// S and T from world coordinates
+	TCGEN_VECTOR,			// S and T from world coordinates
+	TCGEN_MAXHEIGHT			// Speed Outcast
 } texCoordGen_t;
 
 typedef enum {
@@ -968,6 +969,10 @@ typedef struct {
 	shader_t				*shadowShader;
 	shader_t				*projectionShadowShader;
 
+	// Addition for Speed Outcast to color in area of maximum jump height
+	image_t					*elevationImage;
+	shader_t				*maxHeightShader;
+
 	shader_t				*sunShader;
 
 	int						numLightmaps;
@@ -1169,6 +1174,12 @@ extern	cvar_t	*r_debugSort;
 extern	cvar_t	*r_debugStyle;
 
 extern	cvar_t	*r_printShaders;
+
+// Speed Outcast
+extern	cvar_t* r_showMaxJumpHeight;
+extern	cvar_t* r_showMaxJumpHeightR;
+extern	cvar_t* r_showMaxJumpHeightG;
+extern	cvar_t* r_showMaxJumpHeightB;
 
 /*
 Ghoul2 Insert Start
@@ -1433,6 +1444,9 @@ void RB_AddQuadStamp( vec3_t origin, vec3_t left, vec3_t up, byte *color );
 void RB_AddQuadStampExt( vec3_t origin, vec3_t left, vec3_t up, byte *color, float s1, float t1, float s2, float t2 );
 
 void RB_ShowImages( void );
+
+// Speed Outcast
+void	RB_CalcElevationTexCoords(float* dstTexCoords);
 
 #ifdef _NPATCH
 void RE_NPatchLevel( int level );
@@ -1805,5 +1819,9 @@ Ghoul2 Insert End
 
 // tr_surfacesprites
 void RB_DrawSurfaceSprites( shaderStage_t *stage, shaderCommands_t *input);
+
+// Speed Outcast
+void RE_SetPlayerJumpStartWorldZ(float value);
+void RE_SetPlayerJumpHeight(float value);
 
 #endif //TR_LOCAL_H

@@ -110,6 +110,10 @@ typedef struct {
 	qboolean (*Language_UsesSpaces) (void);
 	unsigned int (*AnyLanguage_ReadCharFromString)( const char **ppsText, qboolean *pbIsTrailingPunctuation /* = NULL */);
 
+	// Additions for Speed Outcast
+	void	(*SetPlayerJumpStartWorldZ)(float value);
+	void	(*SetPlayerJumpHeight)(float value);
+
 #ifdef _NPATCH
 	void    (*NPatchLevel) ( int level );
 #endif // _NPATCH

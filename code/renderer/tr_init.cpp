@@ -160,6 +160,12 @@ cvar_t	*r_Ghoul2NoBlend;
 cvar_t	*r_Ghoul2BlendMultiplier=0;
 cvar_t	*r_Ghoul2UnSqashAfterSmooth;
 
+// Speed Outcast
+cvar_t	*r_showMaxJumpHeight;
+cvar_t	*r_showMaxJumpHeightR;
+cvar_t	*r_showMaxJumpHeightG;
+cvar_t	*r_showMaxJumpHeightB;
+
 
 /*
 Ghoul2 Insert End
@@ -940,6 +946,21 @@ void R_FogColor_f(void)
 			                          atof(ri.Cmd_Argv(3)) * tr.identityLight, 1.0 );
 }
 
+void R_SetShowMaxJumpHeightColor_f(void)
+{
+	if (Cmd_Argc() != 4) {
+		Com_Printf("Usage: showMaxJumpHeightColor <red 0-255> <green 0-255> <blue 0-255>\n");
+		Com_Printf("Current color is: %d %d %d\n",
+			r_showMaxJumpHeightR->integer,
+			r_showMaxJumpHeightG->integer,
+			r_showMaxJumpHeightB->integer);
+		return;
+	}
+	Cvar_Set("r_showMaxJumpHeightR", Cmd_Argv(1));
+	Cvar_Set("r_showMaxJumpHeightG", Cmd_Argv(2));
+	Cvar_Set("r_showMaxJumpHeightB", Cmd_Argv(3));
+}
+
 /*
 ===============
 R_Register
@@ -1089,6 +1110,13 @@ void R_Register( void )
 	r_noportals = ri.Cvar_Get ("r_noportals", "0", CVAR_CHEAT);
 	r_shadows = ri.Cvar_Get( "cg_shadows", "1", 0 );
 	r_scissorbroken = ri.Cvar_Get( "r_scissorbroken", "0", 0 );
+
+	// Speed Outcast
+	r_showMaxJumpHeight = Cvar_Get("r_showMaxJumpHeight", "0", CVAR_ARCHIVE);
+	r_showMaxJumpHeightR = Cvar_Get("r_showMaxJumpHeightR", "0", CVAR_ARCHIVE);
+	r_showMaxJumpHeightG = Cvar_Get("r_showMaxJumpHeightG", "0", CVAR_ARCHIVE);
+	r_showMaxJumpHeightB = Cvar_Get("r_showMaxJumpHeightB", "255", CVAR_ARCHIVE);
+
 /*
 Ghoul2 Insert Start
 */
@@ -1125,6 +1153,8 @@ extern qboolean Sys_LowPhysicalMemory();
 	ri.Cmd_AddCommand( "r_fogColor", R_FogColor_f);
 	ri.Cmd_AddCommand( "modelcacheinfo", RE_RegisterModels_Info_f);
 	ri.Cmd_AddCommand( "imagecacheinfo", RE_RegisterImages_Info_f);
+	// Speed Outcast
+	Cmd_AddCommand("showMaxJumpHeightColor", R_SetShowMaxJumpHeightColor_f);
 	// make sure all the commands added above are also
 	// removed in R_Shutdown
 }
@@ -1395,6 +1425,10 @@ refexport_t *GetRefAPI ( int apiVersion, refimport_t *rimp ) {
 	re.Language_IsAsian = Language_IsAsian;
 	re.Language_UsesSpaces = Language_UsesSpaces;
 	re.AnyLanguage_ReadCharFromString = AnyLanguage_ReadCharFromString;
+
+	// Speed Outcast
+	re.SetPlayerJumpStartWorldZ = RE_SetPlayerJumpStartWorldZ;
+	re.SetPlayerJumpHeight = RE_SetPlayerJumpHeight;
 
 #ifdef _NPATCH
 	re.NPatchLevel = RE_NPatchLevel;

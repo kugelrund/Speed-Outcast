@@ -495,6 +495,91 @@ void RB_BeginDrawingView (void) {
 	}
 }
 
+/*
+==================
+RB_RenderDrawSurfListMaxHeightColoring
+
+Basically a copy of RB_RenderDrawSurfList stripped down to only whats needed for
+drawing the maximum height we can jump based on current force level.
+==================
+*/
+static void RB_RenderDrawSurfListMaxHeightColoring(drawSurf_t* drawSurfs, int numDrawSurfs)
+{
+	int i;
+	drawSurf_t* drawSurf;
+	int entityNum;
+	shader_t* shader;
+	int	fogNum;
+	int dlighted;
+	int oldEntityNum = -1;
+	unsigned int oldSort = (unsigned int)-1;
+	int	depthRange = qfalse;
+	int oldDepthRange = qfalse;
+
+	const float originalTime = backEnd.refdef.floatTime;
+
+	RB_BeginSurface(tr.maxHeightShader, 0);
+	for (i = 0, drawSurf = drawSurfs; i < numDrawSurfs; i++, drawSurf++) {
+		if (drawSurf->sort == oldSort) {
+			// fast path, same as previous sort
+			rb_surfaceTable[*drawSurf->surface](drawSurf->surface);
+			continue;
+		}
+		R_DecomposeSort(drawSurf->sort, &entityNum, &shader, &fogNum, &dlighted);
+
+		if (( shader && shader->stages[0] && // Check if not null
+			shader->stages[0]->stateBits & GLS_SRCBLEND_SRC_ALPHA) ||
+			!(shader->contentFlags & (CONTENTS_SOLID | CONTENTS_PLAYERCLIP | CONTENTS_BODY | CONTENTS_TERRAIN)))//MASK_PLAYERSOLID))
+		{
+			entityNum = oldEntityNum;
+			continue;
+		}
+		oldSort = drawSurf->sort;
+
+		if (entityNum != oldEntityNum) {
+			if (oldEntityNum != -1) {
+				RB_EndSurface();
+			}
+			RB_BeginSurface(tr.maxHeightShader, 0);
+			depthRange = qfalse;
+			if (entityNum != (MAX_ENTITIES - 1)) {
+				backEnd.currentEntity = &backEnd.refdef.entities[entityNum];
+				backEnd.refdef.floatTime = originalTime - backEnd.currentEntity->e.shaderTime;
+				R_RotateForEntity(backEnd.currentEntity, &backEnd.viewParms, &backEnd.or);
+			}
+			else {
+				backEnd.currentEntity = &tr.worldEntity;
+				backEnd.refdef.floatTime = originalTime;
+				backEnd.or = backEnd.viewParms.world;
+			}
+
+			qglLoadMatrixf(backEnd.or.modelMatrix);
+			if (oldDepthRange != depthRange) {
+				switch (depthRange) {
+				default:
+				case 0:
+					qglDepthRange(0, 1);
+					break;
+				case 1:
+					qglDepthRange(0, .3);
+					break;
+				case 2:
+					qglDepthRange(0, 0);
+					break;
+				}
+				oldDepthRange = depthRange;
+			}
+			oldEntityNum = entityNum;
+		}
+
+		// add the triangles for this surface
+		rb_surfaceTable[*drawSurf->surface](drawSurf->surface);
+	}
+	if (oldEntityNum != -1) {
+		RB_EndSurface();
+	}
+}
+
 #define	MAC_EVENT_PUMP_MSEC		5
 
 /*
@@ -633,6 +718,11 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 	// draw the contents of the last shader batch
 	if (oldShader != NULL) {
 		RB_EndSurface();
+	}
+
+	if (r_showMaxJumpHeight->integer)
+	{
+		RB_RenderDrawSurfListMaxHeightColoring(drawSurfs, numDrawSurfs);
 	}
 
 	// go back to the world modelview matrix

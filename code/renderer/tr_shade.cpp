@@ -1180,6 +1180,9 @@ static void ComputeTexCoords( shaderStage_t *pStage ) {
 			break;
 		case TCGEN_ENVIRONMENT_MAPPED:
 			RB_CalcEnvironmentTexCoords( ( float * ) tess.svars.texcoords[b] );
+		case TCGEN_MAXHEIGHT: // Speed Outcast
+			RB_CalcElevationTexCoords((float*)tess.svars.texcoords[b]);
+			break;
 			break;
 		case TCGEN_BAD:
 			return;
