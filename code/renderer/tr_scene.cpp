@@ -122,6 +122,9 @@ void RE_AddPolyToScene( qhandle_t hShader , int numVerts, const polyVert_t *vert
 	}
 
 	if ( r_numpolyverts + numVerts > MAX_POLYVERTS || r_numpolys >= MAX_POLYS ) {
+#ifdef _DEBUG
+		ri.Printf(PRINT_WARNING, "WARNING: RE_AddPolyToScene: TOO MUCH POLY\n");
+#endif // _DEBUG
 		return;
 	}
 
