@@ -1609,6 +1609,12 @@ CRenderableSurface():
 	boneCache(0),
 	surfaceData(0)
 	{}
+
+	void Init()
+	{
+		boneCache=0;
+		surfaceData=0;
+	}
 };
 
 void R_AddGhoulSurfaces( trRefEntity_t *ent );
