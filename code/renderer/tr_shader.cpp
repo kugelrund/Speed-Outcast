@@ -3536,7 +3536,6 @@ static void CreateInternalShaders( void ) {
 	// alpha settings so that we only overlay the range with a semitransparent color
 	stages[0].stateBits = GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
 	tr.overbounceShader = FinishShader();
-
 }
 
 static void CreateExternalShaders( void ) {
