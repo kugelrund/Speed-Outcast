@@ -694,6 +694,8 @@ extern	vmCvar_t		cg_strafeHelperColorSpeedB;
 extern	vmCvar_t		cg_strafeHelperColorSpeedA;
 extern	vmCvar_t		cg_fovThirdPerson;
 extern	vmCvar_t		cg_sensitivityFactorTurret;
+extern	vmCvar_t		cg_drawPlayerInfo;
+extern	vmCvar_t		cg_drawPlayerInfoPrecision;
 
 void CG_NewClientinfo( int clientNum );
 //
@@ -1255,6 +1257,8 @@ void	cgi_UI_String_Init(void);
 void	SetWeaponSelectTime(void);
 
 // Speed Outcast
+void cgi_ReportLastPmoveFrametime(int msec);
+float cgi_OverbounceProbability(float height_difference, float vertical_speed, float gravity);
 void cgi_SpeedrunPauseTimer(int priority = 0);
 void cgi_SpeedrunUnpauseTimer(int priority = 0);
 void cgi_SpeedrunLevelFinished(void);

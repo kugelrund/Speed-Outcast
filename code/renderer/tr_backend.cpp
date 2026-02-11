@@ -497,75 +497,61 @@ void RB_BeginDrawingView (void) {
 
 /*
 ==================
-RB_RenderDrawSurfListMaxHeightColoring
+RB_RenderDrawSurfListElevationColoring
 
 Basically a copy of RB_RenderDrawSurfList stripped down to only whats needed for
-drawing the maximum height we can jump based on current force level.
+drawing anything related to coloring certain elevations. This can be the
+elevations that you can reach with a jump (`r_showMaxJumpHeight`) or the
+elevations where an overbounce is probable (`r_overbouncePrediction`).
 ==================
 */
-static void RB_RenderDrawSurfListMaxHeightColoring(drawSurf_t* drawSurfs, int numDrawSurfs)
+static void RB_RenderDrawSurfListElevationColoring( drawSurf_t *drawSurfs, int numDrawSurfs, shader_t *elevationShader )
 {
 	int i;
-	drawSurf_t* drawSurf;
+	drawSurf_t *drawSurf;
 	int entityNum;
-	shader_t* shader;
+	shader_t *shader;
 	int	fogNum;
 	int dlighted;
 	int oldEntityNum = -1;
-	unsigned int oldSort = (unsigned int)-1;
-	int	depthRange = qfalse;
+	int oldSort = -1;
+	qboolean	depthRange = qfalse;
 	int oldDepthRange = qfalse;
 
 	const float originalTime = backEnd.refdef.floatTime;
 
-	RB_BeginSurface(tr.maxHeightShader, 0);
-	for (i = 0, drawSurf = drawSurfs; i < numDrawSurfs; i++, drawSurf++) {
-		if (drawSurf->sort == oldSort) {
+	RB_BeginSurface( elevationShader, 0 );
+	for (i = 0, drawSurf = drawSurfs ; i < numDrawSurfs ; i++, drawSurf++) {
+		if ( drawSurf->sort == oldSort ) {
 			// fast path, same as previous sort
-			rb_surfaceTable[*drawSurf->surface](drawSurf->surface);
-			continue;
-		}
-		R_DecomposeSort(drawSurf->sort, &entityNum, &shader, &fogNum, &dlighted);
-
-		if (( shader && shader->stages[0] && // Check if not null
-			shader->stages[0]->stateBits & GLS_SRCBLEND_SRC_ALPHA) ||
-			!(shader->contentFlags & (CONTENTS_SOLID | CONTENTS_PLAYERCLIP | CONTENTS_BODY | CONTENTS_TERRAIN)))//MASK_PLAYERSOLID))
-		{
-			entityNum = oldEntityNum;
+			rb_surfaceTable[ *drawSurf->surface ]( drawSurf->surface );
 			continue;
 		}
 		oldSort = drawSurf->sort;
+		R_DecomposeSort( drawSurf->sort, &entityNum, &shader, &fogNum, &dlighted );
 
-		if (entityNum != oldEntityNum) {
+		if ( entityNum != oldEntityNum ) {
 			if (oldEntityNum != -1) {
 				RB_EndSurface();
 			}
-			RB_BeginSurface(tr.maxHeightShader, 0);
+			RB_BeginSurface( elevationShader, 0 );
 			depthRange = qfalse;
-			if (entityNum != (MAX_ENTITIES - 1)) {
+			if ( entityNum != ENTITYNUM_WORLD ) {
 				backEnd.currentEntity = &backEnd.refdef.entities[entityNum];
 				backEnd.refdef.floatTime = originalTime - backEnd.currentEntity->e.shaderTime;
-				R_RotateForEntity(backEnd.currentEntity, &backEnd.viewParms, &backEnd.or);
-			}
-			else {
+				R_RotateForEntity( backEnd.currentEntity, &backEnd.viewParms, &backEnd.or );
+			} else {
 				backEnd.currentEntity = &tr.worldEntity;
 				backEnd.refdef.floatTime = originalTime;
 				backEnd.or = backEnd.viewParms.world;
 			}
 
-			qglLoadMatrixf(backEnd.or.modelMatrix);
-			if (oldDepthRange != depthRange) {
-				switch (depthRange) {
-				default:
-				case 0:
-					qglDepthRange(0, 1);
-					break;
-				case 1:
-					qglDepthRange(0, .3);
-					break;
-				case 2:
-					qglDepthRange(0, 0);
-					break;
+			qglLoadMatrixf( backEnd.or.modelMatrix );
+			if ( oldDepthRange != depthRange ) {
+				if ( depthRange ) {
+					qglDepthRange (0, 0.3);
+				} else {
+					qglDepthRange (0, 1);
 				}
 				oldDepthRange = depthRange;
 			}
@@ -573,12 +559,13 @@ static void RB_RenderDrawSurfListMaxHeightColoring(drawSurf_t* drawSurfs, int nu
 		}
 
 		// add the triangles for this surface
-		rb_surfaceTable[*drawSurf->surface](drawSurf->surface);
+		rb_surfaceTable[ *drawSurf->surface ]( drawSurf->surface );
 	}
 	if (oldEntityNum != -1) {
 		RB_EndSurface();
 	}
 }
+
 
 #define	MAC_EVENT_PUMP_MSEC		5
 
@@ -720,9 +707,14 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 		RB_EndSurface();
 	}
 
+	if (r_overbouncePrediction->integer)
+	{
+		RB_RenderDrawSurfListElevationColoring( drawSurfs, numDrawSurfs, tr.overbounceShader );
+	}
+
 	if (r_showMaxJumpHeight->integer)
 	{
-		RB_RenderDrawSurfListMaxHeightColoring(drawSurfs, numDrawSurfs);
+		RB_RenderDrawSurfListElevationColoring( drawSurfs, numDrawSurfs, tr.maxHeightShader );
 	}
 
 	// go back to the world modelview matrix

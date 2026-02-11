@@ -3507,10 +3507,7 @@ static void CreateInternalShaders( void ) {
 	}
 	stages[0].active = true;
 	stages[0].bundle[0].tcGen = TCGEN_MAXHEIGHT;
-	for (int i = 0; i < 8; i++)
-	{
-		stages[0].bundle[0].image[i] = tr.elevationImage;
-	}
+	stages[0].bundle[0].image[0] = tr.elevationImage;
 	// lets use a single, fixed custom color
 	stages[0].constantColor[0] = r_showMaxJumpHeightR->integer;
 	stages[0].constantColor[1] = r_showMaxJumpHeightG->integer;
@@ -3520,6 +3517,25 @@ static void CreateInternalShaders( void ) {
 	// alpha settings so that we only overlay the range with a semitransparent color
 	stages[0].stateBits = GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
 	tr.maxHeightShader = FinishShader();
+
+	// Addition for Speed-Outcast to color-in overbounce
+	memset( &shader, 0, sizeof( shader ) );
+	memset( &stages, 0, sizeof( stages ) );
+	Q_strncpyz( shader.name, "<overbounce>", sizeof( shader.name ) );
+	memcpy(shader.lightmapIndex, lightmapsNone, sizeof(shader.lightmapIndex));
+	memcpy(shader.styles, stylesDefault, sizeof(shader.styles));
+	stages[0].active = qtrue;
+	stages[0].bundle[0].tcGen = TCGEN_OVERBOUNCE;
+	stages[0].bundle[0].image[0] = tr.overbounceImage;
+	// lets use a single, fixed custom color
+	stages[0].constantColor[0] = r_overbouncePredictionColorR->integer;
+	stages[0].constantColor[1] = r_overbouncePredictionColorG->integer;
+	stages[0].constantColor[2] = r_overbouncePredictionColorB->integer;
+	stages[0].constantColor[3] = 255;
+	stages[0].rgbGen = CGEN_CONST;
+	// alpha settings so that we only overlay the range with a semitransparent color
+	stages[0].stateBits = GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
+	tr.overbounceShader = FinishShader();
 
 }
 

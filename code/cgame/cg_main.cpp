@@ -14,7 +14,6 @@
 #include "../ff/ff.h"
 #endif // _IMMERSION
 #include "../qcommon/sstring.h"
-#include "../speedrun/PlayerOverbouncePrediction.hpp"
 //NOTENOTE: Be sure to change the mirrored code in g_shared.h
 typedef	map< sstring_t, unsigned char, less<sstring_t>, allocator< unsigned char >  >	namePrecache_m;
 extern namePrecache_m	as_preCacheMap;
@@ -391,6 +390,8 @@ vmCvar_t	cg_strafeHelperColorSpeedB;
 vmCvar_t	cg_strafeHelperColorSpeedA;
 vmCvar_t	cg_fovThirdPerson;
 vmCvar_t	cg_sensitivityFactorTurret;
+vmCvar_t	cg_drawPlayerInfo;
+vmCvar_t	cg_drawPlayerInfoPrecision;
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -577,6 +578,8 @@ Ghoul2 Insert End
 	{ &cg_strafeHelperColorSpeedA, "cg_strafeHelperColorSpeedA", "0.9", CVAR_ARCHIVE },
 	{ &cg_fovThirdPerson, "cg_fovThirdPerson", "0", CVAR_ARCHIVE },
 	{ &cg_sensitivityFactorTurret, "cg_sensitivityFactorTurret", "0.25", CVAR_ARCHIVE },
+	{ &cg_drawPlayerInfo, "cg_drawPlayerInfo", "0", CVAR_ARCHIVE },
+	{ &cg_drawPlayerInfoPrecision, "cg_drawPlayerInfoPrecision", "2", CVAR_ARCHIVE },
 };
 
 int		cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -2060,7 +2063,6 @@ void CG_Shutdown( void )
 {
 	in_camera = false;
 	FX_Free();
-	playerOverbouncePredictor.reset();
 }
 
 //// DEBUG STUFF
