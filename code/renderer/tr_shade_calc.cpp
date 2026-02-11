@@ -1100,8 +1100,8 @@ void RB_CalcElevationTexCoords(float* dstTexCoords) {
 	// -----
 	//
 	// where "-" is fully transparent and "+" is semitransparent. So now we
-	// have to map heights that are in the interval in which you get an
-	// elevation boost into the "+" region. We have exactly one row of "-" at
+	// have to map heights that are in the interval from the start height
+	// to max jump height into the "+" region. We have exactly one row of "-" at
 	// the top and the bottom of the image, so the area of "+" is 2 pixels less
 	// than the texture size.
 	// So now we compute the elevation delta and map it from [0, 96] to [0, 1]
@@ -1122,19 +1122,16 @@ void RB_CalcElevationTexCoords(float* dstTexCoords) {
 	// amount more to avoid the flickering.
 	const float antiFlickerShift = 1.0f / 16384.0f;
 
-	float signEB = -1.0;
-	float elevDeltaMaxAllowed = playerJumpHeightValue;
-
 	for (int i = 0; i < tess.numVertexes; ++i) {
 		// estimated height at which player would collide with this surface.
 		// We round this to 1/8th. Not quite sure why, but seems necessary.
 		const float collisionZEstimate = ((int)((tess.xyz[i][2] +
 			backEnd.or.origin[2] + surfaceClipEpsilon) * 8.0f)) / 8.0f;
 		// the actual elevation delta that the player would have if they land here.
-		const float elevDelta = signEB * (playerJumpStartWorldZ - collisionZEstimate);
+		const float elevDelta = (collisionZEstimate - playerJumpStartWorldZ);
 		dstTexCoords[0] = 0.5f;  // X-coordinate doesnt matter
 		dstTexCoords[1] = (elevDelta - antiFlickerShift) /
-			(elevDeltaMaxAllowed)*elevAreaRatio + elevAreaOffset;
+			(playerJumpHeightValue)*elevAreaRatio + elevAreaOffset;
 		dstTexCoords += 2;
 	}
 }
