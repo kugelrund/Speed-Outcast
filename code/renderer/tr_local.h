@@ -238,6 +238,7 @@ typedef enum {
 	TCGEN_ENVIRONMENT_MAPPED,
 	TCGEN_FOG,
 	TCGEN_VECTOR,			// S and T from world coordinates
+	TCGEN_MAXHEIGHT,		// Speed Outcast
 	TCGEN_OVERBOUNCE
 } texCoordGen_t;
 
@@ -972,6 +973,10 @@ typedef struct {
 	shader_t				*shadowShader;
 	shader_t				*projectionShadowShader;
 
+	// Addition for Speed Outcast to color in area of maximum jump height
+	image_t					*elevationImage;
+	shader_t				*maxHeightShader;
+
 	shader_t				*sunShader;
 
 	// Addition for Speed-Outcast to color in overbounce levels
@@ -1190,6 +1195,10 @@ extern	cvar_t	*r_overbouncePrediction;
 extern	cvar_t	*r_overbouncePredictionColorR;
 extern	cvar_t	*r_overbouncePredictionColorG;
 extern	cvar_t	*r_overbouncePredictionColorB;
+extern	cvar_t	*r_showMaxJumpHeight;
+extern	cvar_t	*r_showMaxJumpHeightR;
+extern	cvar_t	*r_showMaxJumpHeightG;
+extern	cvar_t	*r_showMaxJumpHeightB;
 //====================================================================
 
 float R_NoiseGet4f( float x, float y, float z, float t );
@@ -1447,6 +1456,9 @@ void RB_AddQuadStampExt( vec3_t origin, vec3_t left, vec3_t up, byte *color, flo
 
 void RB_ShowImages( void );
 
+// Speed Outcast
+void	RB_CalcElevationTexCoords(float* dstTexCoords);
+
 #ifdef _NPATCH
 void RE_NPatchLevel( int level );
 #endif // _NPATCH
@@ -1597,6 +1609,12 @@ CRenderableSurface():
 	boneCache(0),
 	surfaceData(0)
 	{}
+
+	void Init()
+	{
+		boneCache=0;
+		surfaceData=0;
+	}
 };
 
 void R_AddGhoulSurfaces( trRefEntity_t *ent );
@@ -1821,5 +1839,9 @@ Ghoul2 Insert End
 
 // tr_surfacesprites
 void RB_DrawSurfaceSprites( shaderStage_t *stage, shaderCommands_t *input);
+
+// Speed Outcast
+void RE_SetPlayerJumpStartWorldZ(float value);
+void RE_SetPlayerJumpHeight(float value);
 
 #endif //TR_LOCAL_H

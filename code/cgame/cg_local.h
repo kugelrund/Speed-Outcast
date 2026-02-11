@@ -1256,6 +1256,7 @@ void	cgi_UI_String_Init(void);
 
 void	SetWeaponSelectTime(void);
 
+// Speed Outcast
 void cgi_ReportLastPmoveFrametime(int msec);
 float cgi_OverbounceProbability(float height_difference, float vertical_speed, float gravity);
 void cgi_SpeedrunPauseTimer(int priority = 0);
@@ -1264,5 +1265,7 @@ void cgi_SpeedrunLevelFinished(void);
 void cgi_SpeedrunRunFinished(void);
 int cgi_SpeedrunGetTotalTimeMilliseconds(void);
 int cgi_SpeedrunGetLevelTimeMilliseconds(void);
+void cgi_R_SetPlayerJumpStartWorldZ(float value);
+void cgi_R_SetPlayerJumpHeight(float value);
 
 #endif	//__CG_LOCAL_H__

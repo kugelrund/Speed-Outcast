@@ -823,6 +823,7 @@ Ghoul2 Insert End
 		}
 		return strlen(text);
 		//break;
+	// Speed Outcast
 	case CG_REPORT_LAST_PMOVE_FRAMETIME:
 		CL_ReportLastPmoveFrametime(args[1]);
 		break;
@@ -847,6 +848,12 @@ Ghoul2 Insert End
 	case CG_SPEEDRUN_GET_LEVEL_TIME_MILLISECONDS:
 		return SpeedrunGetLevelTimeMilliseconds();
 		break;
+	case CG_R_SET_PLAYER_JUMP_START_Z_WORLD:
+		re.SetPlayerJumpStartWorldZ(VMF(1));
+		return 0;
+	case CG_R_SET_PLAYER_JUMP_HEIGHT:
+		re.SetPlayerJumpHeight(VMF(1));
+		return 0;
 	default:
 		Com_Error( ERR_DROP, "Bad cgame system trap: %i", args[0] );
 	}

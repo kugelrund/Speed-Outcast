@@ -165,11 +165,15 @@ cvar_t	*r_Ghoul2UnSqashAfterSmooth;
 Ghoul2 Insert End
 */
 
-// Additions for Speed-Academy
+// Additions for Speed-Outcast
 cvar_t	*r_overbouncePrediction;
 cvar_t	*r_overbouncePredictionColorR;
 cvar_t	*r_overbouncePredictionColorG;
 cvar_t	*r_overbouncePredictionColorB;
+cvar_t	*r_showMaxJumpHeight;
+cvar_t	*r_showMaxJumpHeightR;
+cvar_t	*r_showMaxJumpHeightG;
+cvar_t	*r_showMaxJumpHeightB;
 
 
 void ( APIENTRY * qglMultiTexCoord2fARB )( GLenum texture, GLfloat s, GLfloat t );
@@ -961,6 +965,21 @@ void R_SetOverbouncePredictionColor_f ( void )
 	Cvar_Set("r_overbouncePredictionColorB", Cmd_Argv(3));
 }
 
+void R_SetShowMaxJumpHeightColor_f(void)
+{
+	if (Cmd_Argc() != 4) {
+		Com_Printf("Usage: showMaxJumpHeightColor <red 0-255> <green 0-255> <blue 0-255>\n");
+		Com_Printf("Current color is: %d %d %d\n",
+			r_showMaxJumpHeightR->integer,
+			r_showMaxJumpHeightG->integer,
+			r_showMaxJumpHeightB->integer);
+		return;
+	}
+	Cvar_Set("r_showMaxJumpHeightR", Cmd_Argv(1));
+	Cvar_Set("r_showMaxJumpHeightG", Cmd_Argv(2));
+	Cvar_Set("r_showMaxJumpHeightB", Cmd_Argv(3));
+}
+
 /*
 ===============
 R_Register
@@ -1137,6 +1156,10 @@ extern qboolean Sys_LowPhysicalMemory();
 	r_overbouncePredictionColorR = Cvar_Get( "r_overbouncePredictionColorR", "0", CVAR_ARCHIVE );
 	r_overbouncePredictionColorG = Cvar_Get( "r_overbouncePredictionColorG", "0", CVAR_ARCHIVE );
 	r_overbouncePredictionColorB = Cvar_Get( "r_overbouncePredictionColorB", "255", CVAR_ARCHIVE );
+	r_showMaxJumpHeight = Cvar_Get( "r_showMaxJumpHeight", "0", CVAR_ARCHIVE );
+	r_showMaxJumpHeightR = Cvar_Get( "r_showMaxJumpHeightR", "0", CVAR_ARCHIVE );
+	r_showMaxJumpHeightG = Cvar_Get( "r_showMaxJumpHeightG", "0", CVAR_ARCHIVE );
+	r_showMaxJumpHeightB = Cvar_Get( "r_showMaxJumpHeightB", "255", CVAR_ARCHIVE );
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
@@ -1154,6 +1177,7 @@ extern qboolean Sys_LowPhysicalMemory();
 	ri.Cmd_AddCommand( "imagecacheinfo", RE_RegisterImages_Info_f);
 	// Additions for Speed-Outcast
 	ri.Cmd_AddCommand( "overbouncePredictionColor", R_SetOverbouncePredictionColor_f );
+	ri.Cmd_AddCommand( "showMaxJumpHeightColor", R_SetShowMaxJumpHeightColor_f );
 	// make sure all the commands added above are also
 	// removed in R_Shutdown
 }
@@ -1426,6 +1450,10 @@ refexport_t *GetRefAPI ( int apiVersion, refimport_t *rimp ) {
 	re.Language_IsAsian = Language_IsAsian;
 	re.Language_UsesSpaces = Language_UsesSpaces;
 	re.AnyLanguage_ReadCharFromString = AnyLanguage_ReadCharFromString;
+
+	// Speed Outcast
+	re.SetPlayerJumpStartWorldZ = RE_SetPlayerJumpStartWorldZ;
+	re.SetPlayerJumpHeight = RE_SetPlayerJumpHeight;
 
 #ifdef _NPATCH
 	re.NPatchLevel = RE_NPatchLevel;

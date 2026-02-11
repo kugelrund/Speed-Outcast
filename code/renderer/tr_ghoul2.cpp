@@ -271,6 +271,19 @@ public:
 	{}
 };
 
+#define MAX_RENDER_SURFACES (2048)
+static CRenderableSurface RSStorage[MAX_RENDER_SURFACES];
+static unsigned int NextRS=0;
+
+CRenderableSurface *AllocRS()
+{
+	CRenderableSurface *ret=&RSStorage[NextRS];
+	ret->Init();
+	NextRS++;
+	NextRS%=MAX_RENDER_SURFACES;
+	return ret;
+}
+
 /*
 
 All bones should be an identity orientation to display the mesh exactly
@@ -1553,7 +1566,7 @@ void RenderSurfaces(CRenderSurface &RS)
 			&& !(RS.renderfx & ( RF_NOSHADOW | RF_DEPTHHACK ) ) 
 			&& shader->sort == SS_OPAQUE ) 
 		{		// set the surface info to point at the where the transformed bone list is going to be for when the surface gets rendered out
-			CRenderableSurface *newSurf = new CRenderableSurface;
+			CRenderableSurface *newSurf = AllocRS();
 			newSurf->surfaceData = surface;
 			newSurf->boneCache = RS.boneCache;
 #ifdef _NPATCH
@@ -1569,7 +1582,7 @@ void RenderSurfaces(CRenderSurface &RS)
 			&& (RS.renderfx & RF_SHADOW_PLANE )
 			&& shader->sort == SS_OPAQUE ) 
 		{		// set the surface info to point at the where the transformed bone list is going to be for when the surface gets rendered out
-			CRenderableSurface *newSurf = new CRenderableSurface;
+			CRenderableSurface *newSurf = AllocRS();
 			newSurf->surfaceData = surface;
 			newSurf->boneCache = RS.boneCache;
 #ifdef _NPATCH
@@ -1582,7 +1595,7 @@ void RenderSurfaces(CRenderSurface &RS)
 		// don't add third_person objects if not viewing through a portal
 		if ( !RS.personalModel ) 
 		{		// set the surface info to point at the where the transformed bone list is going to be for when the surface gets rendered out
-			CRenderableSurface *newSurf = new CRenderableSurface;
+			CRenderableSurface *newSurf = AllocRS();
 			newSurf->surfaceData = surface;
 			newSurf->boneCache = RS.boneCache;
 #ifdef _NPATCH
@@ -1906,7 +1919,6 @@ void RB_SurfaceGhoul( CRenderableSurface *surf ) {
 	// point us at the bone structure that should have been pre-computed
 	CBoneCache *bones = surf->boneCache;
 
-	delete surf;
 	//
 	// deform the vertexes by the lerped bones
 	//
