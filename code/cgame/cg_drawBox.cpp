@@ -23,6 +23,27 @@ Related variables :
 Posto
 */
 
+static bool isBoundingBoxIntersectingViewOriginPVS(gentity_t* ent)
+{
+	for (int x = 0; x < 2; ++x)
+	{
+		for (int y = 0; y < 2; ++y)
+		{
+			for (int z = 0; z < 2; ++z)
+			{
+				const vec3_t vertex = { (x == 0) ? ent->absmin[0] : ent->absmax[0],
+									   (y == 0) ? ent->absmin[1] : ent->absmax[1],
+									   (z == 0) ? ent->absmin[2] : ent->absmax[2] };
+				if (gi.inPVS(cg.refdef.vieworg, vertex))
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 static void drawBoundingBox(const gentity_t* ent, const byte color[4])
 {
 	polyVert_t vertices[4];
@@ -73,15 +94,14 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 	{
 		switch (subTrigger->e_UseFunc)
 		{
-			// CASE : spawns, in orange. Can be seen everywhere.
+		// CASE : spawns, in orange. Can be seen everywhere.
 		case(useF_NPC_Spawn):
 		case(useF_item_spawn_use):
-		//case(useF_NPC_VehicleSpawnUse):
 			color[0] = 100;
 			color[1] = 50;
 			color[2] = 0;
 			break;
-			// CASE : world/save/map related, in pink.
+		// CASE : world/save/map related, in pink.
 		case(useF_target_autosave_use):
 		case(useF_target_level_change_use):
 		case(useF_target_secret_use):
@@ -89,7 +109,7 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 			color[1] = 0;
 			color[2] = 50;
 			break;
-			// CASE : interactible elements, in green.
+		// CASE : interactible elements, in green.
 		case(useF_security_panel_use):
 		case(useF_misc_model_use):
 		case(useF_Use_Item):
@@ -110,23 +130,19 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 		case(useF_misc_atst_use):
 		case(useF_panel_turret_use):
 		case(useF_misc_dlight_use):
-		//case(useF_TieFighterUse):
 		case(useF_TrainUse):
 		//case(useF_bomb_planted_use):
-		//case(useF_beacon_use):
 		case(useF_ion_cannon_use):
 		case(useF_spotlight_use):
 		case(useF_welder_use):
 		case(useF_jabba_cam_use):
 		case(useF_misc_use):
 		case(useF_pas_use):
-		//case(useF_misc_weapon_shooter_use):
-		//case(useF_eweb_use):
 			color[0] = 0;
 			color[1] = 100;
 			color[2] = 0;
 			break;
-			// CASE : 'scripts' / 'func', in greenish cyan.
+		// CASE : 'scripts' / 'func', in greenish cyan.
 		case(useF_Use_Multi):
 		case(useF_func_usable_use):
 		case(useF_trigger_entdist_use):
@@ -140,7 +156,7 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 			color[1] = 100;
 			color[2] = 50;
 			break;
-			// CASE : 'target' ??????, in purple. Note : not found anything is purple during tests
+		// CASE : 'target' ??????, in purple. Note : not found anything is purple during tests
 		case(useF_Use_Target_Give):
 		case(useF_Use_Target_Delay):
 		case(useF_Use_Target_Score):
@@ -160,7 +176,7 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 			color[1] = 0;
 			color[2] = 100;
 			break;
-			// CASE : effects fx & sound, in yellow
+		// CASE : effects fx & sound, in yellow
 		case(useF_fx_runner_use):
 		case(useF_fx_explosion_trail_use):
 		case(useF_fx_target_beam_use):
@@ -169,7 +185,7 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 			color[1] = 66;
 			color[2] = 0;
 			break;
-			// CASE : unknown cases, let it be white
+		// CASE : unknown cases, let it be white
 		case(useF_GoExplodeDeath):
 		case(useF_Use_BinaryMover):
 		case(useF_use_wall):
@@ -280,7 +296,7 @@ void CG_DrawBoxes()
 	}
 
 	if (!cg_drawBoxNPC.integer && !cg_drawBoxItems.integer && !cg_drawBoxTriggers.integer) {
-		// no need to do the loop if nonce of these is enabled
+		// No need to do the loop if none of these is enabled
 		return;
 	}
 
@@ -289,30 +305,38 @@ void CG_DrawBoxes()
 		// NPCs
 		if (cg_drawBoxNPC.integer && g_entities[i].e_ThinkFunc == thinkF_NPC_Think)
 		{
-			drawBoxNPC(&g_entities[i]);
+			if (isBoundingBoxIntersectingViewOriginPVS(&g_entities[i]))
+			{
+				drawBoxNPC(&g_entities[i]);
+			}
 		}
-
 		// Items
-		if (cg_drawBoxItems.integer && g_entities[i].e_TouchFunc == touchF_Touch_Item)
+		else if (cg_drawBoxItems.integer && g_entities[i].e_TouchFunc == touchF_Touch_Item)
 		{
-			drawBoxItems(&g_entities[i]);
+			if (isBoundingBoxIntersectingViewOriginPVS(&g_entities[i]))
+			{
+				drawBoxItems(&g_entities[i]);
+			}
 		}
-
 		// Triggers, but related to the world (not associated with an ingame object like a button or a camera)
-		if (cg_drawBoxTriggers.integer && g_entities[i].classname &&
+		else if (cg_drawBoxTriggers.integer && g_entities[i].classname &&
 			(strcmp(g_entities[i].classname, "trigger_multiple") == 0 ||
-			 strcmp(g_entities[i].classname, "trigger_once") == 0))
+				strcmp(g_entities[i].classname, "trigger_once") == 0))
 		{
-			drawBoxWorldTriggers(&g_entities[i]);
+			if (isBoundingBoxIntersectingViewOriginPVS(&g_entities[i]))
+			{
+				drawBoxWorldTriggers(&g_entities[i]);
+			}
 		}
-
-		// Triggers, but related to	an object like a button or a camera
-		if (cg_drawBoxTriggers.integer && g_entities[i].classname &&
+		// Triggers, but related to an object like a button or a camera
+		else if (cg_drawBoxTriggers.integer && g_entities[i].classname &&
 			(strncmp(g_entities[i].classname, "func_", strlen("func_")) == 0 ||
-			 strncmp(g_entities[i].classname, "misc_", strlen("misc_")) == 0)
-			)
+				strncmp(g_entities[i].classname, "misc_", strlen("misc_")) == 0))
 		{
-			drawBoxObjectTriggers(&g_entities[i]);
+			if (isBoundingBoxIntersectingViewOriginPVS(&g_entities[i]))
+			{
+				drawBoxObjectTriggers(&g_entities[i]);
+			}
 		}
 	}
 }

@@ -1734,7 +1734,7 @@ typedef enum {
 // these are sort of arbitrary limits.
 // the limits apply to the sum of all scenes in a frame --
 // the main view, all the 3D icons, etc
-#define	MAX_POLYS		4096 // 2048
+#define	MAX_POLYS		2048
 #define	MAX_POLYVERTS	( MAX_POLYS * 4 )
 
 // all of the information needed by the back end must be
