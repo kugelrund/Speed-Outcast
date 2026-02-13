@@ -23,27 +23,6 @@ Related variables :
 Posto
 */
 
-static bool isBoundingBoxIntersectingViewOriginPVS(gentity_t* ent)
-{
-	for (int x = 0; x < 2; ++x)
-	{
-		for (int y = 0; y < 2; ++y)
-		{
-			for (int z = 0; z < 2; ++z)
-			{
-				const vec3_t vertex = { (x == 0) ? ent->absmin[0] : ent->absmax[0],
-									   (y == 0) ? ent->absmin[1] : ent->absmax[1],
-									   (z == 0) ? ent->absmin[2] : ent->absmax[2] };
-				if (gi.inPVS(cg.refdef.vieworg, vertex))
-				{
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
-
 static void drawBoundingBox(const gentity_t* ent, const byte color[4])
 {
 	polyVert_t vertices[4];
@@ -283,6 +262,12 @@ static void drawBoxObjectTriggers(gentity_t* self)
 	// Do not use blue nor red to know we correctly override the previous color.
 	setColorForTrigger(self, color);
 
+	// Default color = no trigger found for this object : don't render the box
+	if (color[0] == 0 && color[1] == 0 && color[2] == 100 && color[3] == 25)
+	{
+		return;
+	}
+
 	drawBoundingBox(self, color);
 }
 
@@ -305,38 +290,26 @@ void CG_DrawBoxes()
 		// NPCs
 		if (cg_drawBoxNPC.integer && g_entities[i].e_ThinkFunc == thinkF_NPC_Think)
 		{
-			if (isBoundingBoxIntersectingViewOriginPVS(&g_entities[i]))
-			{
-				drawBoxNPC(&g_entities[i]);
-			}
+			drawBoxNPC(&g_entities[i]);
 		}
 		// Items
 		else if (cg_drawBoxItems.integer && g_entities[i].e_TouchFunc == touchF_Touch_Item)
 		{
-			if (isBoundingBoxIntersectingViewOriginPVS(&g_entities[i]))
-			{
-				drawBoxItems(&g_entities[i]);
-			}
+			drawBoxItems(&g_entities[i]);
 		}
 		// Triggers, but related to the world (not associated with an ingame object like a button or a camera)
 		else if (cg_drawBoxTriggers.integer && g_entities[i].classname &&
 			(strcmp(g_entities[i].classname, "trigger_multiple") == 0 ||
 				strcmp(g_entities[i].classname, "trigger_once") == 0))
 		{
-			if (isBoundingBoxIntersectingViewOriginPVS(&g_entities[i]))
-			{
-				drawBoxWorldTriggers(&g_entities[i]);
-			}
+			drawBoxWorldTriggers(&g_entities[i]);
 		}
 		// Triggers, but related to an object like a button or a camera
 		else if (cg_drawBoxTriggers.integer && g_entities[i].classname &&
 			(strncmp(g_entities[i].classname, "func_", strlen("func_")) == 0 ||
 				strncmp(g_entities[i].classname, "misc_", strlen("misc_")) == 0))
 		{
-			if (isBoundingBoxIntersectingViewOriginPVS(&g_entities[i]))
-			{
-				drawBoxObjectTriggers(&g_entities[i]);
-			}
+			drawBoxObjectTriggers(&g_entities[i]);
 		}
 	}
 }
