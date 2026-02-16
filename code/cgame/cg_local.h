@@ -694,6 +694,11 @@ extern	vmCvar_t		cg_strafeHelperColorSpeedB;
 extern	vmCvar_t		cg_strafeHelperColorSpeedA;
 extern	vmCvar_t		cg_fovThirdPerson;
 extern	vmCvar_t		cg_sensitivityFactorTurret;
+extern	vmCvar_t		cg_drawBoxTriggers;
+extern	vmCvar_t		cg_drawBoxPlayer;
+extern	vmCvar_t		cg_drawBoxPlayerFP;
+extern	vmCvar_t		cg_drawBoxNPC;
+extern	vmCvar_t		cg_drawBoxItems;
 extern	vmCvar_t		cg_drawPlayerInfo;
 extern	vmCvar_t		cg_drawPlayerInfoPrecision;
 
