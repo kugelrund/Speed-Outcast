@@ -7,10 +7,11 @@
 //#include "cg_local.h"
 #include "cg_media.h"
 #include "..\game\objectives.h"
-#include "..\speedrun\PlayerOverbouncePrediction.hpp"
 #include "..\speedrun\strafe_helper\strafe_helper.h"
 #include "..\speedrun\speedrun_timer_q3\timer_helper.h"
 #include <cmath>
+#include <iomanip> // setprecision
+#include <sstream> // stringstream
 
 void CG_DrawIconBackground(void);
 void CG_DrawMissionInformation( void );
@@ -2274,10 +2275,6 @@ CG_DrawOverbounceInfo
 */
 static void CG_DrawOverbounceInfo( void ) {
 	gentity_t const *const player_gent = cg_entities[cg.snap->ps.clientNum].gent;
-	playerState_t const &player_state = player_gent->client->ps;
-	if ( player_state.groundEntityNum == ENTITYNUM_NONE ) {
-		return;
-	}
 
 	vec3_t start;
 	vec3_t end;
@@ -2290,35 +2287,27 @@ static void CG_DrawOverbounceInfo( void ) {
 		return;
 	}
 
-	double const height_difference = player_gent->currentOrigin[2] +
+	double const height_difference = cg.snap->ps.origin[2] +
 	                                 player_gent->mins[2] - trace.endpos[2];
 	if ( height_difference <= 0.0 ) {
 		return;
 	}
 
-	float jump_velocity = JUMP_VELOCITY;
-	if ( player_state.forcePowerLevel[FP_LEVITATION] > 0 ) {
-		extern float forceJumpStrength[];
-		jump_velocity += forceJumpStrength[player_state.forcePowerLevel[FP_LEVITATION]] / 10.0f;
-	}
-
-	if ( !playerOverbouncePredictor ) {
-		playerOverbouncePredictor = std::make_unique<OverbouncePrediction>();
-		playerOverbouncePredictor->start();
-	}
-	playerOverbouncePredictor->setParameters( height_difference, player_state.gravity, jump_velocity );
-
-	double const go_overbounce_probability = playerOverbouncePredictor->getProbabilityForGo();
+	double const go_overbounce_probability = cgi_OverbounceProbability(
+		height_difference, cg.snap->ps.velocity[2], cg.snap->ps.gravity);
 	double const go_overbounce_percentage = std::round( go_overbounce_probability * 100.0 );
 	if ( go_overbounce_probability > 0.0 ) {
 		cgi_R_Font_DrawString( 10, 235, va( "G: %.0f%%", go_overbounce_percentage ),
 			colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
 	}
-	double const jump_overbounce_probability = playerOverbouncePredictor->getProbabilityForJump();
-	double const jump_overbounce_percentage = std::round( jump_overbounce_probability * 100.0 );
-	if ( jump_overbounce_probability > 0.0 ) {
-		cgi_R_Font_DrawString( 10, 255, va( "J: %.0f%%", jump_overbounce_percentage ),
-			colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
+	if ( cg.snap->ps.velocity[2] == 0.0 ) {
+		double const jump_overbounce_probability = cgi_OverbounceProbability(
+			height_difference, JUMP_VELOCITY, cg.snap->ps.gravity);
+		double const jump_overbounce_percentage = std::round( jump_overbounce_probability * 100.0 );
+		if ( jump_overbounce_probability > 0.0 ) {
+			cgi_R_Font_DrawString( 10, 255, va( "J: %.0f%%", jump_overbounce_percentage ),
+				colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
+		}
 	}
 }
 
@@ -2543,6 +2532,96 @@ static float CG_DrawFormattedMilliseconds( int milliseconds, int accuracy, float
 }
 
 /*
+===========================
+CG_DrawPlayerInfo
+===========================
+*/
+// Helper function to convert floats to string with precision
+static std::string FloatToString(float value, int precision) {
+	std::stringstream bufferStringStream;
+	bufferStringStream << std::fixed << std::setprecision(precision) << value;
+	return bufferStringStream.str();
+}
+// Array needed to know what the maximum height is
+extern float forceJumpHeight[];
+// The function
+static void CG_DrawPlayerInfo(int precision) {
+	// cg_drawPlayerInfo between 0 and 7 will give different results depending on which bit is set to customize what we want to see.
+	gentity_t const* player_gent = cg_entities[cg.snap->ps.clientNum].gent;
+	const int pos_x_string = 8; // little offset to not be all the way on the left
+	int y = 16; // little offset to still have the console print everything
+	// Precision boundaries
+	if (precision < 0) precision = 0;
+	if (precision > 5) precision = 5;
+
+	if (cg_drawPlayerInfo.integer & 0b1)
+	{
+		///// POSITION /////
+		const std::string positionWord = "Position";
+		std::string pos_x = "X : " + FloatToString(player_gent->client->ps.origin[0], precision);
+		std::string pos_y = "Y : " + FloatToString(player_gent->client->ps.origin[1], precision);
+		std::string pos_z = "Z : " + FloatToString(player_gent->client->ps.origin[2], precision);
+
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, positionWord.c_str(), colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, pos_x.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, pos_y.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, pos_z.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		///// POSITION /////
+	}
+
+	if (cg_drawPlayerInfo.integer & 0b10)
+	{
+		///// VELOCITY /////
+		const std::string velocityWord = "Velocity";
+		std::string vel_x = "X : " + FloatToString(player_gent->client->ps.velocity[0], precision);
+		std::string vel_y = "Y : " + FloatToString(player_gent->client->ps.velocity[1], precision);
+		std::string vel_z = "Z : " + FloatToString(player_gent->client->ps.velocity[2], precision);
+
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, velocityWord.c_str(), colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, vel_x.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, vel_y.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, vel_z.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		///// VELOCITY /////
+	}
+
+	if (cg_drawPlayerInfo.integer & 0b100)// && g_cheats->integer)
+	{
+		///// JUMPING /////
+		const std::string jumpWord = "Jump";
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, jumpWord.c_str(), colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
+
+		y = y + 16;
+		if (player_gent->client->ps.forceJumpZStart == 0.0)
+		{
+			std::string jumpPositions = FloatToString(forceJumpHeight[player_gent->client->ps.forcePowerLevel[FP_LEVITATION]], 0) + " | N/A";
+			cgi_R_Font_DrawString(pos_x_string, y + 2, jumpPositions.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+
+			y = y + 16;
+			cgi_R_Font_DrawString(pos_x_string, y + 2, "Ground", colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		else
+		{
+			std::string jumpPositions = FloatToString(forceJumpHeight[player_gent->client->ps.forcePowerLevel[FP_LEVITATION]], 0) + " | " // Set precision to 0 for this
+				+ FloatToString(player_gent->client->ps.origin[2] - player_gent->client->ps.forceJumpZStart + (player_gent->client->ps.velocity[2] * 0.008), precision);;
+			cgi_R_Font_DrawString(pos_x_string, y + 2, jumpPositions.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+
+			y = y + 16;
+			cgi_R_Font_DrawString(pos_x_string, y + 2, "Jumping", colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		///// JUMPING /////
+	}
+}
+
+/*
 =================
 CG_Draw2D
 =================
@@ -2691,6 +2770,11 @@ static void CG_Draw2D( void )
 	if ( cg_drawOverbounceInfo.integer )
 	{
 		CG_DrawOverbounceInfo();
+	}
+
+	// Left side of the screen
+	if (cg_drawPlayerInfo.integer) {
+		CG_DrawPlayerInfo(cg_drawPlayerInfoPrecision.integer);
 	}
 
 	// don't draw center string if scoreboard is up

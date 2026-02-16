@@ -9,6 +9,10 @@
 #include "tr_local.h"
 #define	WAVEVALUE( table, base, amplitude, phase, freq )  ((base) + table[ myftol( ( ( (phase) + backEnd.refdef.floatTime * (freq) ) * FUNCTABLE_SIZE ) ) & FUNCTABLE_MASK ] * (amplitude))
 
+#include <algorithm>
+#include <numeric>
+#include <vector>
+
 static float *TableForFunc( genFunc_t func ) 
 {
 	switch ( func )
@@ -1019,8 +1023,118 @@ void RB_CalcRotateTexCoords( float degsPerSecond, float *st )
 	RB_CalcTransformTexCoords( &tmi, st );
 }
 
+void RB_CalcOverbounceTexCoords( float *dstTexCoords ) {
+	// get vertex indices in decreasing order of their z-coordinate. that way
+	// we can iterate through the vertices with stricly decreasing closest
+	// overbounce levels. that way we can always assign the next overbounce
+	// level texture to the next texture repetition.
+	std::vector<int> perm(tess.numVertexes);
+	std::iota(perm.begin(), perm.end(), 0);
+	std::sort(perm.begin(), perm.end(), [] (const int i, const int j) {
+		return tess.xyz[i][2] < tess.xyz[j][2];
+	});
 
+	// This reflects SURFACE_CLIP_EPSILON from the collision code (cm_local.h).
+	// A small hull around geometry such that collision starts a little earlier.
+	// So we have to add this to the geometry here as well.
+	const float surfaceClipEpsilon = 0.125f;
 
+	OverbounceLevel level = {0.0, 0.0, 0.0};
+	float image_height = 8192;
+	float uv_offset = -1.0;
+	const float uv_range_overbounce = 1.0 / image_height;
+	for (const int i : perm) {
+		// estimated height at which player would collide with this surface.
+		const float collisionZEstimate = tess.xyz[i][2] + backEnd.or.origin[2] + surfaceClipEpsilon;
+		// TODO: get this from the actual entity instead of hardcoding it
+		const float minsZ = -24.0f;
+		// the actual elevation delta that the player would have if they land here.
+		const float elevDelta = cl.frame.ps.origin[2] + minsZ - collisionZEstimate;
+		if (elevDelta <= 0) {
+			// above player height, so no overbounce possible
+			dstTexCoords[2*i+0] = 0.0;
+			dstTexCoords[2*i+1] = -1.0 + 2.0 * uv_range_overbounce;
+			continue;
+		}
+
+		const OverbounceLevel new_level = CL_ClosestOverbounceLevel(elevDelta);
+		if (level.max_height_difference != new_level.max_height_difference) {
+			// new overbounce level. move on to next texture repetition
+			uv_offset += 1.0;
+			level = new_level;
+		}
+
+		const float probability = CL_OverbounceProbability(elevDelta, cl.frame.ps.velocity[2], cl.frame.ps.gravity);
+		dstTexCoords[2*i+0] = 2.0f * min(0.5f, probability);
+
+		const float antiFlickerConstant = 1.0f/8.0f;
+		const float factor = (elevDelta - level.min_height_difference)
+		                   / (level.max_height_difference - level.min_height_difference);
+		dstTexCoords[2*i+1] = uv_offset + uv_range_overbounce * min(max(factor, antiFlickerConstant), 1.0f - antiFlickerConstant);
+	}
+}
+
+// Speed Outcast : max jump height viewer
+/*
+========================
+RB_CalcElevationTexCoords
+
+Compute texture coordinates for coloring the range that is eligible
+for the range of the maximum height the player can jump.
+========================
+*/
+static float playerJumpStartWorldZ;
+void RE_SetPlayerJumpStartWorldZ(float value) {
+	playerJumpStartWorldZ = value;
+}
+static float playerJumpHeightValue;
+void RE_SetPlayerJumpHeight(float value) {
+	playerJumpHeightValue = value;
+}
+void RB_CalcElevationTexCoords(float* dstTexCoords) {
+	// The elevation texture looks like this:
+	//
+	// -----
+	// +++++
+	// +++++
+	// -----
+	//
+	// where "-" is fully transparent and "+" is semitransparent. So now we
+	// have to map heights that are in the interval from the start height
+	// to max jump height into the "+" region. We have exactly one row of "-" at
+	// the top and the bottom of the image, so the area of "+" is 2 pixels less
+	// than the texture size.
+	// So now we compute the elevation delta and map it from [0, 96] to [0, 1]
+	// Then we map [0, 1] into the "+" range, i.e. scale it down to the ratio
+	// that the "+" area covers of the image and shift it up by one pixel.
+
+	const float elevTextureHeight = 4.0f;  // has to be same as elevationImage height.
+	const float elevAreaHeight = (elevTextureHeight - 2.0f);
+	const float elevAreaRatio = elevAreaHeight / elevTextureHeight;
+	const float elevAreaOffset = 1.0f / elevTextureHeight;
+
+	// This reflects SURFACE_CLIP_EPSILON from the collision code (cm_local.h).
+	// A small hull around geometry such that collision starts a little earlier.
+	// So we have to add this to the geometry here as well.
+	const float surfaceClipEpsilon = 0.125f;
+	// Standing on the ground means that the coloring is exactly on the border
+	// of the ground. That causes flickering. We therefore shift by just a tiny
+	// amount more to avoid the flickering.
+	const float antiFlickerShift = 1.0f / 16384.0f;
+
+	for (int i = 0; i < tess.numVertexes; ++i) {
+		// estimated height at which player would collide with this surface.
+		// We round this to 1/8th. Not quite sure why, but seems necessary.
+		const float collisionZEstimate = ((int)((tess.xyz[i][2] +
+			backEnd.or.origin[2] + surfaceClipEpsilon) * 8.0f)) / 8.0f;
+		// the actual elevation delta that the player would have if they land here.
+		const float elevDelta = (collisionZEstimate - playerJumpStartWorldZ);
+		dstTexCoords[0] = 0.5f;  // X-coordinate doesnt matter
+		dstTexCoords[1] = (elevDelta - antiFlickerShift) /
+			(playerJumpHeightValue)*elevAreaRatio + elevAreaOffset;
+		dstTexCoords += 2;
+	}
+}
 
 
 

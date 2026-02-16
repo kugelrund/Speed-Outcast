@@ -16,7 +16,6 @@
 #include "anims.h"
 #include "../cgame/cg_local.h"	// yeah I know this is naughty, but we're shipping soon...
 #include "wp_saber.h"
-#include "../speedrun/overbounce_prediction/OverbouncePrediction.hpp"
 #include "../speedrun/strafe_helper/strafe_helper.h"
 #include <float.h>
 
@@ -8801,6 +8800,17 @@ void Pmove( pmove_t *pmove )
 {
 	pm = pmove;
 
+	// Speed Outcast
+	if (pm->ps->clientNum == 0) {
+		if (pm->ps->jumpZStart == 0.0) {
+			cgi_R_SetPlayerJumpStartWorldZ(pm->ps->origin[2] + pm->gent->mins[2]);
+		}
+		else {
+			cgi_R_SetPlayerJumpStartWorldZ(pm->ps->jumpZStart + pm->gent->mins[2]);
+		}
+		cgi_R_SetPlayerJumpHeight(forceJumpHeight[pm->ps->forcePowerLevel[FP_LEVITATION]]);
+	}
+
 	// this counter lets us debug movement problems with a journal by setting a conditional breakpoint fot the previous frame
 	c_pmove++;
 
@@ -8844,9 +8854,6 @@ void Pmove( pmove_t *pmove )
 	VectorCopy (pm->ps->velocity, pml.previous_velocity);
 
 	pml.frametime = pml.msec * 0.001;
-	if ( cg_drawOverbounceInfo.integer && pm->ps->clientNum == 0 ) {
-		OverbouncePrediction::reportLastFrametime( pml.frametime );
-	}
 
 	PM_SetSpecialMoveValues();
 

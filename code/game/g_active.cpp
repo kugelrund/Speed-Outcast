@@ -1980,6 +1980,15 @@ void G_CheckMovingLoopingSounds( gentity_t *ent, usercmd_t *ucmd )
 	}
 }
 
+static void G_ReportLastPmoveFrametime( int msec )
+{
+	if ( msec < 1 || msec >= 200 ) {
+		return;
+	}
+
+	cgi_ReportLastPmoveFrametime(msec);
+}
+
 /*
 ==============
 ClientThink
@@ -2782,6 +2791,10 @@ extern cvar_t	*g_skippingcin;
 	pm.noFootsteps = 0;//( g_dmflags->integer & DF_NO_FOOTSTEPS ) > 0;
 
 	VectorCopy( client->ps.origin, oldOrigin );
+
+	if ( pm.ps->clientNum == 0 ) {
+		G_ReportLastPmoveFrametime( pm.cmd.serverTime - pm.ps->commandTime );
+	}
 
 	// perform a pmove
 	Pmove( &pm );

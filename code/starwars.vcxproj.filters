@@ -78,6 +78,9 @@
     <Filter Include="speedrun\speedrun_timer_q3">
       <UniqueIdentifier>{caefa591-8515-4aec-9a98-8cc324c26c07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="speedrun\overbounce_prediction">
+      <UniqueIdentifier>{a28284cb-d6eb-43c5-b6fe-1883a8b7a653}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="0_compiled_first\0_SH_Leak.cpp">
@@ -598,6 +601,12 @@
     </ClCompile>
     <ClCompile Include="speedrun\speedrun_timer_includes.cpp">
       <Filter>speedrun</Filter>
+    </ClCompile>
+    <ClCompile Include="client\cl_overbounce.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="speedrun\overbounce_prediction\overbounce_prediction.cpp">
+      <Filter>speedrun\overbounce_prediction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1155,6 +1164,9 @@
     </ClInclude>
     <ClInclude Include="speedrun\speedrun_timer_includes.h">
       <Filter>speedrun</Filter>
+    </ClInclude>
+    <ClInclude Include="speedrun\overbounce_prediction\overbounce_prediction.hpp">
+      <Filter>speedrun\overbounce_prediction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1753,6 +1753,50 @@ static void R_CreateFogImage( void ) {
 
 /*
 ==================
+R_CreateElevationImage
+
+Image for coloring in elevations that are to be highlighted.
+==================
+*/
+static void R_CreateElevationImage(void) {
+	// We dont need a width for this but only height. We create the image like
+	// this
+	//        ---
+	//        +++
+	//        +++
+	//        ---
+	//
+	// where "-" is fully transparent and "+" is semitransparent. That way,
+	// UV coordinates can be set into the "+" area if the height should be
+	// highlighted and outside of it otherwise. By using GL_CLAMP mode for the
+	// texture, any values outside of the texture will be fully transparent
+	// (the "-"). To not have smoothing on the edges of the highlighted height
+	// area, we set filter mode to GL_NEAREST.
+	const int elevationImageHeight = 4;
+	const byte elevationColoringAlpha = 64;
+	byte data[elevationImageHeight][4];
+	memset(data, 255, sizeof(data));
+	for (int y = 0; y < elevationImageHeight; ++y) {
+		data[y][3] = elevationColoringAlpha;
+		data[y][3] = elevationColoringAlpha;
+	}
+	data[0][0] = 0;
+	data[0][1] = 0;
+	data[0][2] = 0;
+	data[0][3] = 0;
+	data[elevationImageHeight - 1][0] = 0;
+	data[elevationImageHeight - 1][1] = 0;
+	data[elevationImageHeight - 1][2] = 0;
+	data[elevationImageHeight - 1][3] = 0;
+	//tr.elevationImage = R_CreateImage("*elevation", (byte*)data, 1, elevationImageHeight, GL_RGBA, qfalse, qfalse, qtrue, GL_CLAMP);
+	tr.elevationImage = R_CreateImage("*elevation", (byte*)data, 1, elevationImageHeight, qfalse, qfalse, qtrue, GL_CLAMP);
+	GL_Bind(tr.elevationImage);
+	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+/*
+==================
 R_CreateDefaultImage
 ==================
 */
@@ -1785,6 +1829,50 @@ static void R_CreateDefaultImage( void ) {
 		data[x][DEFAULT_SIZE-1][3] = 255;
 	}
 	tr.defaultImage = R_CreateImage("*default", (byte *)data, DEFAULT_SIZE, DEFAULT_SIZE, qtrue, qfalse, qtrue, GL_REPEAT);
+}
+
+/*
+==================
+R_CreateOverbounceImage
+
+Image for coloring in overbounce levels.
+==================
+*/
+static void R_CreateOverbounceImage( void ) {
+	// We create the image like this
+	//
+	// 0123456789
+	// 0000000000
+	// 0000000000
+	// 0000000000
+	//
+	// where "0" is fully transparent and "9" is fully opaque. Vertices that are
+	// within the overbounce level will have their UV-coordinate set somewhere
+	// in the topmost row texture pixels. Top of the top-most row if right on
+	// the minimum of the overbounce level range, bottom of the top-most row if
+	// right on the maximum. The column is set according to the overbounce
+	// probability of that overbounce level. Vertices that are outside the
+	// overbounce level will have their UV-coordinate set in one of the other
+	// rows that are all zero.
+	//
+	// By using GL_REPEAT we can use different texture repetitions for different
+	// overbounce levels to map each vertex to a corresponding value.
+	const int overbounceImageHeight = 8192;
+	const int overbounceImageWidth = 128;
+	byte data[overbounceImageHeight][overbounceImageWidth][4];
+	memset(data, 255, sizeof(data));
+	for (int x=0; x < overbounceImageWidth; ++x) {
+		data[0][x][3] = (256/overbounceImageWidth) * x;
+	}
+	for (int y=1; y < overbounceImageHeight - 1; ++y) {
+		for (int x=0; x < overbounceImageWidth; ++x) {
+			data[y][x][3] = 0;
+		}
+	}
+	tr.overbounceImage = R_CreateImage("*overbounce", (byte *)data, overbounceImageWidth, overbounceImageHeight, qfalse, qfalse, qtrue, GL_REPEAT);
+	GL_Bind(tr.overbounceImage);
+	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
 /*
@@ -1823,6 +1911,10 @@ void R_CreateBuiltinImages( void ) {
 
 	R_CreateDlightImage();
 	R_CreateFogImage();
+
+	// Additions for Speed-Outcast
+	R_CreateElevationImage();
+	R_CreateOverbounceImage();
 }
 
 

@@ -576,6 +576,17 @@ int cgi_EndGame(void)
 	return syscall( CG_SENDCONSOLECOMMAND, "cam_disable; set nextmap disconnect; cinematic outcast\n" );
 }
 
+// Speed Outcast
+void cgi_ReportLastPmoveFrametime(int msec)
+{
+	syscall(CG_REPORT_LAST_PMOVE_FRAMETIME, msec);
+}
+
+float cgi_OverbounceProbability(float height_difference, float vertical_speed, float gravity)
+{
+	return syscall(CG_OVERBOUNCE_PROBABILITY, PASSFLOAT(height_difference), PASSFLOAT(vertical_speed), PASSFLOAT(gravity)) / 10000.0f;
+}
+
 void cgi_SpeedrunPauseTimer(int priority)
 {
 	syscall(CG_SPEEDRUN_PAUSE_TIMER, priority);
@@ -602,4 +613,12 @@ int cgi_SpeedrunGetTotalTimeMilliseconds(void) {
 
 int cgi_SpeedrunGetLevelTimeMilliseconds(void) {
 	return syscall(CG_SPEEDRUN_GET_LEVEL_TIME_MILLISECONDS);
+}
+
+void cgi_R_SetPlayerJumpStartWorldZ(float value) {
+	syscall(CG_R_SET_PLAYER_JUMP_START_Z_WORLD, PASSFLOAT(value));
+}
+
+void cgi_R_SetPlayerJumpHeight(float value) {
+	syscall(CG_R_SET_PLAYER_JUMP_HEIGHT, PASSFLOAT(value));
 }
