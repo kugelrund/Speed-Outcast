@@ -413,6 +413,21 @@ Restart the video subsystem
 */
 void CL_Vid_Restart_f( void ) {
 	SpeedrunPauseTimer();
+	if (cls.cgameStarted || cls.rendererStarted || cls.uiStarted || cls.soundRegistered
+#ifdef __IMMERSION
+		|| cls.forceStarted
+#endif
+	) {
+		// vid_restart will cause the next CL_Frame to run CL_StartHunkUsers which
+		// takes quite some time, blocking the current Com_Frame. So when eventually
+		// we move on to the next Com_Frame, the time delta to the previous frame
+		// will be huge. This delta will be capped to 200msec and passed to
+		// SV_Frame, meaning that we advance level time by 200msec while we had the
+		// timer paused for the vid_restart. So to avoid saving speedrun time in
+		// sections where waiting for gametime to pass by spamming vid_restart, we
+		// have to add these 200 msec.
+		SpeedrunTimerAddMilliseconds(200);
+	}
 
 	S_StopAllSounds();		// don't let them loop during the restart
 	S_BeginRegistration();	// all sound handles are now invalid
@@ -1045,10 +1060,29 @@ void CL_StartHunkUsers( void ) {
 		cls.uiStarted = qtrue;
 		CL_InitUI();
 	}
+	
+	if ( !cls.cgameStarted && cls.state > CA_CONNECTED && cls.state != CA_CINEMATIC ) {
+		if (CL_IsRunningInGameCinematic()) {
+			// This is a special somewhat bugged case:
+			// We are basically all ready and would usually start all client stuff now so that the player can start playing,
+			// but somehow a cinematic is playing despite cls.state not being CA_CINEMATIC so we are not starting cgame.
+			// But that means that we would never enter CL_FirstSnapshot to unpause the timer. But we need to have the timer
+			// running during cinematics, because they are skippable. So let's unpause it now.
+			SpeedrunUnpauseTimer();
+		}
+	}
 
 //	if ( !cls.cgameStarted && cls.state > CA_CONNECTED && cls.state != CA_CINEMATIC ) {
 	if ( !cls.cgameStarted && cls.state > CA_CONNECTED && (cls.state != CA_CINEMATIC && !CL_IsRunningInGameCinematic()) ) 
 	{
+		// Usually the timer should already have been paused by a vid_restart, quickload, map change, ...
+		// But if just now we had the bugged cinematic case mentioned above, that will not be the case,
+		// so to make sure let's pause now.
+		// The timer should always be paused for this init anyways cause it completely blocks Com_Frame,
+		// meaning neither player nor server can ever do anything during it. So we don't have to worry
+		// about special cases where we don't want to pause here.
+		SpeedrunPauseTimer();
+
 		cls.cgameStarted = qtrue;
 		CL_InitCGame();
 	}
