@@ -56,4 +56,8 @@ int	CM_MarkFragments( int numPoints, const vec3_t *points, const vec3_t projecti
 // cm_patch.c
 void CM_DrawDebugSurface( void (*drawPoly)(int color, int numPoints, float *points) );
 
+// Addition for Speed-Outcast: Historically the LiveSplit autosplitter used this value for distinguishing
+// the current map. To set and expose this value in the SpeedrunDataForLivesplit struct we use this getter.
+int CM_GetNumAreas();
+
 #endif //__CM_PUBLIC_H__

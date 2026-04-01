@@ -2113,6 +2113,23 @@ void Com_SetOrgAngles(vec3_t org,vec3_t angles)
 	VectorCopy(angles,cangles);
 }
 
+struct SpeedrunDataForLivesplit
+{
+	const unsigned char magic_identifier[40] = {
+		0x6D, 0x61, 0x67, 0x69, 0x63, 0x20,                    // magic
+		0x69, 0x64, 0x20,                                      // id
+		0x66, 0x6F, 0x72, 0x20,                                // for
+		0x73, 0x70, 0x65, 0x65, 0x64, 0x72, 0x75, 0x6E, 0x20,  // speedrun
+		0x64, 0x61, 0x74, 0x61, 0x20,                          // data
+		0x66, 0x6F, 0x72, 0x20,                                // for
+		0x6C, 0x69, 0x76, 0x65, 0x73, 0x70, 0x6C, 0x69, 0x74,  // livesplit
+	};
+	int map;  // This is actually just cm.numAreas, was used historically as some kind of "map number"
+	int ingameTime;
+};
+
+volatile SpeedrunDataForLivesplit speedrun_data_for_livesplit;
+
 #pragma warning (disable: 4701)	//local may have been used without init (timing info vars)
 void Com_Frame( void ) {
 try 
@@ -2123,6 +2140,8 @@ try
 	char		msg[MAXPRINTMSG];
 
 	SpeedrunUpdateTimer();
+	speedrun_data_for_livesplit.map = CM_GetNumAreas();
+	speedrun_data_for_livesplit.ingameTime = SpeedrunGetTotalTimeMilliseconds();
 
 	// write config file if anything changed
 	Com_WriteConfiguration(); 

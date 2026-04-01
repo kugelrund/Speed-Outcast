@@ -996,3 +996,7 @@ void	CM_ReadPortalState ()
 	CM_FloodAreaConnections ();
 }
 
+int CM_GetNumAreas()
+{
+	return cm.numAreas;
+}
