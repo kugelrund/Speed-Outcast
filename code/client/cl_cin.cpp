@@ -1882,9 +1882,11 @@ void SCR_StopCinematic( qboolean bAllowRefusal /* = qfalse */ )
 {
 	if (bAllowRefusal)
 	{
+		// This used enfore a delay delay of 1.2 seconds by checking `cls.realtime < CL_iPlaybackStartTime + 1200`.
+		// Removed in Speed-Outcast as it is unnecessary wait-time and nothing seemed to break without the delay.
 		if ( (CL_handle >= 0 && CL_handle < MAX_VIDEO_HANDLES)
 			&&
-			cls.realtime < CL_iPlaybackStartTime + 1200	// 1.2 seconds have to have elapsed
+			cls.realtime < CL_iPlaybackStartTime
 			)
 		{
 			return;
