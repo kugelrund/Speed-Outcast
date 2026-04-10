@@ -58,11 +58,6 @@ Variables:
 
   Draw in RED, the box around the player
 
-- `cg_drawBoxPlayerFP` : 0 or 1
-
-  Allows rendering if the box even in first person if set to 1 or more.
-  Needs `cg_drawBoxPlayer` to also be set to 1
-
 - `cg_drawBoxNPC` : 0 or 1
 
   Draw in GREEN, the boxes around NPCs (include spawned NPCs)
@@ -70,6 +65,26 @@ Variables:
 - `cg_drawBoxItems` : 0 or 1
 
   Draw in BLUE, the boxes around items (include dropped weapons)
+
+## Ingame NPC behavior, line of sight and pathing rendering
+
+Variables: 
+
+- `cg_drawNPCInfo` : 0 or 1
+
+  Display information about some flags about NPCs such as their default and current behavior.
+  This is triggered when looking at an NPC entity.
+  The last NPC entity will be remembered as long as the player's crosshair doesn't look at any other NPC entity.
+
+- `cg_drawLineOfSight` : 0 or 1
+
+  Draw a blue line that where every NPC is looking at.
+  Will stop at the first collision encountered (includes player)
+
+- `cg_drawNPCPath` : 0 or 1
+
+  Draw in orange, a line a box at where an NPC is trying to go to, a 'goal' destination.
+  This does not include the whole path that an NPC will take to get to said goal.
 
 ## Maximum Jump Height Visualization
 
@@ -97,20 +112,25 @@ Commands:
 
 Variables:
 
-- `cg_drawPlayerInfo` (0 to 7)
+- `cg_drawPlayerInfo` (0 to 15)
 
   Draw information about the player in the current 3D environment.
-  The types of information are the player's position, velocity, and jumping state.
-  Depending on the value of this variable, different information is shown:
+  The displayed result will always be in the following order from top to bottom : Position - Velocity - Angles - Jumping state.
+  
+  #------------------------------------#
+  Binary :      (1    1    1    1) = 15
+  Power of 2^n : 3    2    1    0
+  Decimal :      8    4    2    1
+                 |    |    |    |
+                 |    |    |    Position
+                 |    |    Velocity
+                 |    Angles
+                 Jumping state
+  #------------------------------------#
 
-  - `0` : Nothing
-  - `1` : Position
-  - `2` : Velocity
-  - `3` : Position + Velocity
-  - `4` : Jumping
-  - `5` : Position + Jumping
-  - `6` : Velocity + Jumping
-  - `7` : Position + Velocity + Jumping
+  Examples : 
+  . To enable everything, you must then set the variable to 15 (8 + 4 + 2 + 1)
+  . To only enable velocity and angles, you would set the variable to 6 (4 + 2)
 
   Default: `0`.
 
@@ -177,6 +197,12 @@ Variables:
   Color components (red, green, blue, alpha) for different strafe helper elements.
   These are `Accelerating`, `Optimal`, `CenterMarker` and `Speed`.
   Colors can be set more conveniently with the corresponding commands.
+
+- `cg_drawVelocityVector` (0 or 1)
+
+  Draw a 3D rectangle representing the current velocity vector of the player when moving in the world.
+  It's 3D length is 1/5 of the units values stored internally.
+  Example : a forward volocity of 250 (walking) will result in a rectangle of length 25 ingame units in the direction the player is walking to.
 
 Commands:
 

@@ -696,14 +696,14 @@ extern	vmCvar_t		cg_fovThirdPerson;
 extern	vmCvar_t		cg_sensitivityFactorTurret;
 extern	vmCvar_t		cg_drawBoxTriggers;
 extern	vmCvar_t		cg_drawBoxPlayer;
-extern	vmCvar_t		cg_drawBoxPlayerFP;
 extern	vmCvar_t		cg_drawBoxNPC;
 extern	vmCvar_t		cg_drawBoxItems;
 extern	vmCvar_t		cg_drawPlayerInfo;
 extern	vmCvar_t		cg_drawPlayerInfoPrecision;
-extern	vmCvar_t		cg_drawBoxAggro;
+extern	vmCvar_t		cg_drawNPCInfo;
 extern	vmCvar_t		cg_drawLineOfSight;
 extern	vmCvar_t		cg_drawNPCPath;
+extern	vmCvar_t		cg_drawVelocityVector;
 
 void CG_NewClientinfo( int clientNum );
 //

@@ -2545,11 +2545,10 @@ static std::string FloatToString(float value, int precision) {
 // Array needed to know what the maximum height is
 extern float forceJumpHeight[];
 // The function
-static void CG_DrawPlayerInfo(int precision) {
+static float CG_DrawPlayerInfo(float x, float y, int precision) {
 	// cg_drawPlayerInfo between 0 and 7 will give different results depending on which bit is set to customize what we want to see.
 	gentity_t const* player_gent = cg_entities[cg.snap->ps.clientNum].gent;
-	const int pos_x_string = 8; // little offset to not be all the way on the left
-	int y = 16; // little offset to still have the console print everything
+	const int pos_x_string = x;
 	// Precision boundaries
 	if (precision < 0) precision = 0;
 	if (precision > 5) precision = 5;
@@ -2592,7 +2591,23 @@ static void CG_DrawPlayerInfo(int precision) {
 		///// VELOCITY /////
 	}
 
-	if (cg_drawPlayerInfo.integer & 0b100)// && g_cheats->integer)
+	if (cg_drawPlayerInfo.integer & 0b100)
+	{
+		///// ANGLE /////
+		const std::string angleWord = "Angles";
+		std::string ang_v = "V : " + FloatToString(player_gent->client->ps.viewangles[0], precision);
+		std::string ang_h = "H : " + FloatToString(player_gent->client->ps.viewangles[1], precision);
+		
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, angleWord.c_str(), colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, ang_v.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, ang_h.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		///// ANGLE /////
+	}
+
+	if (cg_drawPlayerInfo.integer & 0b1000)
 	{
 		///// JUMPING /////
 		const std::string jumpWord = "Jump";
@@ -2619,6 +2634,365 @@ static void CG_DrawPlayerInfo(int precision) {
 		}
 		///// JUMPING /////
 	}
+
+	return y + BIGCHAR_HEIGHT + 10;
+}
+
+/*
+===========================
+CG_DrawNPCInfo
+===========================
+*/
+static gentity_t* validNPCPointer;
+// Helper function to keep track of the last valid entity we got, so that even when not looking at one, we keep the pointer
+static void checkValidNPC() {
+	// Check if latest pointer is still valid
+	if (validNPCPointer && validNPCPointer->NPC)
+	{
+		// I suppose that's fine
+	}
+	else // Pointing to garbage data, remove the reference
+	{
+		validNPCPointer = NULL; 
+	}
+
+	// Check for potential new crosshair npc
+	if (cg_crosshairIdentifyTarget.integer)
+	{
+		gentity_t* tempPointer = &g_entities[g_crosshairEntNum];
+		if (tempPointer->NPC) validNPCPointer = tempPointer; // New or same NPC
+	}
+	// Else : keep the latest pointer we had as valid, so nothing to do
+}
+// The function
+static float CG_DrawNPCInfo(float x, float y) {
+	checkValidNPC();
+	float pos_x_string = x;
+
+	if (validNPCPointer)
+	{
+		///// Name/Type /////
+		if (validNPCPointer->NPC_type)
+		{
+			std::string nameWord = validNPCPointer->NPC_type;
+			cgi_R_Font_DrawString(pos_x_string, y + 2, nameWord.c_str(), colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		///// Name/Type /////
+
+
+		///// BEHAVIOR - Default /////
+		std::string behaviorDefaultWord = " ";
+		switch (validNPCPointer->NPC->defaultBehavior)
+		{
+		case BS_DEFAULT: // Let default be empty ?
+			//behaviorDefaultWord = "BS_DEFAULT";
+			break;
+		case BS_ADVANCE_FIGHT:
+			behaviorDefaultWord = "BS_ADVANCE_FIGHT";
+			break;
+		case BS_SLEEP:
+			behaviorDefaultWord = "BS_SLEEP";
+			break;
+		case BS_FOLLOW_LEADER:
+			behaviorDefaultWord = "BS_FOLLOW_LEADER";
+			break;
+		case BS_JUMP:
+			behaviorDefaultWord = "BS_JUMP";
+			break;
+		case BS_SEARCH:
+			behaviorDefaultWord = "BS_SEARCH";
+			break;
+		case BS_WANDER:
+			behaviorDefaultWord = "BS_WANDER";
+			break;
+		case BS_NOCLIP:
+			behaviorDefaultWord = "BS_NOCLIP";
+			break;
+		case BS_REMOVE:
+			behaviorDefaultWord = "BS_REMOVE";
+			break;
+		case BS_CINEMATIC:
+			behaviorDefaultWord = "BS_CINEMATIC";
+			break;
+		case BS_WAIT:
+			behaviorDefaultWord = "BS_WAIT";
+			break;
+		case BS_STAND_GUARD:
+			behaviorDefaultWord = "BS_STAND_GUARD";
+			break;
+		case BS_PATROL:
+			behaviorDefaultWord = "BS_PATROL";
+			break;
+		case BS_INVESTIGATE:
+			behaviorDefaultWord = "BS_INVESTIGATE";
+			break;
+		case BS_STAND_AND_SHOOT:
+			behaviorDefaultWord = "BS_STAND_AND_SHOOT";
+			break;
+		case BS_HUNT_AND_KILL:
+			behaviorDefaultWord = "BS_HUNT_AND_KILL";
+			break;
+		case BS_FLEE:
+			behaviorDefaultWord = "BS_FLEE";
+			break;
+		default: // REMOVE ME
+			break;
+		}
+		if (behaviorDefaultWord != " ")
+		{
+			y = y + 16;
+			cgi_R_Font_DrawString(pos_x_string, y + 2, behaviorDefaultWord.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		///// BEHAVIOR - Default /////
+
+		///// BEHAVIOR - Current /////
+		std::string behaviorCurrentWord = " ";
+		switch (validNPCPointer->NPC->behaviorState)
+		{
+		case BS_DEFAULT: // Let default be empty ?
+			behaviorCurrentWord = "BS_DEFAULT";
+			break;
+		case BS_ADVANCE_FIGHT:
+			behaviorCurrentWord = "BS_ADVANCE_FIGHT";
+			break;
+		case BS_SLEEP:
+			behaviorCurrentWord = "BS_SLEEP";
+			break;
+		case BS_FOLLOW_LEADER:
+			behaviorCurrentWord = "BS_FOLLOW_LEADER";
+			break;
+		case BS_JUMP:
+			behaviorCurrentWord = "BS_JUMP";
+			break;
+		case BS_SEARCH:
+			behaviorCurrentWord = "BS_SEARCH";
+			break;
+		case BS_WANDER:
+			behaviorCurrentWord = "BS_WANDER";
+			break;
+		case BS_NOCLIP:
+			behaviorCurrentWord = "BS_NOCLIP";
+			break;
+		case BS_REMOVE:
+			behaviorCurrentWord = "BS_REMOVE";
+			break;
+		case BS_CINEMATIC:
+			behaviorCurrentWord = "BS_CINEMATIC";
+			break;
+		case BS_WAIT:
+			behaviorCurrentWord = "BS_WAIT";
+			break;
+		case BS_STAND_GUARD:
+			behaviorCurrentWord = "BS_STAND_GUARD";
+			break;
+		case BS_PATROL:
+			behaviorCurrentWord = "BS_PATROL";
+			break;
+		case BS_INVESTIGATE:
+			behaviorCurrentWord = "BS_INVESTIGATE";
+			break;
+		case BS_STAND_AND_SHOOT:
+			behaviorCurrentWord = "BS_STAND_AND_SHOOT";
+			break;
+		case BS_HUNT_AND_KILL:
+			behaviorCurrentWord = "BS_HUNT_AND_KILL";
+			break;
+		case BS_FLEE:
+			behaviorCurrentWord = "BS_FLEE";
+			break;
+		default: // REMOVE ME
+			break;
+		}
+		if (behaviorCurrentWord != " ")
+		{
+			y = y + 16;
+			cgi_R_Font_DrawString(pos_x_string, y + 2, behaviorCurrentWord.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		///// BEHAVIOR - Current /////
+
+		///// BEHAVIOR - TEMP /////
+		std::string behaviorTempWord = " ";
+		switch (validNPCPointer->NPC->tempBehavior)
+		{
+		case BS_DEFAULT: // Let default be empty ?
+			//behaviorTempWord = "BS_DEFAULT";
+			break;
+		case BS_ADVANCE_FIGHT:
+			behaviorTempWord = "BS_ADVANCE_FIGHT";
+			break;
+		case BS_SLEEP:
+			behaviorTempWord = "BS_SLEEP";
+			break;
+		case BS_FOLLOW_LEADER:
+			behaviorTempWord = "BS_FOLLOW_LEADER";
+			break;
+		case BS_JUMP:
+			behaviorTempWord = "BS_JUMP";
+			break;
+		case BS_SEARCH:
+			behaviorTempWord = "BS_SEARCH";
+			break;
+		case BS_WANDER:
+			behaviorTempWord = "BS_WANDER";
+			break;
+		case BS_NOCLIP:
+			behaviorTempWord = "BS_NOCLIP";
+			break;
+		case BS_REMOVE:
+			behaviorTempWord = "BS_REMOVE";
+			break;
+		case BS_CINEMATIC:
+			behaviorTempWord = "BS_CINEMATIC";
+			break;
+		case BS_WAIT:
+			behaviorTempWord = "BS_WAIT";
+			break;
+		case BS_STAND_GUARD:
+			behaviorTempWord = "BS_STAND_GUARD";
+			break;
+		case BS_PATROL:
+			behaviorTempWord = "BS_PATROL";
+			break;
+		case BS_INVESTIGATE:
+			behaviorTempWord = "BS_INVESTIGATE";
+			break;
+		case BS_STAND_AND_SHOOT:
+			behaviorTempWord = "BS_STAND_AND_SHOOT";
+			break;
+		case BS_HUNT_AND_KILL:
+			behaviorTempWord = "BS_HUNT_AND_KILL";
+			break;
+		case BS_FLEE:
+			behaviorTempWord = "BS_FLEE";
+			break;
+		default: // REMOVE ME
+			break;
+		}
+		if (behaviorTempWord != " ")
+		{
+			y = y + 16;
+			cgi_R_Font_DrawString(pos_x_string, y + 2, behaviorTempWord.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		///// BEHAVIOR - TEMP /////
+
+
+		///// SQUAD /////
+		std::string squadWord = " ";
+		switch (validNPCPointer->NPC->squadState)
+		{
+		case SQUAD_IDLE:
+			squadWord = "SQUAD_IDLE";
+			break;
+		case SQUAD_STAND_AND_SHOOT:
+			squadWord = "SQUAD_STAND_AND_SHOOT";
+			break;
+		case SQUAD_RETREAT:
+			squadWord = "SQUAD_RETREAT";
+			break;
+		case SQUAD_COVER:
+			squadWord = "SQUAD_COVER";
+			break;
+		case SQUAD_TRANSITION:
+			squadWord = "SQUAD_TRANSITION";
+			break;
+		case SQUAD_POINT:
+			squadWord = "SQUAD_POINT";
+			break;
+		case SQUAD_SCOUT:
+			squadWord = "SQUAD_SCOUT";
+			break;
+		default: // REMOVE ME ?
+			break;
+		}
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, squadWord.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		///// SQUAD /////
+
+
+		///// AI FLAG /////
+		std::string aiFlagsWord = "";
+		if (validNPCPointer->NPC->aiFlags & NPCAI_CHECK_WEAPON)
+		{
+			aiFlagsWord += "- NPCAI_CHECK_WEAPON\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_BURST_WEAPON)
+		{
+			aiFlagsWord += "- NPCAI_BURST_WEAPON\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_MOVING)
+		{
+			aiFlagsWord += "- NPCAI_MOVING\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_TOUCHED_GOAL)
+		{
+			aiFlagsWord += "- NPCAI_TOUCHED_GOAL\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_PUSHED)
+		{
+			aiFlagsWord += "- NPCAI_PUSHED\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_NO_COLL_AVOID)
+		{
+			aiFlagsWord += "- NPCAI_NO_COLL_AVOID\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_BLOCKED)
+		{
+			aiFlagsWord += "- NPCAI_BLOCKED\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_OFF_PATH)
+		{
+			aiFlagsWord += "- NPCAI_OFF_PATH\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_IN_SQUADPOINT)
+		{
+			aiFlagsWord += "- NPCAI_IN_SQUADPOINT\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_STRAIGHT_TO_DESTPOS)
+		{
+			aiFlagsWord += "- NPCAI_STRAIGHT_TO_DESTPOS\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_NO_SLOWDOWN)
+		{
+			aiFlagsWord += "- NPCAI_NO_SLOWDOWN\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_LOST)
+		{
+			aiFlagsWord += "- NPCAI_LOST\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_SHIELDS)
+		{
+			aiFlagsWord += "- NPCAI_SHIELDS\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_GREET_ALLIES)
+		{
+			aiFlagsWord += "- NPCAI_GREET_ALLIES\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_FORM_TELE_NAV)
+		{
+			aiFlagsWord += "- NPCAI_FORM_TELE_NAV\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_ENROUTE_TO_HOMEWP)
+		{
+			aiFlagsWord += "- NPCAI_ENROUTE_TO_HOMEWP\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_MATCHPLAYERWEAPON)
+		{
+			aiFlagsWord += "- NPCAI_MATCHPLAYERWEAPON\n";
+		}
+		if (validNPCPointer->NPC->aiFlags & NPCAI_DIE_ON_IMPACT)
+		{
+			aiFlagsWord += "- NPCAI_DIE_ON_IMPACT\n";
+		}
+		if (aiFlagsWord != "") // Not empty
+		{
+			y = y + 16;
+			cgi_R_Font_DrawString(pos_x_string, y + 2, aiFlagsWord.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		///// AI FLAG /////
+		
+	}
+		
+	return y + BIGCHAR_HEIGHT + 10;
 }
 
 /*
@@ -2739,32 +3113,33 @@ static void CG_Draw2D( void )
 	}
 	CG_SaberClashFlare();
 
-	float y = 0;
+	// Right side of the screen
+	float y_right = 0;
 	if (g_cheats->integer) {
-		y=CG_DrawCheatsNotice(y);
+		y_right=CG_DrawCheatsNotice(y_right);
 	}
 	if (cg_drawSecrets.integer) {
-		y=CG_DrawSecrets(y);
+		y_right=CG_DrawSecrets(y_right);
 	}
 	if (cg_drawSnapshot.integer) {
-		y=CG_DrawSnapshot(y);
+		y_right=CG_DrawSnapshot(y_right);
 	} 
 	if (cg_drawFPS.integer) {
-		y=CG_DrawFPS(y);
+		y_right=CG_DrawFPS(y_right);
 	} 
 	if (cg_drawServerFPS.integer) {
-		y=CG_DrawServerFPS(y);
+		y_right=CG_DrawServerFPS(y_right);
 	}
 	if (cg_drawTimer.integer) {
-		y=CG_DrawTimer(y);
+		y_right=CG_DrawTimer(y_right);
 	}
 	if (cg_drawSpeedrunTotalTimer.integer > 0) {
-		y=CG_DrawFormattedMilliseconds(cgi_SpeedrunGetTotalTimeMilliseconds(),
-			cg_drawSpeedrunTotalTimer.integer - 1, y);
+		y_right=CG_DrawFormattedMilliseconds(cgi_SpeedrunGetTotalTimeMilliseconds(),
+			cg_drawSpeedrunTotalTimer.integer - 1, y_right);
 	}
 	if (cg_drawSpeedrunLevelTimer.integer > 0) {
-		y=CG_DrawFormattedMilliseconds(cgi_SpeedrunGetLevelTimeMilliseconds(),
-			cg_drawSpeedrunLevelTimer.integer - 1, y);
+		y_right=CG_DrawFormattedMilliseconds(cgi_SpeedrunGetLevelTimeMilliseconds(),
+			cg_drawSpeedrunLevelTimer.integer - 1, y_right);
 	}
 
 	if ( cg_drawOverbounceInfo.integer )
@@ -2773,8 +3148,14 @@ static void CG_Draw2D( void )
 	}
 
 	// Left side of the screen
+	float y_left = 16;// Offset of 16 to see the console
+	const int x_offset = 8; // Little offset to not be all the way on the left
 	if (cg_drawPlayerInfo.integer) {
-		CG_DrawPlayerInfo(cg_drawPlayerInfoPrecision.integer);
+		y_left = CG_DrawPlayerInfo(x_offset, y_left, cg_drawPlayerInfoPrecision.integer);
+	}
+
+	if (cg_drawNPCInfo.integer) {
+		y_left = CG_DrawNPCInfo(x_offset, y_left);
 	}
 
 	// don't draw center string if scoreboard is up

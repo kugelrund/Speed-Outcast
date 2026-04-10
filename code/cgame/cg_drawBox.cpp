@@ -16,7 +16,6 @@ Entrypoint :
 Related variables :
 - cg_drawBoxTriggers : 0 or 1 (any int not 0) : draw in different colors (ex : pink or orange for secrets) triggers around the map
 - cg_drawBoxPlayer : 0 or 1 (any int not 0) : draw in RED, the box around the player
-- cg_drawBoxPlayerFP : 0 or 1 (any int not 0) : allows rendering if the box even in first person if set to 1 or more
 - cg_drawBoxNPC : 0 or 1 (any int not 0) : draw in GREEN, the boxes around NPCs (include spawned NPCs)
 - cg_drawBoxItems : 0 or 1 (any int not 0) : draw in BLUE, the boxes around items (include dropped weapons)
 
@@ -74,7 +73,7 @@ static void drawLine(vec3_t p1, vec3_t p2, byte color[4], float width, bool onFi
 	if (onFirstHit)
 	{
 		gi.trace(&trace, p1, vec3_origin, vec3_origin, p2,
-			0, MASK_OPAQUE | CONTENTS_SHOTCLIP | CONTENTS_BODY | CONTENTS_ITEM | CONTENTS_TERRAIN, G2_NOCOLLIDE, 10);
+			1, MASK_OPAQUE | CONTENTS_SHOTCLIP | CONTENTS_BODY | CONTENTS_ITEM | CONTENTS_TERRAIN, G2_NOCOLLIDE, 10);
 	}
 	else
 	{
@@ -154,6 +153,8 @@ static void drawCubeFromCenter(vec3_t center, byte color[4], float width, float 
 		return;
 	}
 
+	center[2] += deltaZ;
+
 	VectorSet(absmin, center[0] - half, center[1] - half, center[2] - half);
 	VectorSet(absmax, center[0] + half, center[1] + half, center[2] + half);
 
@@ -199,154 +200,29 @@ static void drawLineOfSight(const gentity_t* ent, float width)
 	drawLine(p1, p2, color, width, true);
 }
 
-static void drawAggroCubes(gentity_t * self)
+static void drawVelocityVector(const gentity_t* ent, float width)
 {
-	// Width of 16, and deltaZ of 16, can be adjusted later of needs be
-	/*
-	drawCubeFromCenter(self, 10, 16, 1);
-	drawCubeFromCenter(self, 10, 32, 2);
-	drawCubeFromCenter(self, 10, 48, 3);
-	drawCubeFromCenter(self, 10, 64, 4);
-	drawCubeFromCenter(self, 10, 80, 5);
-	drawCubeFromCenter(self, 10, 96, 6);
-	*/
-	vec3_t center;
-	byte color[4] = { 0, 0, 0, 25 };
+	byte color[4] = { 50, 50, 50, 50 };
+	vec3_t p1, p2;
+	trace_t trace;
 
-	VectorAdd(self->absmin, self->absmax, center);
-	VectorScale(center, 0.5, center);
-	// Add 16 units in the Z axis of the center of an NPC, above their max height of the bounding box.
+	VectorCopy(ent->client->ps.origin, p1);
+	p1[2] += 10; // Add an offset so that we can see the start of line around the waist instead of the feets
 
-	// ent->NPC should always be a valid pointer since only NPCs entities will reach this function
-	if (self->NPC)
-	{
-		// Let's just call this function with a 'mode' parameter, we just want cubes 
-		// Just remember to also change deltaZ so that the multiple cubes don't override eachother
-		switch (self->NPC->behaviorState)
-		{
-			case BS_DEFAULT:
-				break;
-			case BS_ADVANCE_FIGHT:
-				break;
-			case BS_SLEEP:
-				break;
-			case BS_FOLLOW_LEADER:
-				break;
-			case BS_JUMP:
-				break;
-			case BS_SEARCH:
-				break;
-			case BS_WANDER:
-				break;
-			case BS_NOCLIP:
-				break;
-			case BS_REMOVE:
-				break;
-			case BS_CINEMATIC:
-				break;
-			case BS_WAIT:
-				break;
-			case BS_STAND_GUARD:
-				break;
-			case BS_PATROL:
-				break;
-			case BS_INVESTIGATE:
-				break;
-			case BS_STAND_AND_SHOOT:
-				break;
-			case BS_HUNT_AND_KILL:
-				break;
-			case BS_FLEE:
-				break;
-			default: // REMOVE ME
-				color[0] = 25;
-				color[1] = 25;
-				color[2] = 25;
-				break;
+	// Length in 3D is velovity divided by 10
+	VectorMA(p1, 1.0/10.0, ent->client->ps.velocity, p2);
+	p2[2] = p1[2]; // We don't care about the Z component (?)
 
-			
-		}
-		//drawCubeFromCenter(vec3_t center, byte color[4], float width, float deltaZ);
-		//color = [0, 0, 0, 25];
-		
-		switch (self->NPC->aiFlags)
-		{
-			case NPCAI_CHECK_WEAPON:
-				break;
-			case NPCAI_BURST_WEAPON:
-				break;
-			case NPCAI_MOVING:
-				break;
-			case NPCAI_TOUCHED_GOAL:
-				break;
-			case NPCAI_PUSHED:
-				break;
-			case NPCAI_NO_COLL_AVOID:
-				break;
-			case NPCAI_BLOCKED:
-				break;
-			case NPCAI_OFF_PATH:
-				break;
-			case NPCAI_IN_SQUADPOINT:
-				break;
-			case NPCAI_STRAIGHT_TO_DESTPOS:
-				break;
-			case NPCAI_NO_SLOWDOWN:
-				break;
-			case NPCAI_LOST:
-				break;
-			case NPCAI_SHIELDS:
-				break;
-			case NPCAI_GREET_ALLIES:
-				break;
-			case NPCAI_FORM_TELE_NAV:
-				break;
-			case NPCAI_ENROUTE_TO_HOMEWP:
-				break;
-			case NPCAI_MATCHPLAYERWEAPON:
-				break;
-			case NPCAI_DIE_ON_IMPACT:
-				break;
-			default: // REMOVE ME
-				color[0] = 25;
-				color[1] = 25;
-				color[2] = 25;
-				break;
-		}
-		//drawCubeFromCenter(vec3_t center, byte color[4], float width, float deltaZ);
-		//color = [0, 0, 0, 25];
-		
-		switch (self->NPC->squadState)
-		{
-			case SQUAD_IDLE:
-				break;
-			case SQUAD_STAND_AND_SHOOT:
-				break;
-			case SQUAD_RETREAT:
-				break;
-			case SQUAD_COVER:
-				break;
-			case SQUAD_TRANSITION:
-				break;
-			case SQUAD_POINT:
-				break;
-			case SQUAD_SCOUT:
-				break;
-			default: // REMOVE ME
-				color[0] = 25;
-				color[1] = 25;
-				color[2] = 25;
-				break;
-		}
-		//drawCubeFromCenter(vec3_t center, byte color[4], float width, float deltaZ);
-	}
+	// TODO for next time : make it longer but curved, to also add a prediction instead of only the direction.
+
+	drawLine(p1, p2, color, width, true);
 }
 
 static void drawNPCPathing(gentity_t* self)
 {
-	vec3_t centerNPC;
-	vec3_t centerGoal;
-	byte color[4] = { 25, 25, 0, 25 };
+	vec3_t centerNPC = { 0, 0, 0 };
+	vec3_t centerGoal = { 0, 0, 0 };
+	byte colorGoal[4] = { 50, 25, 0, 25 };
 
 	if (self->NPC && self->NPC->goalEntity)
 	{
@@ -356,9 +232,10 @@ static void drawNPCPathing(gentity_t* self)
 		VectorAdd(self->NPC->goalEntity->absmin, self->NPC->goalEntity->absmax, centerGoal);
 		VectorScale(centerGoal, 0.5, centerGoal);
 
-		drawLine(centerNPC, centerGoal, color, 4, false);
-		drawCubeFromCenter(centerGoal, color, 10, 0);
+		drawLine(centerNPC, centerGoal, colorGoal, 4, false);
+		drawCubeFromCenter(centerGoal, colorGoal, 10, 0);
 	}
+
 }
 
 static void setColorForTrigger(gentity_t* self, byte color[4])
@@ -486,7 +363,7 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 
 static void drawBoxPlayer(gentity_t* self)
 {
-	if (cg_drawBoxPlayer.integer && (cg.renderingThirdPerson || (!cg.renderingThirdPerson && cg_drawBoxPlayerFP.integer)))
+	if (cg_drawBoxPlayer.integer && cg.renderingThirdPerson)
 	{
 		// Make it red and semi-transparent
 		byte color[4];
@@ -502,6 +379,11 @@ static void drawBoxPlayer(gentity_t* self)
 	{
 		// Width of 4, can be adjusted later of needs be
 		drawLineOfSight(self, 4);
+	}
+	if (cg_drawVelocityVector.integer)
+	{
+		// Draw velocity vector, its 3d length will be it's vec3 values / 10 ; so a speed of 300 will display a line of 30 units in game
+		drawVelocityVector(self, 4);
 	}
 }
 
@@ -522,10 +404,6 @@ static void drawBoxNPC(gentity_t* self)
 	{
 		// Width of 4, can be adjusted later of needs be
 		drawLineOfSight(self, 4);
-	}
-	if (cg_drawBoxAggro.integer)
-	{
-		drawAggroCubes(self);
 	}
 	if (cg_drawNPCPath.integer)
 	{
@@ -595,7 +473,7 @@ static void drawBoxObjectTriggers(gentity_t* self)
 
 void CG_DrawBoxes()
 {
-	if (!cg_drawBoxPlayer.integer && !cg_drawBoxNPC.integer && !cg_drawBoxItems.integer && !cg_drawBoxTriggers.integer && !cg_drawBoxAggro.integer && !cg_drawLineOfSight.integer) {
+	if (!cg_drawBoxPlayer.integer && !cg_drawBoxNPC.integer && !cg_drawBoxItems.integer && !cg_drawBoxTriggers.integer && !cg_drawNPCInfo.integer && !cg_drawLineOfSight.integer) {
 		// No need to do the loop if none of these is enabled
 		return;
 	}
@@ -603,13 +481,13 @@ void CG_DrawBoxes()
 	for (int i = 0; i < MAX_GENTITIES; ++i)
 	{
 		// Player
-		if (i == 0 && (cg_drawBoxPlayer.integer || cg_drawLineOfSight.integer))
+		if (i == 0 && (cg_drawBoxPlayer.integer || cg_drawLineOfSight.integer || cg_drawVelocityVector.integer))
 		{
 			// Player is always the first on this array
 			drawBoxPlayer(&g_entities[i]);
 		}
 		// NPCs
-		if ((cg_drawBoxNPC.integer || cg_drawLineOfSight.integer || cg_drawBoxAggro.integer || cg_drawNPCPath.integer) && g_entities[i].e_ThinkFunc == thinkF_NPC_Think)
+		if ((cg_drawBoxNPC.integer || cg_drawLineOfSight.integer || cg_drawNPCInfo.integer || cg_drawNPCPath.integer) && g_entities[i].e_ThinkFunc == thinkF_NPC_Think)
 		{
 			drawBoxNPC(&g_entities[i]);
 		}
