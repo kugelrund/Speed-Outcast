@@ -10,6 +10,7 @@
 #define	WAVEVALUE( table, base, amplitude, phase, freq )  ((base) + table[ myftol( ( ( (phase) + backEnd.refdef.floatTime * (freq) ) * FUNCTABLE_SIZE ) ) & FUNCTABLE_MASK ] * (amplitude))
 
 #include <algorithm>
+#include <cmath>
 #include <numeric>
 #include <vector>
 
@@ -1031,6 +1032,9 @@ void RB_CalcOverbounceTexCoords( float *dstTexCoords ) {
 	std::vector<int> perm(tess.numVertexes);
 	std::iota(perm.begin(), perm.end(), 0);
 	std::sort(perm.begin(), perm.end(), [] (const int i, const int j) {
+		if (std::isnan(tess.xyz[i][2])) {
+			return false;  // artus_topside somehow seems to have NaNs... put them last
+		}
 		return tess.xyz[i][2] < tess.xyz[j][2];
 	});
 
@@ -1044,6 +1048,9 @@ void RB_CalcOverbounceTexCoords( float *dstTexCoords ) {
 	float uv_offset = -1.0;
 	const float uv_range_overbounce = 1.0 / image_height;
 	for (const int i : perm) {
+		if (!std::isfinite(tess.xyz[i][2])) {
+			continue;
+		}
 		// estimated height at which player would collide with this surface.
 		const float collisionZEstimate = tess.xyz[i][2] + backEnd.or.origin[2] + surfaceClipEpsilon;
 		// TODO: get this from the actual entity instead of hardcoding it
