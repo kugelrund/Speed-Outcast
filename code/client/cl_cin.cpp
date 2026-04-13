@@ -1276,6 +1276,11 @@ e_status CIN_StopCinematic(int handle) {
 		// cinematic cutscene on first map (kejim_post) is over, so unpause the timer
 		SpeedrunUnpauseTimer();
 	}
+	if (strcmp(cinTable[currentHandle].fileName, "video/end.roq") == 0) {
+		// cinematic cutscene at the end of the demo level
+		SpeedrunRunFinished();
+	}
+
 	RoQShutdown();
 
 	return FMV_EOF;
