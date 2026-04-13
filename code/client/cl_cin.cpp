@@ -1278,7 +1278,6 @@ e_status CIN_StopCinematic(int handle) {
 	}
 	if (strcmp(cinTable[currentHandle].fileName, "video/end.roq") == 0) {
 		// cinematic cutscene at the end of the demo level
-		SpeedrunLevelFinished();
 		SpeedrunRunFinished();
 	}
 
