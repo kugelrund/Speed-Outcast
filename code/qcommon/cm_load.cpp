@@ -283,6 +283,7 @@ void CMod_LoadLeafs (lump_t *l)
 		if (out->area >= cm.numAreas)
 			cm.numAreas = out->area + 1;
 	}
+	SpeedrunReportNewMapNumber( cm.numAreas );
 
 	cm.areas = (cArea_t *) Z_Malloc( cm.numAreas * sizeof( *cm.areas ), TAG_BSP, qtrue );
 	cm.areaPortals = (int *) Z_Malloc( cm.numAreas * cm.numAreas * sizeof( *cm.areaPortals ), TAG_BSP, qtrue );
@@ -656,6 +657,7 @@ static void CM_LoadMap_Actual( const char *name, qboolean clientload, int *check
 
 		// free old stuff
 		memset( &cm, 0, sizeof( cm ) );
+		SpeedrunReportNewMapNumber( cm.numAreas );
 		CM_ClearLevelPatches();
 		Z_TagFree(TAG_BSP);
 
@@ -663,6 +665,7 @@ static void CM_LoadMap_Actual( const char *name, qboolean clientload, int *check
 			cm.numLeafs = 1;
 			cm.numClusters = 1;
 			cm.numAreas = 1;
+			SpeedrunReportNewMapNumber( cm.numAreas );
 			cm.cmodels = (struct cmodel_s *) Z_Malloc( sizeof( *cm.cmodels ), TAG_BSP, qtrue );
 			*checksum = 0;
 			return;
@@ -996,7 +999,3 @@ void	CM_ReadPortalState ()
 	CM_FloodAreaConnections ();
 }
 
-int CM_GetNumAreas()
-{
-	return cm.numAreas;
-}

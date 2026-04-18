@@ -2130,6 +2130,11 @@ struct SpeedrunDataForLivesplit
 
 volatile SpeedrunDataForLivesplit speedrun_data_for_livesplit;
 
+void SpeedrunReportNewMapNumber( int numAreas )
+{
+	speedrun_data_for_livesplit.map = numAreas;
+}
+
 #pragma warning (disable: 4701)	//local may have been used without init (timing info vars)
 void Com_Frame( void ) {
 try 
@@ -2140,7 +2145,6 @@ try
 	char		msg[MAXPRINTMSG];
 
 	SpeedrunUpdateTimer();
-	speedrun_data_for_livesplit.map = CM_GetNumAreas();
 	speedrun_data_for_livesplit.ingameTime = SpeedrunGetTotalTimeMilliseconds();
 
 	// write config file if anything changed

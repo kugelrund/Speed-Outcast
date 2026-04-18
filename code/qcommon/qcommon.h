@@ -785,5 +785,8 @@ void	SCR_SetScreenshot(const byte *pbData, int w, int h);
 byte*	SCR_TempRawImage_ReadFromFile(const char *psLocalFilename, int *piWidth, int *piHeight, byte *pbReSampleBuffer, qboolean qbVertFlip);
 void	SCR_TempRawImage_CleanUp();
 
+// Addition for Speed-Outcast: Historically the LiveSplit autosplitter used cm.numAreas for distinguishing
+// the current map. To set and expose this value in the SpeedrunDataForLivesplit struct we use this setter.
+void	SpeedrunReportNewMapNumber( int numAreas );
 
 #endif //__QCOMMON_H__
