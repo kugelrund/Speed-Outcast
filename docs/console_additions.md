@@ -71,6 +71,20 @@ Variables:
 
   Draw in BLUE, the boxes around items (include dropped weapons)
 
+## Ingame NPC behavior, line of sight and pathing rendering
+
+Variables: 
+
+- `cg_drawLineOfSight` : 0 or 1
+
+  Draw a blue line that where every NPC is looking at.
+  Will stop at the first collision encountered (includes player)
+
+- `cg_drawNPCPath` : 0 or 1
+
+  Draw in orange, a line a box at where an NPC is trying to go to, a 'goal' destination.
+  This does not include the whole path that an NPC will take to get to said goal.
+
 ## Maximum Jump Height Visualization
 
 Variables:
@@ -177,6 +191,12 @@ Variables:
   Color components (red, green, blue, alpha) for different strafe helper elements.
   These are `Accelerating`, `Optimal`, `CenterMarker` and `Speed`.
   Colors can be set more conveniently with the corresponding commands.
+
+- `cg_drawVelocityVector` (0 or 1)
+
+  Draw a 3D rectangle representing the current velocity vector of the player when moving in the world.
+  It's 3D length is 1/5 of the units values stored internally.
+  Example : a forward volocity of 250 (walking) will result in a rectangle of length 25 ingame units in the direction the player is walking to.
 
 Commands:
 
