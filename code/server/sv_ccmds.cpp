@@ -407,6 +407,13 @@ static void SV_SetTimedCheckpoint_f( void ) {
 		sv_timedCheckpointMaxX->value = x + 50.0f;
 		sv_timedCheckpointMaxY->value = y + 50.0f;
 		sv_timedCheckpointMaxZ->value = z + 100.0f;
+		// Integers can be accessed by 'cg_drawBox.cpp'
+		sv_timedCheckpointMinX->integer = x - 50;
+		sv_timedCheckpointMinY->integer = y - 50;
+		sv_timedCheckpointMinZ->integer = z - 100;
+		sv_timedCheckpointMaxX->integer = x + 50;
+		sv_timedCheckpointMaxY->integer = y + 50;
+		sv_timedCheckpointMaxZ->integer = z + 100;
 	} else if ( Cmd_Argc() == 7 ) {
 		const float x1 = atof( Cmd_Argv(1) );
 		const float y1 = atof( Cmd_Argv(2) );
@@ -423,6 +430,28 @@ static void SV_SetTimedCheckpoint_f( void ) {
 	} else {
 		Com_Printf ("Usage: setTimedCheckpoint x y z  or  setTimedCheckpoint x1 y1 z1 x2 y2 z2\n");
 	}
+}
+
+/*
+=================
+SV_SetTimedCheckpoint_f
+=================
+*/
+static void SV_SetTimedCheckpointCurrentViewpos_f(void) {
+	// Vryndar idea : set the checkpoint to the player's current position.
+	sv_timedCheckpointMinX->value = ge->gentities[0].currentOrigin[0]-50;
+	sv_timedCheckpointMinY->value = ge->gentities[0].currentOrigin[1]-50;
+	sv_timedCheckpointMinZ->value = ge->gentities[0].currentOrigin[2]-100;
+	sv_timedCheckpointMaxX->value = ge->gentities[0].currentOrigin[0]+50;
+	sv_timedCheckpointMaxY->value = ge->gentities[0].currentOrigin[1]+50;
+	sv_timedCheckpointMaxZ->value = ge->gentities[0].currentOrigin[2]+100;
+	// Integers can be accessed by 'cg_drawBox.cpp'
+	sv_timedCheckpointMinX->integer = ge->gentities[0].currentOrigin[0]-50;
+	sv_timedCheckpointMinY->integer = ge->gentities[0].currentOrigin[1]-50;
+	sv_timedCheckpointMinZ->integer = ge->gentities[0].currentOrigin[2]-100;
+	sv_timedCheckpointMaxX->integer = ge->gentities[0].currentOrigin[0]+50;
+	sv_timedCheckpointMaxY->integer = ge->gentities[0].currentOrigin[1]+50;
+	sv_timedCheckpointMaxZ->integer = ge->gentities[0].currentOrigin[2]+100;
 }
 
 
@@ -458,6 +487,7 @@ void SV_AddOperatorCommands( void ) {
 	Cmd_AddCommand ("save", SV_SaveGame_f);
 	Cmd_AddCommand ("wipe", SV_WipeGame_f);
 	Cmd_AddCommand ("settimedcheckpoint", SV_SetTimedCheckpoint_f);
+	Cmd_AddCommand ("settimedcheckpointCurrentViewpos", SV_SetTimedCheckpointCurrentViewpos_f);
 
 //#ifdef _DEBUG
 //	extern void UI_Dump_f(void);
