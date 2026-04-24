@@ -64,20 +64,6 @@ static void drawBoundingBox(const gentity_t* ent, const byte color[4])
 	}
 }
 
-// Checkpoint vizualizer helper.
-// We can't directly access the timer from here (can't include headers), so compare if the previous time (that can be accessed) is different from current time.
-// We will know if the checkpoint has activated if the speedruntimer is paused.
-static int rememberTime = 0;
-static bool hasCheckpointActivated()
-{
-	if (cgi_SpeedrunGetLevelTimeMilliseconds() != rememberTime)
-	{
-		rememberTime = cgi_SpeedrunGetLevelTimeMilliseconds();
-		return false;
-	}
-	return true;
-}
-
 static void setColorForTrigger(gentity_t* self, byte color[4])
 {
 	gentity_t* subTrigger = NULL;
@@ -287,6 +273,38 @@ static void drawBoxObjectTriggers(gentity_t* self)
 
 void CG_DrawBoxes()
 {
+	///// Any new / other display than trigger related /////
+	
+	// Checkpoint visualizer
+	if (gi.Cvar_VariableIntegerValue("sv_speedrunModeCheckpoint"))
+	{
+		gentity_t fakeEntity{};
+		byte color[4];
+		if (!cgi_SpeedrunGetIsRunFinished())
+		{
+			color[0] = 0;
+			color[1] = 50;
+			color[2] = 0;
+			color[3] = 25;
+		}
+		else
+		{
+			color[0] = 50;
+			color[1] = 0;
+			color[2] = 0;
+			color[3] = 25;
+		}
+		fakeEntity.absmin[0] = gi.cvar("sv_timedCheckpointMinX", "", CVAR_ARCHIVE)->value;
+		fakeEntity.absmin[1] = gi.cvar("sv_timedCheckpointMinY", "", CVAR_ARCHIVE)->value;
+		fakeEntity.absmin[2] = gi.cvar("sv_timedCheckpointMinZ", "", CVAR_ARCHIVE)->value;
+		fakeEntity.absmax[0] = gi.cvar("sv_timedCheckpointMaxX", "", CVAR_ARCHIVE)->value;
+		fakeEntity.absmax[1] = gi.cvar("sv_timedCheckpointMaxY", "", CVAR_ARCHIVE)->value;
+		fakeEntity.absmax[2] = gi.cvar("sv_timedCheckpointMaxZ", "", CVAR_ARCHIVE)->value;
+		drawBoundingBox(&fakeEntity, color);
+	}
+
+	///// Trigger related boxes /////
+	
 	// Player
 	if (cg_drawBoxPlayer.integer && (cg.renderingThirdPerson || (!cg.renderingThirdPerson && cg_drawBoxPlayerFP.integer)))
 	{
@@ -325,35 +343,5 @@ void CG_DrawBoxes()
 		{
 			drawBoxObjectTriggers(&g_entities[i]);
 		}
-	}
-	
-	// Checkpoint visualizer
-	if (gi.Cvar_VariableIntegerValue("sv_speedrunModeCheckpoint"))
-	{
-		// Proof of concept, I'm sure it could be optimised.
-		gentity_s* fakeEntity = new gentity_s();
-		byte color[4];
-		if (!hasCheckpointActivated())
-		{
-			color[0] = 0;
-			color[1] = 50;
-			color[2] = 0;
-			color[3] = 25;
-		}
-		else
-		{
-			color[0] = 50;
-			color[1] = 0;
-			color[2] = 0;
-			color[3] = 25;
-		}
-		fakeEntity->absmin[0] = gi.Cvar_VariableIntegerValue("sv_timedCheckpointMinX");
-		fakeEntity->absmin[1] = gi.Cvar_VariableIntegerValue("sv_timedCheckpointMinY");
-		fakeEntity->absmin[2] = gi.Cvar_VariableIntegerValue("sv_timedCheckpointMinZ");
-		fakeEntity->absmax[0] = gi.Cvar_VariableIntegerValue("sv_timedCheckpointMaxX");
-		fakeEntity->absmax[1] = gi.Cvar_VariableIntegerValue("sv_timedCheckpointMaxY");
-		fakeEntity->absmax[2] = gi.Cvar_VariableIntegerValue("sv_timedCheckpointMaxZ");
-		drawBoundingBox(fakeEntity, color);
-		free(fakeEntity);
 	}
 }
