@@ -36,6 +36,13 @@ static void drawBoundingBox(const gentity_t* ent, const byte color[4])
 		vertices[i].st[1] = 0.0f;
 	}
 
+    // Determine which face on each axis is facing the camera and only draw that one.
+	// This reduces the number of faces shown (6 --> 3). Isn't beautiful but we don't reach MAX_POLY now.
+	vec3_t center, viewVec;
+	for (int i = 0; i < 3; ++i)
+		center[i] = (ent->absmin[i] + ent->absmax[i]) * 0.5f;
+	VectorSubtract(center, cg.refdef.vieworg, viewVec);
+
 	for (int axis_fixed = 0; axis_fixed < 3; ++axis_fixed)
 	{
 		const int axis_prev = (axis_fixed == 0) ? 2 : (axis_fixed - 1);
@@ -53,12 +60,11 @@ static void drawBoundingBox(const gentity_t* ent, const byte color[4])
 		vertices[3].xyz[axis_prev] = ent->absmin[axis_prev];
 		vertices[3].xyz[axis_next] = ent->absmax[axis_next];
 
+        // Show only faces in front of the camera.
+		// (viewVec >= 0), the nearer face is absmin; otherwise absmax.
+		float faceCoord = (viewVec[axis_fixed] >= 0.0f) ? ent->absmin[axis_fixed] : ent->absmax[axis_fixed];
 		for (int i = 0; i < 4; ++i) {
-			vertices[i].xyz[axis_fixed] = ent->absmin[axis_fixed];
-		}
-		cgi_R_AddPolyToScene(cgs.media.solidWhiteShader, 4, vertices);
-		for (int i = 0; i < 4; ++i) {
-			vertices[i].xyz[axis_fixed] = ent->absmax[axis_fixed];
+			vertices[i].xyz[axis_fixed] = faceCoord;
 		}
 		cgi_R_AddPolyToScene(cgs.media.solidWhiteShader, 4, vertices);
 	}
@@ -461,10 +467,10 @@ static void drawBoxObjectTriggers(gentity_t* self)
 	setColorForTrigger(self, color);
 
 	// Default color = no trigger found for this object : don't render the box
-	if (color[0] == 0 && color[1] == 0 && color[2] == 100 && color[3] == 25)
-	{
-		return;
-	}
+	//if (color[0] == 0 && color[1] == 0 && color[2] == 100 && color[3] == 25)
+	//{
+	//	return;
+	//}
 
 	drawBoundingBox(self, color);
 }
