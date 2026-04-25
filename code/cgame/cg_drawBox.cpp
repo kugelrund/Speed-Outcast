@@ -276,7 +276,7 @@ void CG_DrawBoxes()
 	///// Any new / other display than trigger related /////
 	
 	// Checkpoint visualizer
-	if (gi.Cvar_VariableIntegerValue("sv_speedrunModeCheckpoint"))
+	if (gi.Cvar_VariableIntegerValue("sv_speedrunModeCheckpoint") && gi.Cvar_VariableIntegerValue("sv_speedrunModeCheckpointRender"))
 	{
 		gentity_t fakeEntity{};
 		byte color[4];

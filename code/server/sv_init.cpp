@@ -370,6 +370,7 @@ void SV_Init (void) {
 	sv_speedrunModeIL = Cvar_Get ("sv_speedrunModeIL", "0", CVAR_ARCHIVE);
 	sv_speedrunModeCheckpoint = Cvar_Get ("sv_speedrunModeCheckpoint", "0", CVAR_ARCHIVE);
 	sv_speedrunModeCheckpointSave = Cvar_Get ("sv_speedrunModeCheckpointSave", "0", CVAR_ARCHIVE);
+	sv_speedrunModeCheckpointRender = Cvar_Get("sv_speedrunModeCheckpointRender", "0", CVAR_ARCHIVE);
 	sv_timedCheckpointMinX = Cvar_Get ("sv_timedCheckpointMinX", "0", CVAR_ARCHIVE);
 	sv_timedCheckpointMinY = Cvar_Get ("sv_timedCheckpointMinY", "0", CVAR_ARCHIVE);
 	sv_timedCheckpointMinZ = Cvar_Get ("sv_timedCheckpointMinZ", "0", CVAR_ARCHIVE);

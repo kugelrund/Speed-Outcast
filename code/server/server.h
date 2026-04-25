@@ -155,6 +155,7 @@ extern  cvar_t	*sv_compress_saved_games;
 extern	cvar_t	*sv_speedrunModeIL;
 extern	cvar_t	*sv_speedrunModeCheckpoint;
 extern	cvar_t	*sv_speedrunModeCheckpointSave;
+extern	cvar_t	*sv_speedrunModeCheckpointRender;
 extern	cvar_t	*sv_timedCheckpointMinX;
 extern	cvar_t	*sv_timedCheckpointMinY;
 extern	cvar_t	*sv_timedCheckpointMinZ;
