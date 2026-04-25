@@ -36,6 +36,7 @@ cvar_t	*sv_compress_saved_games;	// compress the saved games on the way out (onl
 cvar_t	*sv_speedrunModeIL;
 cvar_t	*sv_speedrunModeCheckpoint;
 cvar_t	*sv_speedrunModeCheckpointSave;
+cvar_t	*sv_speedrunModeCheckpointRender;
 cvar_t	*sv_timedCheckpointMinX;
 cvar_t	*sv_timedCheckpointMinY;
 cvar_t	*sv_timedCheckpointMinZ;
