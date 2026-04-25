@@ -615,7 +615,7 @@ int cgi_SpeedrunGetLevelTimeMilliseconds(void) {
 	return syscall(CG_SPEEDRUN_GET_LEVEL_TIME_MILLISECONDS);
 }
 
-int cgi_SpeedrunGetIsRunFinished(void) {
+int cgi_SpeedrunIsRunFinished(void) {
 	return syscall(CG_SPEEDRUN_IS_RUN_FINISHED);
 }
 

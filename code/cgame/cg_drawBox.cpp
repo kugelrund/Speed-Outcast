@@ -280,7 +280,7 @@ void CG_DrawBoxes()
 	{
 		gentity_t fakeEntity{};
 		byte color[4];
-		if (!cgi_SpeedrunGetIsRunFinished())
+		if (!cgi_SpeedrunIsRunFinished())
 		{
 			color[0] = 0;
 			color[1] = 50;
