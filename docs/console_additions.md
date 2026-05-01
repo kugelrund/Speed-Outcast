@@ -281,6 +281,11 @@ Variables:
   Create an automatic save when a checkpoint is reached in checkpoint mode.
   Default: `0`.
 
+- `cg_drawSpeedrunCheckpoint` (0 or 1)
+
+  Draw a green/red box indicating the checkpoint position in checkpoint mode.
+  Default: `0`.
+
 Commands:
 
 - `settimedcheckpoint <x1> <y1> <z1> <x2> <y2> <z2>`
