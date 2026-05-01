@@ -2273,7 +2273,7 @@ static qboolean CG_RenderingFromMiscCamera()
 CG_DrawOverbounceInfo
 ======================
 */
-static void CG_DrawOverbounceInfo( void ) {
+static float CG_DrawOverbounceInfo(float x, float y) {
 	gentity_t const *const player_gent = cg_entities[cg.snap->ps.clientNum].gent;
 
 	vec3_t start;
@@ -2284,31 +2284,42 @@ static void CG_DrawOverbounceInfo( void ) {
 	VectorMA( start, TRACE_LENGTH, cg.refdef.viewaxis[0], end );
 	CG_Trace( &trace, start, vec3_origin, vec3_origin, end, cg.snap->ps.clientNum, MASK_PLAYERSOLID );
 	if ( trace.plane.normal[2] < MIN_WALK_NORMAL ) {
-		return;
+		return y; // No change, return same y
 	}
 
 	double const height_difference = cg.snap->ps.origin[2] +
 	                                 player_gent->mins[2] - trace.endpos[2];
 	if ( height_difference <= 0.0 ) {
-		return;
+		return y; // No change, return same y
 	}
 
 	double const go_overbounce_probability = cgi_OverbounceProbability(
 		height_difference, cg.snap->ps.velocity[2], cg.snap->ps.gravity);
 	double const go_overbounce_percentage = std::round( go_overbounce_probability * 100.0 );
+
+
+	const std::string overbounceWord = "OB Info";
+	y = y + 16;
+	cgi_R_Font_DrawString(x, y, overbounceWord.c_str(), colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
+
 	if ( go_overbounce_probability > 0.0 ) {
-		cgi_R_Font_DrawString( 10, 235, va( "G: %.0f%%", go_overbounce_percentage ),
-			colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
+		y = y + 16;
+		cgi_R_Font_DrawString( x, y, va( "G: %.0f%%", go_overbounce_percentage ),
+			colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f );
 	}
+
 	if ( cg.snap->ps.velocity[2] == 0.0 ) {
+		y = y + 16;
 		double const jump_overbounce_probability = cgi_OverbounceProbability(
 			height_difference, JUMP_VELOCITY, cg.snap->ps.gravity);
 		double const jump_overbounce_percentage = std::round( jump_overbounce_probability * 100.0 );
 		if ( jump_overbounce_probability > 0.0 ) {
-			cgi_R_Font_DrawString( 10, 255, va( "J: %.0f%%", jump_overbounce_percentage ),
-				colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
+			cgi_R_Font_DrawString( x, y, va( "J: %.0f%%", jump_overbounce_percentage ),
+				colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f );
 		}
 	}
+
+	return y + BIGCHAR_HEIGHT;
 }
 
 /*
@@ -2649,7 +2660,7 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 		}
 		///// JUMPING /////
 	}
-	return y + BIGCHAR_HEIGHT + 10;
+	return y + BIGCHAR_HEIGHT;
 }
 
 /*
@@ -2657,26 +2668,26 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 CG_DrawNPCInfo
 ===========================
 */
-// Helpers
-static gentity_t* validNPCPointer = nullptr;
 // Function to keep track of the last valid entity we got, so that even when not looking at one, we keep the pointer
-static void checkValidNPC()
+static gentity_t* GetLastCrosshairNPC()
 {
-	if (validNPCPointer && !validNPCPointer->NPC) // When dying, NPC lose it's pointer
+	static gentity_t* validNPCPointer = nullptr;
+
+	// First check : when dying, NPC lose it's pointer
+	if (validNPCPointer && !validNPCPointer->NPC)
 	{
 		validNPCPointer = nullptr;
 	}
-
-	if (cg_crosshairIdentifyTarget.integer)
+	// Second check : when looking at an NPC, update the pointer
+	gentity_t* temp = &g_entities[g_crosshairEntNum];
+	if ( temp && temp->NPC )
 	{
-		gentity_t* temp = &g_entities[g_crosshairEntNum];
-		if ( temp && temp->NPC )
-		{
-			validNPCPointer = temp;
-		}
+		validNPCPointer = temp;
 	}
+
+	return validNPCPointer;
 }
-static char* NPCBehaviorName(int x)
+static const char* NPCBehaviorName(bState_t x)
 {
 	switch (x)
 	{
@@ -2699,7 +2710,7 @@ static char* NPCBehaviorName(int x)
 	default:                   return nullptr; // BS_DEFAULT, keep empty ?
 	}
 }
-static char* NPCSquadName(int x)
+static const char* NPCSquadName(int x)
 {
 	switch (x)
 	{
@@ -2737,42 +2748,41 @@ static AIFlagPair aiFlags[] = {
 // Function
 static float CG_DrawNPCInfo(float x, float y)
 {
-	checkValidNPC();
+	gentity_t* NPCPointer = GetLastCrosshairNPC();
 
-	if (validNPCPointer)
+	if (NPCPointer)
 	{
 		///// Name/Type /////
-		if (validNPCPointer->NPC_type)
+		if (NPCPointer->NPC_type)
 		{
 			y = y + 16;
-			cgi_R_Font_DrawString(x, y + 2, validNPCPointer->NPC_type, colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
+			cgi_R_Font_DrawString(x, y + 2, NPCPointer->NPC_type, colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
 		}
 		///// Name/Type /////
 
 		///// Behaviors /////
-		char* behaviorWord;
-		behaviorWord = NPCBehaviorName(validNPCPointer->NPC->defaultBehavior);
-		if (behaviorWord)
+		const char* behaviorDefaultWord = NPCBehaviorName(NPCPointer->NPC->defaultBehavior);
+		if (behaviorDefaultWord)
 		{
 			y = y + 16;
-			cgi_R_Font_DrawString(x, y + 2, behaviorWord, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+			cgi_R_Font_DrawString(x, y + 2, behaviorDefaultWord, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
 		}
-		behaviorWord = NPCBehaviorName(validNPCPointer->NPC->behaviorState);
-		if (behaviorWord)
+		const char* behaviorCurrentWord = NPCBehaviorName(NPCPointer->NPC->behaviorState);
+		if (behaviorCurrentWord)
 		{
 			y = y + 16;
-			cgi_R_Font_DrawString(x, y + 2, behaviorWord, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+			cgi_R_Font_DrawString(x, y + 2, behaviorCurrentWord, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
 		}
-		behaviorWord = NPCBehaviorName(validNPCPointer->NPC->tempBehavior);
-		if (behaviorWord)
+		const char* behaviorTempWord = NPCBehaviorName(NPCPointer->NPC->tempBehavior);
+		if (behaviorTempWord)
 		{
 			y = y + 16;
-			cgi_R_Font_DrawString(x, y + 2, behaviorWord, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+			cgi_R_Font_DrawString(x, y + 2, behaviorTempWord, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
 		}
 		///// Behaviors /////
 
 		///// Squad /////
-		char* squadWord = NPCSquadName(validNPCPointer->NPC->squadState);
+		const char* squadWord = NPCSquadName(NPCPointer->NPC->squadState);
 		if (squadWord && squadWord[0])
 		{
 			y = y + 16;
@@ -2785,7 +2795,7 @@ static float CG_DrawNPCInfo(float x, float y)
 		int ybuffer = 0;
 		for (AIFlagPair pair : aiFlags)
 		{
-			if (validNPCPointer->NPC->aiFlags & pair.flag)
+			if (NPCPointer->NPC->aiFlags & pair.flag)
 			{
 				if (!aiFlagWord.empty()) aiFlagWord.push_back('\n'); // Don't want an extra \n at the start
 				aiFlagWord.append(pair.name);
@@ -2799,8 +2809,13 @@ static float CG_DrawNPCInfo(float x, float y)
 			y += ybuffer;
 		}
 		///// AI FLAG /////
+
+		return y + BIGCHAR_HEIGHT;
 	}
-	return y + BIGCHAR_HEIGHT + 10;
+	else
+	{
+		return y;
+	}
 }
 
 /*
@@ -2959,10 +2974,9 @@ static void CG_Draw2D( void )
 	if (cg_drawNPCInfo.integer) {
 		y_left = CG_DrawNPCInfo(x_offset, y_left);
 	}
-
 	if ( cg_drawOverbounceInfo.integer )
 	{
-		CG_DrawOverbounceInfo();
+		y_left = CG_DrawOverbounceInfo(x_offset, y_left);
 	}
 
 	// don't draw center string if scoreboard is up
