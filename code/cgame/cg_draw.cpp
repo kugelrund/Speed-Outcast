@@ -2572,9 +2572,9 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 		y = y + 16;
 		cgi_R_Font_DrawString(pos_x_string, y + 2, positionWord.c_str(), colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
 
-		std::string pos_x = "X : " + FloatToString(player_gent->client->ps.origin[0], precision);
-		std::string pos_y = "Y : " + FloatToString(player_gent->client->ps.origin[1], precision);
-		std::string pos_z = "Z : " + FloatToString(player_gent->client->ps.origin[2], precision);
+		std::string pos_x = "P_X : " + FloatToString(player_gent->client->ps.origin[0], precision);
+		std::string pos_y = "P_Y : " + FloatToString(player_gent->client->ps.origin[1], precision);
+		std::string pos_z = "P_Z : " + FloatToString(player_gent->client->ps.origin[2], precision);
 
 		y = y + 16;
 		cgi_R_Font_DrawString(pos_x_string, y + 2, pos_x.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
@@ -2583,10 +2583,9 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 		y = y + 16;
 		cgi_R_Font_DrawString(pos_x_string, y + 2, pos_z.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
 
-
-		std::string eye_x = "X : " + FloatToString(player_gent->client->ps.origin[0], precision);
-		std::string eye_y = "Y : " + FloatToString(player_gent->client->ps.origin[1], precision);
-		std::string eye_z = "Z : " + FloatToString(player_gent->client->ps.origin[2], precision);
+		std::string eye_x = "E_X : " + FloatToString(player_gent->client->renderInfo.eyePoint[0], precision);
+		std::string eye_y = "E_Y : " + FloatToString(player_gent->client->renderInfo.eyePoint[1], precision);
+		std::string eye_z = "E_Z : " + FloatToString(player_gent->client->renderInfo.eyePoint[2], precision);
 
 		y = y + 16;
 		cgi_R_Font_DrawString(pos_x_string, y + 2, eye_x.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
