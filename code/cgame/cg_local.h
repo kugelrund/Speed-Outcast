@@ -699,9 +699,10 @@ extern	vmCvar_t		cg_drawBoxPlayer;
 extern	vmCvar_t		cg_drawBoxPlayerFP;
 extern	vmCvar_t		cg_drawBoxNPC;
 extern	vmCvar_t		cg_drawBoxItems;
+extern	vmCvar_t		cg_drawNPCInfo;
 extern	vmCvar_t		cg_drawPlayerInfo;
 extern	vmCvar_t		cg_drawPlayerInfoPrecision;
-extern	vmCvar_t		cg_drawNPCInfo;
+extern	vmCvar_t		cg_drawSpeedrunCheckpoint;
 
 void CG_NewClientinfo( int clientNum );
 //
@@ -1271,6 +1272,7 @@ void cgi_SpeedrunLevelFinished(void);
 void cgi_SpeedrunRunFinished(void);
 int cgi_SpeedrunGetTotalTimeMilliseconds(void);
 int cgi_SpeedrunGetLevelTimeMilliseconds(void);
+int cgi_SpeedrunIsRunFinished(void);
 void cgi_R_SetPlayerJumpStartWorldZ(float value);
 void cgi_R_SetPlayerJumpHeight(float value);
 
