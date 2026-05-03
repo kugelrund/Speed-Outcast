@@ -2273,7 +2273,7 @@ static qboolean CG_RenderingFromMiscCamera()
 CG_DrawOverbounceInfo
 ======================
 */
-static void CG_DrawOverbounceInfo( void ) {
+static float CG_DrawOverbounceInfo(float x, float y) {
 	gentity_t const *const player_gent = cg_entities[cg.snap->ps.clientNum].gent;
 
 	vec3_t start;
@@ -2284,31 +2284,42 @@ static void CG_DrawOverbounceInfo( void ) {
 	VectorMA( start, TRACE_LENGTH, cg.refdef.viewaxis[0], end );
 	CG_Trace( &trace, start, vec3_origin, vec3_origin, end, cg.snap->ps.clientNum, MASK_PLAYERSOLID );
 	if ( trace.plane.normal[2] < MIN_WALK_NORMAL ) {
-		return;
+		return y; // No change, return same y
 	}
 
 	double const height_difference = cg.snap->ps.origin[2] +
 	                                 player_gent->mins[2] - trace.endpos[2];
 	if ( height_difference <= 0.0 ) {
-		return;
+		return y; // No change, return same y
 	}
 
 	double const go_overbounce_probability = cgi_OverbounceProbability(
 		height_difference, cg.snap->ps.velocity[2], cg.snap->ps.gravity);
 	double const go_overbounce_percentage = std::round( go_overbounce_probability * 100.0 );
+
+
+	const std::string overbounceWord = "OB Info";
+	y = y + 16;
+	cgi_R_Font_DrawString(x, y, overbounceWord.c_str(), colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
+
 	if ( go_overbounce_probability > 0.0 ) {
-		cgi_R_Font_DrawString( 10, 235, va( "G: %.0f%%", go_overbounce_percentage ),
-			colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
+		y = y + 16;
+		cgi_R_Font_DrawString( x, y, va( "G: %.0f%%", go_overbounce_percentage ),
+			colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f );
 	}
+
 	if ( cg.snap->ps.velocity[2] == 0.0 ) {
+		y = y + 16;
 		double const jump_overbounce_probability = cgi_OverbounceProbability(
 			height_difference, JUMP_VELOCITY, cg.snap->ps.gravity);
 		double const jump_overbounce_percentage = std::round( jump_overbounce_probability * 100.0 );
 		if ( jump_overbounce_probability > 0.0 ) {
-			cgi_R_Font_DrawString( 10, 255, va( "J: %.0f%%", jump_overbounce_percentage ),
-				colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 1.0f );
+			cgi_R_Font_DrawString( x, y, va( "J: %.0f%%", jump_overbounce_percentage ),
+				colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f );
 		}
 	}
+
+	return y + BIGCHAR_HEIGHT;
 }
 
 /*
@@ -2545,11 +2556,10 @@ static std::string FloatToString(float value, int precision) {
 // Array needed to know what the maximum height is
 extern float forceJumpHeight[];
 // The function
-static void CG_DrawPlayerInfo(int precision) {
+static float CG_DrawPlayerInfo(float x, float y, int precision) {
 	// cg_drawPlayerInfo between 0 and 7 will give different results depending on which bit is set to customize what we want to see.
 	gentity_t const* player_gent = cg_entities[cg.snap->ps.clientNum].gent;
-	const int pos_x_string = 8; // little offset to not be all the way on the left
-	int y = 16; // little offset to still have the console print everything
+	const int pos_x_string = x;
 	// Precision boundaries
 	if (precision < 0) precision = 0;
 	if (precision > 5) precision = 5;
@@ -2558,18 +2568,32 @@ static void CG_DrawPlayerInfo(int precision) {
 	{
 		///// POSITION /////
 		const std::string positionWord = "Position";
-		std::string pos_x = "X : " + FloatToString(player_gent->client->ps.origin[0], precision);
-		std::string pos_y = "Y : " + FloatToString(player_gent->client->ps.origin[1], precision);
-		std::string pos_z = "Z : " + FloatToString(player_gent->client->ps.origin[2], precision);
 
 		y = y + 16;
 		cgi_R_Font_DrawString(pos_x_string, y + 2, positionWord.c_str(), colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
+
+		std::string pos_x = "P_X : " + FloatToString(player_gent->client->ps.origin[0], precision);
+		std::string pos_y = "P_Y : " + FloatToString(player_gent->client->ps.origin[1], precision);
+		std::string pos_z = "P_Z : " + FloatToString(player_gent->client->ps.origin[2], precision);
+
 		y = y + 16;
 		cgi_R_Font_DrawString(pos_x_string, y + 2, pos_x.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
 		y = y + 16;
 		cgi_R_Font_DrawString(pos_x_string, y + 2, pos_y.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
 		y = y + 16;
 		cgi_R_Font_DrawString(pos_x_string, y + 2, pos_z.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+
+		std::string eye_x = "E_X : " + FloatToString(player_gent->client->renderInfo.eyePoint[0], precision);
+		std::string eye_y = "E_Y : " + FloatToString(player_gent->client->renderInfo.eyePoint[1], precision);
+		std::string eye_z = "E_Z : " + FloatToString(player_gent->client->renderInfo.eyePoint[2], precision);
+
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, eye_x.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, eye_y.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, eye_z.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+
 		///// POSITION /////
 	}
 
@@ -2592,7 +2616,23 @@ static void CG_DrawPlayerInfo(int precision) {
 		///// VELOCITY /////
 	}
 
-	if (cg_drawPlayerInfo.integer & 0b100)// && g_cheats->integer)
+	if (cg_drawPlayerInfo.integer & 0b100)
+	{
+		///// ANGLE /////
+		const std::string angleWord = "Angles";
+		std::string ang_v = "V : " + FloatToString(player_gent->client->ps.viewangles[0], precision);
+		std::string ang_h = "H : " + FloatToString(player_gent->client->ps.viewangles[1], precision);
+
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, angleWord.c_str(), colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, ang_v.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		y = y + 16;
+		cgi_R_Font_DrawString(pos_x_string, y + 2, ang_h.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		///// ANGLE /////
+	}
+
+	if (cg_drawPlayerInfo.integer & 0b1000)
 	{
 		///// JUMPING /////
 		const std::string jumpWord = "Jump";
@@ -2618,6 +2658,162 @@ static void CG_DrawPlayerInfo(int precision) {
 			cgi_R_Font_DrawString(pos_x_string, y + 2, "Jumping", colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
 		}
 		///// JUMPING /////
+	}
+	return y + BIGCHAR_HEIGHT;
+}
+
+/*
+===========================
+CG_DrawNPCInfo
+===========================
+*/
+// Function to keep track of the last valid entity we got, so that even when not looking at one, we keep the pointer
+static gentity_t* GetLastCrosshairNPC()
+{
+	static gentity_t* validNPCPointer = nullptr;
+
+	// First check : when dying, NPC lose it's pointer
+	if (validNPCPointer && !validNPCPointer->NPC)
+	{
+		validNPCPointer = nullptr;
+	}
+	// Second check : when looking at an NPC, update the pointer
+	gentity_t* temp = &g_entities[g_crosshairEntNum];
+	if ( temp && temp->NPC )
+	{
+		validNPCPointer = temp;
+	}
+
+	return validNPCPointer;
+}
+static const char* NPCBehaviorName(bState_t x)
+{
+	switch (x)
+	{
+	case BS_ADVANCE_FIGHT:     return "BS_ADVANCE_FIGHT";
+	case BS_SLEEP:             return "BS_SLEEP";
+	case BS_FOLLOW_LEADER:     return "BS_FOLLOW_LEADER";
+	case BS_JUMP:              return "BS_JUMP";
+	case BS_SEARCH:            return "BS_SEARCH";
+	case BS_WANDER:            return "BS_WANDER";
+	case BS_NOCLIP:            return "BS_NOCLIP";
+	case BS_REMOVE:            return "BS_REMOVE";
+	case BS_CINEMATIC:         return "BS_CINEMATIC";
+	case BS_WAIT:              return "BS_WAIT";
+	case BS_STAND_GUARD:       return "BS_STAND_GUARD";
+	case BS_PATROL:            return "BS_PATROL";
+	case BS_INVESTIGATE:       return "BS_INVESTIGATE";
+	case BS_STAND_AND_SHOOT:   return "BS_STAND_AND_SHOOT";
+	case BS_HUNT_AND_KILL:     return "BS_HUNT_AND_KILL";
+	case BS_FLEE:              return "BS_FLEE";
+	default:                   return nullptr; // BS_DEFAULT, keep empty ?
+	}
+}
+static const char* NPCSquadName(int x)
+{
+	switch (x)
+	{
+	case SQUAD_IDLE:            return "SQUAD_IDLE";
+	case SQUAD_STAND_AND_SHOOT: return "SQUAD_STAND_AND_SHOOT";
+	case SQUAD_RETREAT:         return "SQUAD_RETREAT";
+	case SQUAD_COVER:           return "SQUAD_COVER";
+	case SQUAD_TRANSITION:      return "SQUAD_TRANSITION";
+	case SQUAD_POINT:           return "SQUAD_POINT";
+	case SQUAD_SCOUT:           return "SQUAD_SCOUT";
+	default:                    return "";
+	}
+}
+struct AIFlagPair {int flag; const char* name;};
+static AIFlagPair aiFlags[] = {
+	{ NPCAI_CHECK_WEAPON,       "- NPCAI_CHECK_WEAPON" },
+	{ NPCAI_BURST_WEAPON,       "- NPCAI_BURST_WEAPON" },
+	{ NPCAI_MOVING,             "- NPCAI_MOVING" },
+	{ NPCAI_TOUCHED_GOAL,       "- NPCAI_TOUCHED_GOAL" },
+	{ NPCAI_PUSHED,             "- NPCAI_PUSHED" },
+	{ NPCAI_NO_COLL_AVOID,      "- NPCAI_NO_COLL_AVOID" },
+	{ NPCAI_BLOCKED,            "- NPCAI_BLOCKED" },
+	{ NPCAI_OFF_PATH,           "- NPCAI_OFF_PATH" },
+	{ NPCAI_IN_SQUADPOINT,      "- NPCAI_IN_SQUADPOINT" },
+	{ NPCAI_STRAIGHT_TO_DESTPOS,"- NPCAI_STRAIGHT_TO_DESTPOS" },
+	{ NPCAI_NO_SLOWDOWN,        "- NPCAI_NO_SLOWDOWN" },
+	{ NPCAI_LOST,               "- NPCAI_LOST" },
+	{ NPCAI_SHIELDS,            "- NPCAI_SHIELDS" },
+	{ NPCAI_GREET_ALLIES,       "- NPCAI_GREET_ALLIES" },
+	{ NPCAI_FORM_TELE_NAV,      "- NPCAI_FORM_TELE_NAV" },
+	{ NPCAI_ENROUTE_TO_HOMEWP,  "- NPCAI_ENROUTE_TO_HOMEWP" },
+	{ NPCAI_MATCHPLAYERWEAPON,  "- NPCAI_MATCHPLAYERWEAPON" },
+	{ NPCAI_DIE_ON_IMPACT,      "- NPCAI_DIE_ON_IMPACT" },
+};
+// Function
+static float CG_DrawNPCInfo(float x, float y)
+{
+	gentity_t* NPCPointer = GetLastCrosshairNPC();
+
+	if (NPCPointer)
+	{
+		///// Name/Type /////
+		if (NPCPointer->NPC_type)
+		{
+			y = y + 16;
+			cgi_R_Font_DrawString(x, y + 2, NPCPointer->NPC_type, colorTable[CT_GREEN], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		///// Name/Type /////
+
+		///// Behaviors /////
+		const char* behaviorDefaultWord = NPCBehaviorName(NPCPointer->NPC->defaultBehavior);
+		if (behaviorDefaultWord)
+		{
+			y = y + 16;
+			cgi_R_Font_DrawString(x, y + 2, behaviorDefaultWord, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		const char* behaviorCurrentWord = NPCBehaviorName(NPCPointer->NPC->behaviorState);
+		if (behaviorCurrentWord)
+		{
+			y = y + 16;
+			cgi_R_Font_DrawString(x, y + 2, behaviorCurrentWord, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		const char* behaviorTempWord = NPCBehaviorName(NPCPointer->NPC->tempBehavior);
+		if (behaviorTempWord)
+		{
+			y = y + 16;
+			cgi_R_Font_DrawString(x, y + 2, behaviorTempWord, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		///// Behaviors /////
+
+		///// Squad /////
+		const char* squadWord = NPCSquadName(NPCPointer->NPC->squadState);
+		if (squadWord && squadWord[0])
+		{
+			y = y + 16;
+			cgi_R_Font_DrawString(x, y + 2, squadWord, colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+		}
+		///// Squad /////
+
+		///// AI FLAG /////
+		std::string aiFlagWord;
+		int ybuffer = 0;
+		for (AIFlagPair pair : aiFlags)
+		{
+			if (NPCPointer->NPC->aiFlags & pair.flag)
+			{
+				if (!aiFlagWord.empty()) aiFlagWord.push_back('\n'); // Don't want an extra \n at the start
+				aiFlagWord.append(pair.name);
+				ybuffer += 16;
+			}
+		}
+		if (!aiFlagWord.empty())
+		{
+			y = y + 16;
+			cgi_R_Font_DrawString(x, y + 2, aiFlagWord.c_str(), colorTable[CT_LTGOLD1], cgs.media.qhFontMedium, -1, 0.7f);
+			y += ybuffer;
+		}
+		///// AI FLAG /////
+
+		return y + BIGCHAR_HEIGHT;
+	}
+	else
+	{
+		return y;
 	}
 }
 
@@ -2739,42 +2935,47 @@ static void CG_Draw2D( void )
 	}
 	CG_SaberClashFlare();
 
-	float y = 0;
+	// Right side of the UI used by SpeedOutcast
+	float y_right = 0;
 	if (g_cheats->integer) {
-		y=CG_DrawCheatsNotice(y);
+		y_right=CG_DrawCheatsNotice(y_right);
 	}
 	if (cg_drawSecrets.integer) {
-		y=CG_DrawSecrets(y);
+		y_right=CG_DrawSecrets(y_right);
 	}
 	if (cg_drawSnapshot.integer) {
-		y=CG_DrawSnapshot(y);
+		y_right=CG_DrawSnapshot(y_right);
 	} 
 	if (cg_drawFPS.integer) {
-		y=CG_DrawFPS(y);
+		y_right=CG_DrawFPS(y_right);
 	} 
 	if (cg_drawServerFPS.integer) {
-		y=CG_DrawServerFPS(y);
+		y_right=CG_DrawServerFPS(y_right);
 	}
 	if (cg_drawTimer.integer) {
-		y=CG_DrawTimer(y);
+		y_right=CG_DrawTimer(y_right);
 	}
 	if (cg_drawSpeedrunTotalTimer.integer > 0) {
-		y=CG_DrawFormattedMilliseconds(cgi_SpeedrunGetTotalTimeMilliseconds(),
-			cg_drawSpeedrunTotalTimer.integer - 1, y);
+		y_right=CG_DrawFormattedMilliseconds(cgi_SpeedrunGetTotalTimeMilliseconds(),
+			cg_drawSpeedrunTotalTimer.integer - 1, y_right);
 	}
 	if (cg_drawSpeedrunLevelTimer.integer > 0) {
-		y=CG_DrawFormattedMilliseconds(cgi_SpeedrunGetLevelTimeMilliseconds(),
-			cg_drawSpeedrunLevelTimer.integer - 1, y);
+		y_right=CG_DrawFormattedMilliseconds(cgi_SpeedrunGetLevelTimeMilliseconds(),
+			cg_drawSpeedrunLevelTimer.integer - 1, y_right);
 	}
 
+	// Right side of the UI used by SpeedOutcast
+	float y_left = 16; // Offset of 16 to see the console
+	const int x_offset = 8; // Little offset to not be all the way on the left (looks better) 
+	if (cg_drawPlayerInfo.integer) {
+		y_left = CG_DrawPlayerInfo(x_offset, y_left, cg_drawPlayerInfoPrecision.integer);
+	}
+	if (cg_drawNPCInfo.integer) {
+		y_left = CG_DrawNPCInfo(x_offset, y_left);
+	}
 	if ( cg_drawOverbounceInfo.integer )
 	{
-		CG_DrawOverbounceInfo();
-	}
-
-	// Left side of the screen
-	if (cg_drawPlayerInfo.integer) {
-		CG_DrawPlayerInfo(cg_drawPlayerInfoPrecision.integer);
+		y_left = CG_DrawOverbounceInfo(x_offset, y_left);
 	}
 
 	// don't draw center string if scoreboard is up
