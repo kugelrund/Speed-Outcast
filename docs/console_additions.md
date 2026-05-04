@@ -49,19 +49,9 @@ Commands:
 
 Variables:
 
-- `cg_drawBoxTriggers` : 0 or 1
-
-  Draw in different colors (ex : pink or orange for secrets) triggers around the map.
-  By default, triggers will be drawn white when there is no color defined.
-
 - `cg_drawBoxPlayer` : 0 or 1
 
   Draw in RED, the box around the player
-
-- `cg_drawBoxPlayerFP` : 0 or 1
-
-  Allows rendering if the box even in first person if set to 1 or more.
-  Needs `cg_drawBoxPlayer` to also be set to 1
 
 - `cg_drawBoxNPC` : 0 or 1
 
@@ -70,6 +60,18 @@ Variables:
 - `cg_drawBoxItems` : 0 or 1
 
   Draw in BLUE, the boxes around items (include dropped weapons)
+
+- `cg_drawBoxTriggers` : 0 or 1
+
+  Render game triggers in the world with different colors depending on their type.
+  Color code : 
+  - Green : interactibles. Example : cairn_assembly cameras or buttons in kejim_post.
+  - Orange : spawners (NPCs or items). Example : kejim_post, after the window jump.
+  - Yellow : doors triggers. Example : everywhere.
+  - Purple : secrets zone, checkpoints saves, mission update and level change.
+  - Pink and blue : any kind of scripts. Example : doors in ns_streets when interacted with, will make a sound.
+  - Red : disabled trigger. Example : after triggering the NPC spawn on kejim_post.
+  - White : uncategorized. Example : the one runner are trying to access in artus_detention, making the door near the end level openable.
 
 ## Ingame NPC behavior, line of sight and pathing rendering
 
