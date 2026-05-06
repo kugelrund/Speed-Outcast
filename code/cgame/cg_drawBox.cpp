@@ -45,11 +45,8 @@ static void drawBoundingBox(const gentity_t* ent, const byte color[4])
 	}
 }
 
-// Draws a rectangle given the center of two opposite end faces.
 static void drawLine(vec3_t p1, vec3_t p2, byte color[4], float width, bool onFirstHit)
 {
-	vec3_t line, up, perp1, perp2;
-	const float half = width * 0.5f;
 	trace_t trace;
 
 	// Copied from CG_ScanForCrosshairEntity
@@ -86,10 +83,8 @@ static void drawPositionMarker(vec3_t center, byte color[4], float width, float 
 
 static void drawLineOfSight(const gentity_t* ent, float width)
 {
-	const float half = width * 0.5f;
 	byte color[4] = { 0, 0, 150, 255 };
 	vec3_t p1, p2;
-	trace_t trace;
 	vec3_t d_f, d_rt, d_up;
 
 	// Set the first point to be where the entity is looking at (eye) and the end where it's looking at (direction_forward)
@@ -105,7 +100,6 @@ static void drawVelocityVector(const gentity_t* ent, float width)
 {
 	byte color[4] = { 100, 100, 100, 255 };
 	vec3_t p1, p2;
-	trace_t trace;
 
 	VectorCopy(ent->client->ps.origin, p1);
 	p1[2] += 10; // Add an offset so that we can see the start of line around the waist instead of the feets
@@ -391,8 +385,11 @@ static void drawBoxObjectTriggers(gentity_t* self)
 
 void CG_DrawBoxes()
 {
+	// Player related stuff can be done indepedent from the loop so no needs for an early return
+	drawPlayerRelated(&g_entities[0]); 
+
 	// Step 0 : big check of every variable, don't if none of them are enabled
-	if (!cg_drawBoxPlayer.integer && !cg_drawBoxNPC.integer && !cg_drawBoxItems.integer && !cg_drawBoxTriggers.integer
+	if (!cg_drawBoxNPC.integer && !cg_drawBoxItems.integer && !cg_drawBoxTriggers.integer
 		&& !cg_drawLineOfSight.integer && !cg_drawNPCPath.integer && !cg_drawVelocityVector.integer)
 	{
 		return;
@@ -401,10 +398,6 @@ void CG_DrawBoxes()
 	// Step 1 : loop all g_entities and give the pointer to the corresponding function.
 	for (int i = 0; i < MAX_GENTITIES; ++i)
 	{
-		if (i == 0)
-		{
-			drawPlayerRelated(&g_entities[i]);
-		}
 		if (g_entities[i].e_ThinkFunc == thinkF_NPC_Think)
 		{
 			drawNPCRelated(&g_entities[i]);
