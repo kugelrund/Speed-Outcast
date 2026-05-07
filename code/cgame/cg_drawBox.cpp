@@ -390,7 +390,7 @@ void CG_DrawBoxes()
 
 	// Step 0 : big check of every variable, don't if none of them are enabled
 	if (!cg_drawBoxNPC.integer && !cg_drawBoxItems.integer && !cg_drawBoxTriggers.integer
-		&& !cg_drawLineOfSight.integer && !cg_drawNPCPath.integer && !cg_drawVelocityVector.integer)
+		&& !cg_drawLineOfSight.integer && !cg_drawNPCPath.integer)
 	{
 		return;
 	}
