@@ -1,5 +1,4 @@
-// cg_drawBox.cpp
-#include "cg_drawBox.h"
+#include "cg_draw_speedrun_extras.h"
 #include "cg_headers.h"
 #include "cg_media.h"
 
@@ -383,7 +382,7 @@ static void drawBoxObjectTriggers(gentity_t* self)
 	}
 }
 
-void CG_DrawBoxes()
+void CG_DrawSpeedrunExtras()
 {
 	// Checkpoint visualizer
 	if (gi.Cvar_VariableIntegerValue("sv_speedrunModeCheckpoint") && cg_drawSpeedrunCheckpoint.integer)

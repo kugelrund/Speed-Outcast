@@ -11,7 +11,7 @@
 #include "..\game\wp_saber.h"
 
 // Speed Outcast
-#include "cg_drawBox.h"
+#include "cg_draw_speedrun_extras.h"
 
 #define MASK_CAMERACLIP (MASK_SOLID)
 #define CAMERA_SIZE	4
@@ -1907,7 +1907,7 @@ wasForceSpeed=isForceSpeed;
 		CG_AddMarks();
 		CG_AddLocalEntities();
 		// Speed Outcast addition : draw boxes around triggers and other interesting entities
-		CG_DrawBoxes();
+		CG_DrawSpeedrunExtras();
 	}
 
 	//check for opaque water
