@@ -385,8 +385,36 @@ static void drawBoxObjectTriggers(gentity_t* self)
 
 void CG_DrawBoxes()
 {
+	// Checkpoint visualizer
+	if (gi.Cvar_VariableIntegerValue("sv_speedrunModeCheckpoint") && cg_drawSpeedrunCheckpoint.integer)
+	{
+		gentity_t fakeEntity{};
+		byte color[4];
+		if (!cgi_SpeedrunIsRunFinished())
+		{
+			color[0] = 0;
+			color[1] = 50;
+			color[2] = 0;
+			color[3] = 25;
+		}
+		else
+		{
+			color[0] = 50;
+			color[1] = 0;
+			color[2] = 0;
+			color[3] = 25;
+		}
+		fakeEntity.absmin[0] = gi.cvar("sv_timedCheckpointMinX", "", CVAR_ARCHIVE)->value;
+		fakeEntity.absmin[1] = gi.cvar("sv_timedCheckpointMinY", "", CVAR_ARCHIVE)->value;
+		fakeEntity.absmin[2] = gi.cvar("sv_timedCheckpointMinZ", "", CVAR_ARCHIVE)->value;
+		fakeEntity.absmax[0] = gi.cvar("sv_timedCheckpointMaxX", "", CVAR_ARCHIVE)->value;
+		fakeEntity.absmax[1] = gi.cvar("sv_timedCheckpointMaxY", "", CVAR_ARCHIVE)->value;
+		fakeEntity.absmax[2] = gi.cvar("sv_timedCheckpointMaxZ", "", CVAR_ARCHIVE)->value;
+		drawBoundingBox(&fakeEntity, color);
+	}
+
 	// Player related stuff can be done indepedent from the loop so no needs for an early return
-	drawPlayerRelated(&g_entities[0]); 
+	drawPlayerRelated(&g_entities[0]);
 
 	// Step 0 : big check of every variable, don't if none of them are enabled
 	if (!cg_drawBoxNPC.integer && !cg_drawBoxItems.integer && !cg_drawBoxTriggers.integer

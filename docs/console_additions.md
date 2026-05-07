@@ -15,6 +15,12 @@ Variables:
   For verification of speedruns for the leaderboards.
   Default: `1`.
 
+- `cg_drawNPCInfo` : 0 or 1
+
+  Display information about some flags about NPCs such as their default and current behavior.
+  This is triggered when looking at an NPC entity.
+  The last NPC entity will be remembered as long as the player's crosshair doesn't look at any other NPC entity.
+
 ## Speed Display
 
 Variables:
@@ -113,20 +119,24 @@ Commands:
 
 Variables:
 
-- `cg_drawPlayerInfo` (0 to 7)
+- `cg_drawPlayerInfo` (0 to 15)
 
-  Draw information about the player in the current 3D environment.
-  The types of information are the player's position, velocity, and jumping state.
-  Depending on the value of this variable, different information is shown:
+  The displayed result will always be in the following order from top to bottom : Position - Velocity - Angles - Jumping state.
+  
+  #------------------------------------#
+  Binary :      (1    1    1    1) = 15
+  Power of 2^n : 3    2    1    0
+  Decimal :      8    4    2    1
+                 |    |    |    |
+                 |    |    |    Position
+                 |    |    Velocity
+                 |    Angles
+                 Jumping state
+  #------------------------------------#
 
-  - `0` : Nothing
-  - `1` : Position
-  - `2` : Velocity
-  - `3` : Position + Velocity
-  - `4` : Jumping
-  - `5` : Position + Jumping
-  - `6` : Velocity + Jumping
-  - `7` : Position + Velocity + Jumping
+  Examples : 
+  . To enable everything, you must then set the variable to 15 (8 + 4 + 2 + 1)
+  . To only enable velocity and angles, you would set the variable to 6 (4 + 2)
 
   Default: `0`.
 
@@ -303,6 +313,11 @@ Variables:
   Create an automatic save when a checkpoint is reached in checkpoint mode.
   Default: `0`.
 
+- `cg_drawSpeedrunCheckpoint` (0 or 1)
+
+  Draw a green/red box indicating the checkpoint position in checkpoint mode.
+  Default: `0`.
+
 Commands:
 
 - `settimedcheckpoint <x1> <y1> <z1> <x2> <y2> <z2>`
@@ -310,6 +325,7 @@ Commands:
   Sets a box-shaped checkpoint for `sv_speedrunModeCheckpoint`.
   When the player enters the box spanned by the two points `(x1 y1 z1)` and `(x2 y2 z2)` the run is finished.
   If `x2`, `y2` and `z2` are omitted, a checkpoint of reasonable size will be created at `(x1 y1 z1)`.
+  If all arguments are omitted, a checkpoint of reasonable size will be created at the current player position.
 
 ## Mouse Input
 

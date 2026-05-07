@@ -394,10 +394,12 @@ vmCvar_t	cg_drawBoxTriggers;
 vmCvar_t	cg_drawBoxPlayer;
 vmCvar_t	cg_drawBoxNPC;
 vmCvar_t	cg_drawBoxItems;
+vmCvar_t	cg_drawNPCInfo;
 vmCvar_t	cg_drawPlayerInfo;
 vmCvar_t	cg_drawPlayerInfoPrecision;
 vmCvar_t	cg_drawLineOfSight;
 vmCvar_t	cg_drawNPCPath;
+vmCvar_t	cg_drawSpeedrunCheckpoint;
 vmCvar_t	cg_drawVelocityVector;
 
 typedef struct {
@@ -589,10 +591,12 @@ Ghoul2 Insert End
 	{ &cg_drawBoxPlayer, "cg_drawBoxPlayer", "0", CVAR_ARCHIVE },
 	{ &cg_drawBoxNPC, "cg_drawBoxNPC", "0", CVAR_ARCHIVE },
 	{ &cg_drawBoxItems, "cg_drawBoxItems", "0", CVAR_ARCHIVE },
+	{ &cg_drawNPCInfo, "cg_drawNPCInfo", "0", CVAR_ARCHIVE },
 	{ &cg_drawPlayerInfo, "cg_drawPlayerInfo", "0", CVAR_ARCHIVE },
 	{ &cg_drawPlayerInfoPrecision, "cg_drawPlayerInfoPrecision", "2", CVAR_ARCHIVE },
 	{ &cg_drawLineOfSight, "cg_drawLineOfSight", "0", CVAR_ARCHIVE },
 	{ &cg_drawNPCPath, "cg_drawNPCPath", "0", CVAR_ARCHIVE },
+	{ &cg_drawSpeedrunCheckpoint, "cg_drawSpeedrunCheckpoint", "0", CVAR_ARCHIVE },
 	{ &cg_drawVelocityVector, "cg_drawVelocityVector", "0", CVAR_ARCHIVE },
 };
 
