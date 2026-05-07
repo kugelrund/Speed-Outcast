@@ -55,19 +55,9 @@ Commands:
 
 Variables:
 
-- `cg_drawBoxTriggers` : 0 or 1
-
-  Draw in different colors (ex : pink or orange for secrets) triggers around the map.
-  By default, triggers will be drawn white when there is no color defined.
-
 - `cg_drawBoxPlayer` : 0 or 1
 
   Draw in RED, the box around the player
-
-- `cg_drawBoxPlayerFP` : 0 or 1
-
-  Allows rendering if the box even in first person if set to 1 or more.
-  Needs `cg_drawBoxPlayer` to also be set to 1
 
 - `cg_drawBoxNPC` : 0 or 1
 
@@ -76,6 +66,32 @@ Variables:
 - `cg_drawBoxItems` : 0 or 1
 
   Draw in BLUE, the boxes around items (include dropped weapons)
+
+- `cg_drawBoxTriggers` : 0 or 1
+
+  Render game triggers in the world with different colors depending on their type.
+  Color code : 
+  - Green : interactibles. Example : cairn_assembly cameras or buttons in kejim_post.
+  - Orange : spawners (NPCs or items). Example : kejim_post, after the window jump.
+  - Yellow : doors triggers. Example : everywhere.
+  - Purple : secrets zone, checkpoints saves, mission update and level change.
+  - Pink and blue : any kind of scripts. Example : doors in ns_streets when interacted with, will make a sound.
+  - Red : disabled trigger. Example : after triggering the NPC spawn on kejim_post.
+  - White : uncategorized. Example : the one runner are trying to access in artus_detention, making the door near the end level openable.
+
+## Ingame NPC behavior, line of sight and pathing rendering
+
+Variables: 
+
+- `cg_drawLineOfSight` : 0 or 1
+
+  Draw a blue line showing what every NPC is looking at.
+  Will stop at the first collision encountered (includes player)
+
+- `cg_drawNPCPath` : 0 or 1
+
+  Draw in orange, a line showing where an NPC is trying to go to, a 'goal' destination.
+  This does not include the whole path that an NPC will take to get to said goal.
 
 ## Maximum Jump Height Visualization
 
@@ -187,6 +203,12 @@ Variables:
   Color components (red, green, blue, alpha) for different strafe helper elements.
   These are `Accelerating`, `Optimal`, `CenterMarker` and `Speed`.
   Colors can be set more conveniently with the corresponding commands.
+
+- `cg_drawVelocityVector` (0 or 1)
+
+  Draw a 3D rectangle representing the current velocity vector of the player when moving in the world.
+  It's 3D length is 1/10 of the units values stored internally.
+  Example : a forward volocity of 250 (walking) will result in a rectangle of length 25 ingame units in the direction the player is walking to.
 
 Commands:
 
