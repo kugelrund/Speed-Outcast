@@ -79,6 +79,30 @@ Variables:
   - Red : disabled trigger. Example : after triggering the NPC spawn on kejim_post.
   - White : uncategorized. Example : the one runner are trying to access in artus_detention, making the door near the end level openable.
 
+- `cg_drawBoxTriggersFilter` : 0 to 255
+  
+  #------------------------------------#
+  Binary :      (1    1    1    1    1    1    1    1) = 255
+  Power of 2^n : 7    6    5    4    3    2    1    0
+  Decimal :      128  64   32   16   8    4    2    1
+                 |    |    |    |    |    |    |    |
+                 |    |    |    |    |    |    |    Orange / Spawners
+                 |    |    |    |    |    |    Purple / World+Save
+                 |    |    |    |    |    Green / Interactibles
+                 |    |    |    |    Cyan / 'func' Scripts
+                 |    |    |    Pink / 'target' scripts
+                 |    |    Pink light / fx & sounds
+                 |    White / Unknowns
+                 Yellow / Doors
+  #------------------------------------#
+  
+  Examples : 
+  . To enable everything, set the variable to 255.
+  . To only enable doors (yellow), spawners (orange) and level changes (purple), set the variable to 131 (128 + 2 + 1)
+  . Setting the variable to 0 will diable the filter (and so the bahavior is like 255 where you enable everything).
+
+  Default: `0`.
+
 ## Ingame NPC behavior, line of sight and pathing rendering
 
 Variables: 

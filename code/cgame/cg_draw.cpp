@@ -2547,6 +2547,10 @@ static float CG_DrawFormattedMilliseconds( int milliseconds, int accuracy, float
 CG_DrawPlayerInfo
 ===========================
 */
+#define INFO_FILTER_POSITION	0b0001
+#define TRIG_FILTER_VELOCITY	0b0010
+#define TRIG_FILTER_ANGLES		0b0100
+#define TRIG_FILTER_JUMP		0b1000
 // Helper function to convert floats to string with precision
 static std::string FloatToString(float value, int precision) {
 	std::stringstream bufferStringStream;
@@ -2564,7 +2568,7 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 	if (precision < 0) precision = 0;
 	if (precision > 5) precision = 5;
 
-	if (cg_drawPlayerInfo.integer & 0b1)
+	if (cg_drawPlayerInfo.integer & INFO_FILTER_POSITION)
 	{
 		///// POSITION /////
 		const std::string positionWord = "Position";
@@ -2597,7 +2601,7 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 		///// POSITION /////
 	}
 
-	if (cg_drawPlayerInfo.integer & 0b10)
+	if (cg_drawPlayerInfo.integer & TRIG_FILTER_VELOCITY)
 	{
 		///// VELOCITY /////
 		const std::string velocityWord = "Velocity";
@@ -2616,7 +2620,7 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 		///// VELOCITY /////
 	}
 
-	if (cg_drawPlayerInfo.integer & 0b100)
+	if (cg_drawPlayerInfo.integer & TRIG_FILTER_ANGLES)
 	{
 		///// ANGLE /////
 		const std::string angleWord = "Angles";
@@ -2632,7 +2636,7 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 		///// ANGLE /////
 	}
 
-	if (cg_drawPlayerInfo.integer & 0b1000)
+	if (cg_drawPlayerInfo.integer & TRIG_FILTER_JUMP)
 	{
 		///// JUMPING /////
 		const std::string jumpWord = "Jump";

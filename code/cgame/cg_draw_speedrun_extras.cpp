@@ -2,6 +2,14 @@
 #include "cg_headers.h"
 #include "cg_media.h"
 
+#define TRIG_FILTER_SPAWNER			0b00000001
+#define TRIG_FILTER_WORLD			0b00000010
+#define TRIG_FILTER_INTERACTIBLE	0b00000100
+#define TRIG_FILTER_FUNC			0b00001000
+#define TRIG_FILTER_TARGET			0b00010000
+#define TRIG_FILTER_SOUNDSFX		0b00100000
+#define TRIG_FILTER_UNCATEGORIZED	0b01000000
+#define TRIG_FILTER_DOORS			0b10000000
 
 static void drawBoundingBox(const gentity_t* ent, const byte color[4])
 {
@@ -145,17 +153,23 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 		// CASE : spawns, in orange. Can be seen everywhere.
 		case(useF_NPC_Spawn):
 		case(useF_item_spawn_use):
-			color[0] = 100;
-			color[1] = 50;
-			color[2] = 0;
+			if (!cg_drawBoxTriggersFilter.integer || (cg_drawBoxTriggersFilter.integer & TRIG_FILTER_SPAWNER))
+			{
+				color[0] = 150;
+				color[1] = 100;
+				color[2] = 0;
+			}
 			break;
 		// CASE : world/save/map related, in pink.
 		case(useF_target_autosave_use):
 		case(useF_target_level_change_use):
 		case(useF_target_secret_use):
-			color[0] = 100;
-			color[1] = 0;
-			color[2] = 150;
+			if (!cg_drawBoxTriggersFilter.integer || (cg_drawBoxTriggersFilter.integer & TRIG_FILTER_WORLD))
+			{
+				color[0] = 100;
+				color[1] = 0;
+				color[2] = 150;
+			}
 			break;
 		// CASE : interactible elements, in green.
 		case(useF_security_panel_use):
@@ -186,9 +200,12 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 		case(useF_jabba_cam_use):
 		case(useF_misc_use):
 		case(useF_pas_use):
-			color[0] = 0;
-			color[1] = 100;
-			color[2] = 0;
+			if (!cg_drawBoxTriggersFilter.integer || (cg_drawBoxTriggersFilter.integer & TRIG_FILTER_INTERACTIBLE))
+			{
+				color[0] = 0;
+				color[1] = 100;
+				color[2] = 0;
+			}
 			break;
 		// CASE : 'scripts' / 'func', in greenish cyan.
 		case(useF_Use_Multi):
@@ -200,9 +217,12 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 		case(useF_func_rotating_use):
 		case(useF_funcGlassUse):
 		case(useF_func_timer_use):
-			color[0] = 0;
-			color[1] = 100;
-			color[2] = 50;
+			if (!cg_drawBoxTriggersFilter.integer || (cg_drawBoxTriggersFilter.integer & TRIG_FILTER_FUNC))
+			{
+				color[0] = 0;
+				color[1] = 100;
+				color[2] = 50;
+			}
 			break;
 		// CASE : 'target' ??????, in purple. Note : not found anything is purple during tests
 		case(useF_Use_Target_Give):
@@ -220,18 +240,24 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 		case(useF_target_friction_change_use):
 		case(useF_target_teleporter_use):
 		case(useF_Use_target_push):
-			color[0] = 100;
-			color[1] = 0;
-			color[2] = 50;
+			if (!cg_drawBoxTriggersFilter.integer || (cg_drawBoxTriggersFilter.integer & TRIG_FILTER_TARGET))
+			{
+				color[0] = 100;
+				color[1] = 0;
+				color[2] = 50;
+			}
 			break;
 		// CASE : effects fx & sound, in yellow
 		case(useF_fx_runner_use):
 		case(useF_fx_explosion_trail_use):
 		case(useF_fx_target_beam_use):
 		case(useF_target_play_music_use):
-			color[0] = 100;
-			color[1] = 66;
-			color[2] = 0;
+			if (!cg_drawBoxTriggersFilter.integer || (cg_drawBoxTriggersFilter.integer & TRIG_FILTER_SOUNDSFX))
+			{
+				color[0] = 100;
+				color[1] = 50;
+				color[2] = 0;
+			}
 			break;
 		// CASE : unknown cases, let it be white
 		case(useF_GoExplodeDeath):
@@ -247,12 +273,14 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 		case(useF_misc_replicator_item_remove):
 		case(useF_misc_trip_mine_activate):
 		default:
-			color[0] = 20;
-			color[1] = 20;
-			color[2] = 20;
+			if (!cg_drawBoxTriggersFilter.integer || (cg_drawBoxTriggersFilter.integer & TRIG_FILTER_UNCATEGORIZED))
+			{
+				color[0] = 20;
+				color[1] = 20;
+				color[2] = 20;
+			}
 			break;
 		}
-		color[3] = 128;
 	}
 }
 
@@ -333,21 +361,32 @@ static void drawBoxWorldTriggers(gentity_t* self)
 		// Do not use blue nor red to know we correctly override the previous color.
 		setColorForTrigger(self, color);
 
+		// trigger_doors don't have a e_UseFunc defined, so we check them here with their e_TouchFunc
+		if (self->e_TouchFunc == touchF_Touch_DoorTrigger)
+		{
+			if (!cg_drawBoxTriggersFilter.integer || (cg_drawBoxTriggersFilter.integer & TRIG_FILTER_DOORS))
+			{
+				// Yellow for doors
+				color[0] = 100;
+				color[1] = 100;
+				color[2] = 0;
+				color[3] = 25;
+			}
+		}
+
+		// Default color = trigger has been filtered
+		if (color[0] == 0 && color[1] == 0 && color[2] == 100)
+		{
+			return;
+		}
+
 		// At the end, if the trigger has been used, display it in red
+		// This is after the filter so that triggers of the autorized category would still render (and not have random red boxes)
 		if (self->e_TouchFunc == touchF_NULL)
 		{
 			// Red for deactivated triggers
 			color[0] = 50;
 			color[1] = 0;
-			color[2] = 0;
-			color[3] = 25;
-		}
-		// trigger_doors don't have a e_UseFunc defined, so we check them here with their e_TouchFunc
-		if (self->e_TouchFunc == touchF_Touch_DoorTrigger)
-		{
-			// Yellow for doors
-			color[0] = 100;
-			color[1] = 100;
 			color[2] = 0;
 			color[3] = 25;
 		}
