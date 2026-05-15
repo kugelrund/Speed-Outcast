@@ -2,14 +2,23 @@
 #include "cg_headers.h"
 #include "cg_media.h"
 
-#define TRIG_FILTER_SPAWNER			0b00000001
-#define TRIG_FILTER_WORLD			0b00000010
-#define TRIG_FILTER_INTERACTIBLE	0b00000100
-#define TRIG_FILTER_FUNC			0b00001000
-#define TRIG_FILTER_TARGET			0b00010000
-#define TRIG_FILTER_SOUNDSFX		0b00100000
-#define TRIG_FILTER_UNCATEGORIZED	0b01000000
-#define TRIG_FILTER_DOORS			0b10000000
+#define TRIG_FILTER_SPAWNER			1<<0
+#define TRIG_FILTER_WORLD			1<<1
+#define TRIG_FILTER_INTERACTIBLE	1<<2
+#define TRIG_FILTER_FUNC			1<<3
+#define TRIG_FILTER_TARGET			1<<4
+#define TRIG_FILTER_SOUNDSFX		1<<5
+#define TRIG_FILTER_UNCATEGORIZED	1<<6
+#define TRIG_FILTER_DOORS			1<<7
+
+#define TRIG_FILTER_HURT			1<<8
+#define TRIG_FILTER_UNDEFINED1		1<<9
+#define TRIG_FILTER_UNDEFINED2		1<<10
+#define TRIG_FILTER_UNDEFINED3		1<<11
+#define TRIG_FILTER_UNDEFINED4		1<<12
+#define TRIG_FILTER_UNDEFINED5		1<<13
+#define TRIG_FILTER_UNDEFINED6		1<<14
+#define TRIG_FILTER_UNDEFINED7		1<<15
 
 static void drawBoundingBox(const gentity_t* ent, const byte color[4])
 {
@@ -282,6 +291,24 @@ static void setColorForTrigger(gentity_t* self, byte color[4])
 			break;
 		}
 	}
+	else 
+	{
+		// Example : Fuel codes in ns_starpad don't return anything via G_Find.
+		// Don't need to implement any other case afaik, but the structure is ready.
+		switch (self->e_UseFunc)
+		{
+		case(useF_func_usable_use):
+			if (!cg_drawBoxTriggersFilter.integer || (cg_drawBoxTriggersFilter.integer & TRIG_FILTER_FUNC))
+			{
+				color[0] = 0;
+				color[1] = 100;
+				color[2] = 50;
+			}
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 static void drawPlayerRelated(gentity_t* self)
@@ -371,6 +398,19 @@ static void drawBoxWorldTriggers(gentity_t* self)
 				color[1] = 100;
 				color[2] = 0;
 				color[3] = 25;
+			}
+		}
+
+		// trigger_hurt don't have a e_UseFunc defined, so we check them here with their e_TouchFunc
+		if (self->e_TouchFunc == touchF_hurt_touch)
+		{
+			if (!cg_drawBoxTriggersFilter.integer || (cg_drawBoxTriggersFilter.integer & TRIG_FILTER_HURT))
+			{
+				// Red for death triggers
+				color[0] = 200;
+				color[1] = 0;
+				color[2] = 0;
+				color[3] = 255;
 			}
 		}
 
@@ -476,7 +516,8 @@ void CG_DrawSpeedrunExtras()
 		if ( g_entities[i].classname &&
 			(strcmp(g_entities[i].classname, "trigger_multiple") == 0 ||
 			(strcmp(g_entities[i].classname, "trigger_once") == 0 ||
-			(strcmp(g_entities[i].classname, "trigger_door") == 0 ))))
+			(strcmp(g_entities[i].classname, "trigger_door") == 0 ||
+			(strcmp(g_entities[i].classname, "trigger_hurt") == 0 )))))
 		{
 			drawBoxWorldTriggers(&g_entities[i]);
 		}
