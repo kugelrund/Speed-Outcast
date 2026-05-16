@@ -2547,11 +2547,6 @@ static float CG_DrawFormattedMilliseconds( int milliseconds, int accuracy, float
 CG_DrawPlayerInfo
 ===========================
 */
-// Filters consts
-const int info_filter_position	 = 1<<0;
-const int info_filter_velocity	 = 1<<1;
-const int info_filter_angles	 = 1<<2;
-const int info_filter_jump		 = 1<<3;
 // Helper function to convert floats to string with precision
 static std::string FloatToString(float value, int precision) {
 	std::stringstream bufferStringStream;
@@ -2568,6 +2563,11 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 	// Precision boundaries
 	if (precision < 0) precision = 0;
 	if (precision > 5) precision = 5;
+	// Filters consts
+	const int info_filter_position	= 1 << 0;
+	const int info_filter_velocity	= 1 << 1;
+	const int info_filter_angles	= 1 << 2;
+	const int info_filter_jump		= 1 << 3;
 
 	if (cg_drawPlayerInfo.integer & info_filter_position)
 	{

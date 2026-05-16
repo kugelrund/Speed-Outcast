@@ -3,16 +3,17 @@
 #include "cg_media.h"
 
 // Filter consts
-const int trig_filter_spawner		= 1<<0;
-const int trig_filter_world			= 1<<1;
-const int trig_filter_usable		= 1<<2;
-const int trig_filter_func			= 1<<3;
-const int trig_filter_target		= 1<<4;
-const int trig_filter_soundsfx		= 1<<5;
-const int trig_filter_uncategorized	= 1<<6;
-const int trig_filter_doors			= 1<<7;
-const int trig_filter_hurt			= 1<<8;
-// 1<<9 to 1<<15 not used
+static const int trig_filter_spawner		= 1<<0;
+static const int trig_filter_world			= 1<<1;
+static const int trig_filter_usable			= 1<<2;
+static const int trig_filter_func			= 1<<3;
+static const int trig_filter_target			= 1<<4;
+static const int trig_filter_soundsfx		= 1<<5;
+static const int trig_filter_uncategorized	= 1<<6;
+static const int trig_filter_doors			= 1<<7;
+static const int trig_filter_hurt			= 1<<8;
+static const int trig_filter_disabled		= 1<<9;
+// 1<<10 to 1<<15 not used
 
 static void drawBoundingBox(const gentity_t* ent, const byte color[4])
 {
@@ -410,12 +411,16 @@ static void drawBoxWorldTriggers(gentity_t* self)
 
 		// At the end, if the trigger has been used, display it in red
 		// This is after the filter so that triggers of the autorized category would still render (and not have random red boxes)
+		// This isn't present in drawBoxObjectTriggers.
 		if (self->e_TouchFunc == touchF_NULL)
 		{
-			// Red for deactivated triggers
-			color[0] = 50;
-			color[1] = 0;
-			color[2] = 0;
+			if (!cg_drawBoxTriggersFilter.integer || (cg_drawBoxTriggersFilter.integer & trig_filter_disabled))
+			{
+				// Red (lighter) for deactivated triggers
+				color[0] = 50;
+				color[1] = 0;
+				color[2] = 0;
+			}
 		}
 
 		// Default color = no overload by setColorForTrigger because of filtering : return early

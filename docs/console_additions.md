@@ -94,16 +94,16 @@ Variables:
                  |    |    |    |    Pink light : fx & sounds
                  |    |    |    White : Unknowns
                  |    |    Yellow : Doors
-                 |    Red : Death
-                 Unused
+                 |    Red opaque : Death & Hurt
+                 Red light : disabled / used triggers
 
 
   #------------------------------------------------------------------------------------------------#
   
   Examples : 
-  . To enable everything, set the variable to 511.
+  . To enable everything, set the variable to 1023.
   . To only enable doors (yellow), spawners (orange) and level changes (purple), set the variable to 131 (128 + 2 + 1)
-  . Setting the variable to 0 will disable the filter (and so the bahavior is like 511 where you enable everything).
+  . Setting the variable to 0 will disable the filter (and so the bahavior is like 1023 where you enable everything).
 
   Default: `0`.
 
