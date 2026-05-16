@@ -91,11 +91,11 @@ Variables:
                  |    |    |    |    |    |    |    Green : Interactibles
                  |    |    |    |    |    |    Cyan : 'func' Scripts
                  |    |    |    |    |    Pink : 'target' scripts
-                 |    |    |    |    Pink light :fx & sounds
+                 |    |    |    |    Pink light : fx & sounds
                  |    |    |    White : Unknowns
                  |    |    Yellow : Doors
                  |    Red : Death
-                 Undefined
+                 Unused
 
 
   #------------------------------------------------------------------------------------------------#
@@ -103,7 +103,7 @@ Variables:
   Examples : 
   . To enable everything, set the variable to 511.
   . To only enable doors (yellow), spawners (orange) and level changes (purple), set the variable to 131 (128 + 2 + 1)
-  . Setting the variable to 0 will diable the filter (and so the bahavior is like 511 where you enable everything).
+  . Setting the variable to 0 will disable the filter (and so the bahavior is like 511 where you enable everything).
 
   Default: `0`.
 
