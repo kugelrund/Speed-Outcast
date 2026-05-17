@@ -20,6 +20,8 @@ extern	void	Q3_DebugPrint( int level, const char *format, ... );
 int			ICARUS_entFilter = -1;
 
 extern	stringID_table_t setTable[];
+extern	stringID_table_t INVTable[];
+extern	stringID_table_t WPTable[];
 
 /*
 =============
@@ -504,6 +506,22 @@ extern	cvar_t	*com_buildScript;
 				case SET_ADDLHANDBOLT_MODEL:
 					{
 						gi.G2API_PrecacheGhoul2Model( sVal2 );
+					}
+					break;
+				// cache items from SET_ITEM, SET_WEAPON beforehand (ns_starpad\force-weapons_ns3)
+				case SET_ITEM:
+					{
+						int inv = GetIDForString( INVTable, sVal2 );
+						gitem_t *item = FindItemForInventory(inv);
+						RegisterItem( item );
+					}
+					break;
+				case SET_WEAPON:
+					{
+						int wp = GetIDForString( WPTable, sVal2 );
+						if (wp <= WP_NONE) break;
+						gitem_t *item = FindItemForWeapon( (weapon_t) wp);
+						RegisterItem( item );
 					}
 					break;
 				default:

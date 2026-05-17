@@ -81,7 +81,7 @@ void CG_RegisterWeapon( int weaponNum ) {
 		{
 			*spot = 0;
 			spot = strstr(weaponModel, "_w");//i'm using the in view weapon array instead of scanning the item list, so put the _w back on
-			if (!spot) 
+			if (!spot&&!strstr(weaponModel, "noweap"))
 			{
 				strcat (weaponModel, "_w");
 			}
@@ -644,6 +644,8 @@ void CG_RegisterItemVisuals( int itemNum ) {
 			theFxScheduler.RegisterEffect( "env/small_explode");
 
 			CG_RegisterWeapon( WP_BLASTER );
+
+			cgi_R_RegisterModel( "models/players/remote/lower.md3" );
 			break;
 
 		case INV_SENTRY:

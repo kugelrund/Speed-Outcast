@@ -2283,6 +2283,7 @@ void SP_func_rotating (gentity_t *ent) {
 	{
 		ent->e_TouchFunc = touchF_func_rotating_touch;
 		G_SoundIndex( "sound/effects/energy_crackle.wav" );
+		G_EffectIndex("disruptor/death_smoke");
 	}
 
 	gi.linkentity( ent );
