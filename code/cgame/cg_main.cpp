@@ -1733,7 +1733,7 @@ Ghoul2 Insert End
 	{
 		if(&g_entities[i])
 		{
-			std::string npcType = g_entities[i].NPC_type && g_entities[i].NPC_type[0] ? g_entities[i].NPC_type : "";
+			std::string npcType = g_entities[i].NPC_type ? g_entities[i].NPC_type : "";
 			std::transform(npcType.begin(), npcType.end(), npcType.begin(),
 			               [](unsigned char c) { return tolower(c); });
 
@@ -1772,8 +1772,6 @@ Ghoul2 Insert End
 	cg.loadLCARSStage = 9;
 
 	NPCsPrecached = qtrue;
-
-	npc_precachedTypes.clear();
 
 	extern	cvar_t	*com_buildScript;
 
