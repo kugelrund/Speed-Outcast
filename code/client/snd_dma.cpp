@@ -4269,7 +4269,8 @@ void S_StartBackgroundTrack( const char *intro, const char *loop, qboolean bCall
 
 	// if dynamic music not allowed, then just stream the explore music instead of playing dynamic...
 	//
-	if (!s_allowDynamicMusic->integer && Music_DynamicDataAvailable(intro))	// "intro", NOT "sName" (i.e. don't use version with ".mp3" extension)
+    // Speed-Outcast precache fix: if sName is a path we expect Music_DynamicDataAvailable to fail since it expects a levelname, so we skip it to avoid reading dms.dat unnecessarily
+	if (!s_allowDynamicMusic->integer && !strstr(sName,"/") && Music_DynamicDataAvailable(intro))	// "intro", NOT "sName" (i.e. don't use version with ".mp3" extension)
 	{
 		LPCSTR psMusicName = Music_GetFileNameForState( eBGRNDTRACK_DATABEGIN );
 		if (psMusicName && S_FileExists( psMusicName ))

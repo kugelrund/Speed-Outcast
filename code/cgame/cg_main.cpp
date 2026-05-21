@@ -13,6 +13,7 @@
 #ifdef _IMMERSION
 #include "../ff/ff.h"
 #endif // _IMMERSION
+#include <unordered_set>
 #include "../qcommon/sstring.h"
 //NOTENOTE: Be sure to change the mirrored code in g_shared.h
 typedef	map< sstring_t, unsigned char, less<sstring_t>, allocator< unsigned char >  >	namePrecache_m;
@@ -1657,6 +1658,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.shadowMarkShader	= cgi_R_RegisterShader( "markShadow" );
 	cgs.media.wakeMarkShader	= cgi_R_RegisterShader( "wake" );
 	cgi_S_RegisterSound( "sound/effects/energy_crackle.wav" );
+	cgi_R_RegisterShader("gfx/effects/burn"); // func_rotating_touch
 
 
 	CG_LoadingString("map brushes");
@@ -1725,10 +1727,16 @@ Ghoul2 Insert End
 		CG_NewClientinfo( i );
 	}
 
+	std::unordered_set<string> npc_precachedTypes;
+
 	for (i=0 ; i < ENTITYNUM_WORLD ; i++)
 	{
 		if(&g_entities[i])
 		{
+			std::string npcType = g_entities[i].NPC_type ? g_entities[i].NPC_type : "";
+			std::transform(npcType.begin(), npcType.end(), npcType.begin(),
+			               [](unsigned char c) { return tolower(c); });
+
 			if(g_entities[i].client)
 			{
 				//if(!g_entities[i].client->clientInfo.infoValid)
@@ -1738,17 +1746,24 @@ Ghoul2 Insert End
 					CG_RegisterClientModels(i);
 					if ( i != 0 )
 					{//Client weapons already precached
-						CG_RegisterWeapon( g_entities[i].client->ps.weapon );
-						CG_RegisterNPCCustomSounds( &g_entities[i].client->clientInfo );
-						CG_RegisterNPCEffects( g_entities[i].client->playerTeam );
+						// sometimes neither NPC's model/skin is in config string nor spawner for this npc type is in
+						// g_entities (already freed). So precache here to be safe. Happens for: impcommander/gonk on
+						// artus_detention (level change from mine); prisoner on artus_topside (skipping start cutscene
+						// + vid_restart).
+						if (npc_precachedTypes.emplace(npcType).second)
+						{
+							NPC_Precache( &g_entities[i] );
+						}
 					}
 				}
 			}
-			else if ( g_entities[i].svFlags & SVF_NPC_PRECACHE && g_entities[i].NPC_type && g_entities[i].NPC_type[0] )
+			else if ( g_entities[i].svFlags & SVF_NPC_PRECACHE && !npcType.empty() )
 			{//Precache the NPC_type
-				//FIXME: make sure we didn't precache this NPC_type already
 				CG_LoadingString( va("NPC %s", g_entities[i].NPC_type ) );
-				NPC_Precache( &g_entities[i] );
+				if (npc_precachedTypes.emplace(npcType).second)
+				{
+					NPC_Precache( &g_entities[i] );
+				}
 			}
 		}
 	}

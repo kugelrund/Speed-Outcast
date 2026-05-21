@@ -486,7 +486,7 @@ int NPC_WeaponsForTeam( team_t team, int spawnflags, const char *NPC_type )
 			return WP_NONE;
 		}
 
-		if ( Q_strncmp( "weequay", NPC_type, 7 ) == 0 )
+		if ( Q_stricmpn( "weequay", NPC_type, 7 ) == 0 )
 		{
 			return ( 1 << WP_BOWCASTER);//|( 1 << WP_STAFF )(FIXME: new weap?)
 		}

@@ -42,6 +42,9 @@ void SP_info_player_deathmatch(gentity_t *ent) {
 		RegisterItem( FindItemForWeapon( WP_SABER ) );	//these are given in ClientSpawn(), but we register them now before cgame starts
 		G_SkinIndex("models/players/kyle/model_fpls2.skin");	//preache the skin used in cg_players.cpp
 	}
+
+	extern void NPC_PrecacheAnimationCFG( const char *NPC_type );
+	NPC_PrecacheAnimationCFG("kyle");
 }
 
 /*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 32) KEEP_PREV DROPTOFLOOR x x x STUN_BATON NOWEAPON x
@@ -1255,18 +1258,6 @@ void G_SetG2PlayerModel( gentity_t * const ent, const char *modelName, const cha
 	{//try the stormtrooper as a default
 		modelName = "stormtrooper";
 		ent->playerModel = gi.G2API_InitGhoul2Model( ent->ghoul2, va("models/players/%s/model.glm", modelName), G_ModelIndex( va("models/players/%s/model.glm", modelName) ), NULL, NULL, 0, 0 );
-	}
-
-	if ( !Q_stricmp( "kyle", modelName ))
-	{
-		// Try to get the skin we'll use when we switch to the first person light saber.  
-		//	We use a new skin to disable certain surfaces so they are not drawn but we can still collide against them
-		int skin = gi.RE_RegisterSkin( "models/players/kyle/model_fpls.skin" );
-		if ( skin )
-		{
-			// put it in the config strings
-			G_SkinIndex( skinName );
-		}
 	}
 
 	// did we find a ghoul2 model? if so, load the animation.cfg file
