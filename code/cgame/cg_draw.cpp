@@ -2563,8 +2563,13 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 	// Precision boundaries
 	if (precision < 0) precision = 0;
 	if (precision > 5) precision = 5;
+	// Filters consts
+	const int info_filter_position	= 1 << 0;
+	const int info_filter_velocity	= 1 << 1;
+	const int info_filter_angles	= 1 << 2;
+	const int info_filter_jump		= 1 << 3;
 
-	if (cg_drawPlayerInfo.integer & 0b1)
+	if (cg_drawPlayerInfo.integer & info_filter_position)
 	{
 		///// POSITION /////
 		const std::string positionWord = "Position";
@@ -2597,7 +2602,7 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 		///// POSITION /////
 	}
 
-	if (cg_drawPlayerInfo.integer & 0b10)
+	if (cg_drawPlayerInfo.integer & info_filter_velocity)
 	{
 		///// VELOCITY /////
 		const std::string velocityWord = "Velocity";
@@ -2616,7 +2621,7 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 		///// VELOCITY /////
 	}
 
-	if (cg_drawPlayerInfo.integer & 0b100)
+	if (cg_drawPlayerInfo.integer & info_filter_angles)
 	{
 		///// ANGLE /////
 		const std::string angleWord = "Angles";
@@ -2632,7 +2637,7 @@ static float CG_DrawPlayerInfo(float x, float y, int precision) {
 		///// ANGLE /////
 	}
 
-	if (cg_drawPlayerInfo.integer & 0b1000)
+	if (cg_drawPlayerInfo.integer & info_filter_jump)
 	{
 		///// JUMPING /////
 		const std::string jumpWord = "Jump";
