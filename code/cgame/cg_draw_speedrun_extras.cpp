@@ -503,7 +503,6 @@ static void drawBoxWorldTriggers(gentity_t* self)
 
 static void drawBoxObjectTriggers(gentity_t* self)
 {
-	return;
 	// Step 2 : Check what is enabled as to not show everything
 	if (cg_drawBoxTriggers.integer)
 	{
