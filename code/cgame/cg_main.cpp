@@ -392,6 +392,8 @@ vmCvar_t	cg_strafeHelperColorSpeedA;
 vmCvar_t	cg_fovThirdPerson;
 vmCvar_t	cg_sensitivityFactorTurret;
 vmCvar_t	cg_drawBoxTriggers;
+vmCvar_t	cg_drawBoxTriggersFilter;
+vmCvar_t	cg_drawBoxTriggersFilterDisabled;
 vmCvar_t	cg_drawBoxPlayer;
 vmCvar_t	cg_drawBoxNPC;
 vmCvar_t	cg_drawBoxItems;
@@ -589,6 +591,8 @@ Ghoul2 Insert End
 	{ &cg_fovThirdPerson, "cg_fovThirdPerson", "0", CVAR_ARCHIVE },
 	{ &cg_sensitivityFactorTurret, "cg_sensitivityFactorTurret", "0.25", CVAR_ARCHIVE },
 	{ &cg_drawBoxTriggers, "cg_drawBoxTriggers", "0", CVAR_ARCHIVE },
+	{ &cg_drawBoxTriggersFilter, "cg_drawBoxTriggersFilter", "0", CVAR_ARCHIVE },
+	{ &cg_drawBoxTriggersFilterDisabled, "cg_drawBoxTriggersFilterDisabled", "1", CVAR_ARCHIVE },
 	{ &cg_drawBoxPlayer, "cg_drawBoxPlayer", "0", CVAR_ARCHIVE },
 	{ &cg_drawBoxNPC, "cg_drawBoxNPC", "0", CVAR_ARCHIVE },
 	{ &cg_drawBoxItems, "cg_drawBoxItems", "0", CVAR_ARCHIVE },

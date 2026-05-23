@@ -58,14 +58,17 @@ Variables:
 - `cg_drawBoxPlayer` : 0 or 1
 
   Draw in RED, the box around the player
+  Default: `0`.
 
 - `cg_drawBoxNPC` : 0 or 1
 
   Draw in GREEN, the boxes around NPCs (include spawned NPCs)
+  Default: `0`.
 
 - `cg_drawBoxItems` : 0 or 1
 
   Draw in BLUE, the boxes around items (include dropped weapons)
+  Default: `0`.
 
 - `cg_drawBoxTriggers` : 0 or 1
 
@@ -78,6 +81,44 @@ Variables:
   - Pink and blue : any kind of scripts. Example : doors in ns_streets when interacted with, will make a sound.
   - Red : disabled trigger. Example : after triggering the NPC spawn on kejim_post.
   - White : uncategorized. Example : the one runner are trying to access in artus_detention, making the door near the end level openable.
+
+  Default: `0`.
+
+- `cg_drawBoxTriggersFilter` : 0 to 511
+  
+  #------------------------------------------------------------------------------------------------#
+  Binary :      (1    1    1    1    1    1    1    1    1    1) = 1023
+  Power of 2^n : 9    8    7    6    5    4    3    2    1    0
+  Decimal :      512  256  128  64   32   16   8    4    2    1
+                 |    |    |    |    |    |    |    |    |    |
+                 |    |    |    |    |    |    |    |    |    Orange : Spawners
+                 |    |    |    |    |    |    |    |    Purple : World+Save
+                 |    |    |    |    |    |    |    Green : Interactibles
+                 |    |    |    |    |    |    Cyan : 'func' Scripts
+                 |    |    |    |    |    Pink : 'target' scripts
+                 |    |    |    |    Pink light : fx & sounds
+                 |    |    |    White : Unknowns
+                 |    |    Yellow : Doors
+                 |    Red opaque : Death & Hurt
+                 Unused (yet?)
+
+
+  #------------------------------------------------------------------------------------------------#
+  
+  Examples : 
+  . To enable everything, set the variable to 511.
+  . To only enable doors (yellow), spawners (orange) and level changes (purple), set the variable to 131 (128 + 2 + 1)
+  . Setting the variable to 0 will disable the filter (and so the bahavior is like 511 where you enable everything).
+
+  Default: `0`.
+
+- `cg_drawBoxTriggersFilterDisabled` : 0 or 1
+
+  Enable or not, the rendering of used/disabled triggers, in light red.
+  Example : after using a spawner (in orange), the trigger is considered 'disbaled' and would still render in red if this variable is set to 1.
+  On the contrary, if this is set to 0, after using the same trigger, the rendering would stop and visually the rectangle would disappear.
+
+  Default: `1`.
 
 ## Ingame NPC behavior, line of sight and pathing rendering
 
