@@ -1750,6 +1750,7 @@ Ghoul2 Insert End
 					CG_RegisterClientModels(i);
 					if ( i != 0 )
 					{//Client weapons already precached
+						CG_RegisterNPCCustomSounds( &g_entities[i].client->clientInfo );
 						// sometimes neither NPC's model/skin is in config string nor spawner for this npc type is in
 						// g_entities (already freed). So precache here to be safe. Happens for: impcommander/gonk on
 						// artus_detention (level change from mine); prisoner on artus_topside (skipping start cutscene
